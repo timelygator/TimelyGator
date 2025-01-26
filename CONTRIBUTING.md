@@ -6,14 +6,14 @@ Thanks for your interest in contributing to TimelyGator! Here are some guideline
 
 If you're looking for ideas about what to work on, check out:
 
-- Our [public roadmap](https://github.com/users/shreyansh-nayak-ufl/projects/1) contains a high-level overview of our current goals for TimelyGator.
-- Our [top issues](https://github.com/shreyansh-nayak-ufl/TimelyGator/issues/4) can help you identify what's most important to the project right now.
+- Our [public roadmap](https://github.com/orgs/timelygator/projects/1) contains a high-level overview of our current goals for TimelyGator.
+- Our [top issues](https://github.com/timelygator/TimelyGator/issues/4) can help you identify what's most important to the project right now.
 
 ## How to Contribute
 
 ### Proposing changes:
 
-The best way to propose a change is to [start a discussion on our GitHub repository](https://github.com/shreyansh-nayak-ufl/TimelyGator/discussions).
+The best way to propose a change is to [start a discussion on our GitHub repository](https://github.com/timelygator/TimelyGator/discussions).
 
 First, write a short **problem statement**, which _clearly_ and _briefly_ describes the problem you want to solve independently from any specific solution.
 
