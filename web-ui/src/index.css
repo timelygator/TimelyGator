@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Light mode styles */
+body {
+    background-color: white;
+    color: black;
+}
+
+/* Dark mode styles */
+.dark body {
+    background-color: black;
+    color: white;
+}
