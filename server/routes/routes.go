@@ -16,17 +16,17 @@ func RegisterRoutes(r *mux.Router) {
 
 // CreateTask godoc
 //
-//	@Summary		Create a new task
-//	@Description	create new task, returns the created task
-//	@Tags			tasks
-//	@Accept			json
-//	@Produce		json
-//	@Param			task body models.Task true "Task object that needs to be created"
-//	@Success		200	{object}	models.Task
-//	@Failure		400	{object}	middleware.HTTPError
-//	@Failure		404	{object}	middleware.HTTPError
-//	@Failure		500	{object}	middleware.HTTPError
-//	@Router			/tasks [post]
+// @Summary		Create a new task
+// @Description	create new task, returns the created task
+// @Tags		tasks
+// @Accept		json
+// @Produce		json
+// @Param		task body models.Task true "Task object that needs to be created"
+// @Success		200	{object}	models.Task
+// @Failure		400	{object}	middleware.HTTPError
+// @Failure		404	{object}	middleware.HTTPError
+// @Failure		500	{object}	middleware.HTTPError
+// @Router		/tasks [post]
 func createTask(w http.ResponseWriter, r *http.Request) {
 	var task models.Task
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
@@ -47,7 +47,7 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 // @Failure 	400	{object}	middleware.HTTPError
 // @Failure 	404	{object}	middleware.HTTPError
 // @Failure 	500	{object}	middleware.HTTPError
-// @Router 	/tasks [get]
+// @Router		/tasks [get]
 func getTasks(w http.ResponseWriter, r *http.Request) {
 	var tasks []models.Task
 	database.DB.Find(&tasks)
