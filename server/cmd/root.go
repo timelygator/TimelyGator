@@ -12,8 +12,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "time-tracker",
-	Short: "Time Tracker Application",
+	Use:   "tg-server",
+	Short: "TimelyGator is a time tracking application. This is the server cli for the project",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := database.InitDB(); err != nil {
 			log.Fatalf("Could not connect to database: %v", err)

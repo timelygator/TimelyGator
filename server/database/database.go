@@ -11,7 +11,7 @@ var DB *gorm.DB
 
 func InitDB() error {
 	var err error
-	DB, err = gorm.Open(sqlite.Open("time_tracker.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open("timelygator.db"), &gorm.Config{})
 	if err != nil {
 		return err
 	}
