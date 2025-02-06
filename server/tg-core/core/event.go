@@ -3,21 +3,21 @@ package core
 import (
 	"log"
 	"time"
+	"gorm.io/gorm"
 )
 
-type Id interface{}
 type ConvertibleTimestamp interface{}
 type Duration interface{}
 type Data map[string]interface{}
 
 type Event struct {
-	Id        Id            `json:"id"`
-	Timestamp time.Time     `json:"timestamp"`
-	Duration  time.Duration `json:"duration"`
-	Data      Data          `json:"data"`
+	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
+	Timestamp time.Time      `gorm:"not null;type:timestamp" json:"timestamp"`
+	Duration  time.Duration  `gorm:"not null" json:"duration"`
+	Data      Data           `gorm:"type:json" json:"data"`
 }
 
-func NewEvent(id Id, timestamp ConvertibleTimestamp, duration Duration, data Data) *Event {
+func NewEvent(id uint, timestamp ConvertibleTimestamp, duration Duration, data Data) *Event {
 	if timestamp == nil {
 		log.Printf("Event initializer did not receive a timestamp argument, using now as timestamp")
 		timestamp = time.Now().In(time.UTC)
@@ -30,7 +30,7 @@ func NewEvent(id Id, timestamp ConvertibleTimestamp, duration Duration, data Dat
 	}
 
 	return &Event{
-		Id:        id,
+		ID:        id,
 		Timestamp: timestamp.(time.Time),
 		Duration:  parseDuration(duration),
 		Data:      data,
