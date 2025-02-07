@@ -2,13 +2,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { motion } from "framer-motion";
 
 const salesData = [
-	{ name: "Mon", sales: 9 },
-	{ name: "Tue", sales: 8 },
-	{ name: "Wed", sales: 10 },
-	{ name: "Thur", sales: 6.5 },
-	{ name: "Fri", sales: 9 },
-	{ name: "Sat", sales: 16 },
-	{ name: "Sun", sales: 14 }
+	{ name: "Mon", Hours: 9 },
+	{ name: "Tue", Hours: 8 },
+	{ name: "Wed", Hours: 10 },
+	{ name: "Thur", Hours: 6.5 },
+	{ name: "Fri", Hours: 9 },
+	{ name: "Sat", Hours: 16 },
+	{ name: "Sun", Hours: 14 }
 ];
 
 const SalesOverviewChart = () => {
@@ -36,7 +36,7 @@ const SalesOverviewChart = () => {
 						/>
 						<Line
 							type='monotone'
-							dataKey='sales'
+							dataKey='Hours'
 							stroke='#6366F1'
 							strokeWidth={3}
 							dot={{ fill: "#6366F1", strokeWidth: 2, r: 6 }}

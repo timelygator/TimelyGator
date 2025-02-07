@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const categoryData = [
-	{ name: "YouTube", value: 4500 },
-	{ name: "LeetCode", value: 3200 },
-	{ name: "Github", value: 2800 },
-	{ name: "Twitch", value: 2100 },
-	{ name: "Amazon", value: 1900 },
+	{ name: "YouTube", value: 3.7 },
+	{ name: "LeetCode", value: 2.6 },
+	{ name: "Github", value: 2.3 },
+	{ name: "Twitch", value: 1.7 },
+	{ name: "Amazon", value: 1.6 },
 ];
 
 const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
