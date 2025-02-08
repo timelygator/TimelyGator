@@ -7,7 +7,7 @@ const tabData = [
     { id: 1, website: "YouTube", name: "React tutorial", Type: "Entertainment", status: "Active" },
     { id: 2, website: "YouTube", name: "Git tutorial", Type: "Entertainment", status: "Active" },
     { id: 3, website: "Github", name: "Github/PulkitGarg777", Type: "Educational", status: "Inactive" },
-    { id: 4, website: "Instagram", name: "Instagram.com", Type: "Social Media", status: "Active" },
+    { id: 4, website: "Instagram", name: "Instagram.com", Type: "Social", status: "Active" },
     { id: 5, website: "Youtube", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
 ];
 
