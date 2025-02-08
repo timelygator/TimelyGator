@@ -1,12 +1,12 @@
-import { Sun, MoonStar, GalleryVerticalEnd, UserX } from "lucide-react";
+import { Sun, MoonStar, GalleryVerticalEnd, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 
 import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
-import UsersTable from "../components/tabs/UsersTable";
-import UserGrowthChart from "../components/tabs/UserGrowthChart";
-import UserActivityHeatmap from "../components/tabs/UserActivityHeatmap";
-import UserDemographicsChart from "../components/tabs/UserDemographicsChart";
+import UsersTable from "../components/tabs/TabTable";
+import UserGrowthChart from "../components/tabs/TabGrowthChart";
+import UserActivityHeatmap from "../components/tabs/TabActivityHeatmap";
+import UserDemographicsChart from "../components/tabs/TabDemographicsChart";
 
 const TabStats = {
 	totaltabs: 56,
@@ -47,7 +47,7 @@ const TabsPage = () => {
 				/>
 				<StatCard 
 					name='Awake Rate' 
-					icon={UserX} 
+					icon={Eye} 
 					value={TabStats.awakerate} 
 					color='#EF4444' 
 				/>

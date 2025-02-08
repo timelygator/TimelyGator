@@ -2,23 +2,24 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 
-const userData = [
-	{ id: 1, name: "John Doe", email: "john@example.com", role: "Customer", status: "Active" },
-	{ id: 2, name: "Jane Smith", email: "jane@example.com", role: "Admin", status: "Active" },
-	{ id: 3, name: "Bob Johnson", email: "bob@example.com", role: "Customer", status: "Inactive" },
-	{ id: 4, name: "Alice Brown", email: "alice@example.com", role: "Customer", status: "Active" },
-	{ id: 5, name: "Charlie Wilson", email: "charlie@example.com", role: "Moderator", status: "Active" },
+// Add API data below in tabData
+const tabData = [
+	{ id: 1, website: "YouTube", name: "React tutorial", Type: "Customer", status: "Active" },
+	{ id: 2, website: "YouTube", name: "Git tutorial", Type: "Admin", status: "Active" },
+	{ id: 3, website: "Github", name: "Github/PulkitGarg777", Type: "Customer", status: "Inactive" },
+	{ id: 4, website: "Instagram", name: "Instagram.com", Type: "Customer", status: "Active" },
+	{ id: 5, website: "Youtube", name: "Homemade Chocolate Cake", Type: "Moderator", status: "Active" },
 ];
 
-const UsersTable = () => {
+const TabTable = () => {
 	const [searchTerm, setSearchTerm] = useState("");
-	const [filteredUsers, setFilteredUsers] = useState(userData);
+	const [filteredUsers, setFilteredUsers] = useState(tabData);
 
 	const handleSearch = (e) => {
 		const term = e.target.value.toLowerCase();
 		setSearchTerm(term);
-		const filtered = userData.filter(
-			(user) => user.name.toLowerCase().includes(term) || user.email.toLowerCase().includes(term)
+		const filtered = tabData.filter(
+			(tab) => tab.website.toLowerCase().includes(term) || tab.name.toLowerCase().includes(term)
 		);
 		setFilteredUsers(filtered);
 	};
@@ -31,11 +32,11 @@ const UsersTable = () => {
 			transition={{ delay: 0.2 }}
 		>
 			<div className='flex justify-between items-center mb-6'>
-				<h2 className='text-xl font-semibold text-gray-100'>Users</h2>
+				<h2 className='text-xl font-semibold text-gray-100'>Tabs</h2>
 				<div className='relative'>
 					<input
 						type='text'
-						placeholder='Search users...'
+						placeholder='Search tabs...'
 						className='bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
 						value={searchTerm}
 						onChange={handleSearch}
@@ -49,13 +50,13 @@ const UsersTable = () => {
 					<thead>
 						<tr>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+								Website
+							</th>
+							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
 								Name
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Email
-							</th>
-							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
-								Role
+								Type
 							</th>
 							<th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
 								Status
@@ -67,9 +68,9 @@ const UsersTable = () => {
 					</thead>
 
 					<tbody className='divide-y divide-gray-700'>
-						{filteredUsers.map((user) => (
+						{filteredUsers.map((tab) => (
 							<motion.tr
-								key={user.id}
+								key={tab.id}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								transition={{ duration: 0.3 }}
@@ -77,34 +78,34 @@ const UsersTable = () => {
 								<td className='px-6 py-4 whitespace-nowrap'>
 									<div className='flex items-center'>
 										<div className='flex-shrink-0 h-10 w-10'>
-											<div className='h-10 w-10 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold'>
-												{user.name.charAt(0)}
+											<div className='h-10 w-10 bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold'>
+												{}
 											</div>
 										</div>
 										<div className='ml-4'>
-											<div className='text-sm font-medium text-gray-100'>{user.name}</div>
+											<div className='text-sm font-medium text-gray-100'>{tab.website}</div>
 										</div>
 									</div>
 								</td>
 
 								<td className='px-6 py-4 whitespace-nowrap'>
-									<div className='text-sm text-gray-300'>{user.email}</div>
+									<div className='text-sm text-gray-300'>{tab.name}</div>
 								</td>
 								<td className='px-6 py-4 whitespace-nowrap'>
 									<span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-800 text-blue-100'>
-										{user.role}
+										{tab.Type}
 									</span>
 								</td>
 
 								<td className='px-6 py-4 whitespace-nowrap'>
 									<span
 										className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-											user.status === "Active"
+											tab.status === "Active"
 												? "bg-green-800 text-green-100"
 												: "bg-red-800 text-red-100"
 										}`}
 									>
-										{user.status}
+										{tab.status}
 									</span>
 								</td>
 
@@ -120,4 +121,4 @@ const UsersTable = () => {
 		</motion.div>
 	);
 };
-export default UsersTable;
+export default TabTable;
