@@ -5,7 +5,7 @@ const categoryData = [
 	{ name: "YouTube", value: 3.7 },
 	{ name: "LeetCode", value: 2.6 },
 	{ name: "Github", value: 2.3 },
-	{ name: "Twitch", value: 1.7 },
+	{ name: "Instagram", value: 1.7 },
 	{ name: "Amazon", value: 1.6 },
 ];
 
