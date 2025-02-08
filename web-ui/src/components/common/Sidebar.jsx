@@ -14,7 +14,7 @@ const SIDEBAR_ITEMS = [
 		name: "Tabs", 
 		icon: NotebookTabs, 
 		color: "#EC4899", 
-		href: "/users" 
+		href: "/tabs" 
 	},
 	{ 
 		name: "Analytics", 

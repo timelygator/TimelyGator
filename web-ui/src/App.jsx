@@ -4,7 +4,7 @@ import Sidebar from "./components/common/Sidebar";
 
 import OverviewPage from "./pages/OverviewPage";
 import ProductsPage from "./pages/ProductsPage";
-import UsersPage from "./pages/UsersPage";
+import TabsPage from "./pages/TabsPage";
 import SalesPage from "./pages/SalesPage";
 import OrdersPage from "./pages/OrdersPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
@@ -23,7 +23,7 @@ function App() {
 			<Routes>
 				<Route path='/' element={<OverviewPage />} />
 				<Route path='/products' element={<ProductsPage />} />
-				<Route path='/users' element={<UsersPage />} />
+				<Route path='/tabs' element={<TabsPage />} />
 				<Route path='/sales' element={<SalesPage />} />
 				<Route path='/orders' element={<OrdersPage />} />
 				<Route path='/analytics' element={<AnalyticsPage />} />
