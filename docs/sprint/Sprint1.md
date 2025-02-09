@@ -80,3 +80,88 @@ We discussed the repository settings and decided to:
 - Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for commit messages.
 
 > Links: [discussion #3](https://github.com/timelygator/TimelyGator/discussions/3) [discussion #12](https://github.com/timelygator/TimelyGator/discussions/12)
+
+
+## User stories
+
+The user stories planned for the first sprint have been,
+
+### Frontend
+
+> As a potential user, I want to know how the application works and what features are available.
+
+- [ ] Create a landing page with an overview of the application.
+- [ ] Add a feature list with descriptions.
+
+> As a user, I want to maintain my profile and settings.
+
+- [ ] Create a profile page with user information.
+- [ ] Add Theme toggle for light and dark mode.
+- [ ] Add settings page for customizing the application.
+
+> As a user, I want a centralized dashboard for tracking time and goals.
+
+- [ ] Create a dashboard with time tracking and goal setting.
+- [ ] Add a daily, weekly, and monthly view for tracking time.
+- [ ] Show browser insights and tracking data.
+
+### Backend
+
+> As a developer, I want to set up the backend structure and database.
+
+- [x] Initialize the project with Cobra CLI support.
+- [x] Add GORM for ORM and database management.
+- [ ] Create models for user, time tracking, and goals.
+
+> As a developer, I want to set up the API routes and controllers.
+
+- [x] Add Gorilla Mux for API routing and middleware.
+- [ ] Create API routes for user, time tracking, and goals.
+- [ ] Implement CRUD operations for user data.
+
+> As a developer, I want to enable OAuth2 authentication for user login.
+
+- [ ] Add OAuth2 support for user authentication.
+- [ ] Implement login and registration endpoints.
+
+> As a developer, I want a documentation system for API references and guides.
+
+- [x] Set up Swaggo for API documentation.
+- [x] Add godoc comments to API routes and controllers.
+- [ ] Generate Swagger docs for API endpoints automatically.
+
+> As a developer, I want a centralized logging system for tracking errors and events.
+
+- [ ] Add logging support.
+- [ ] Implement logging for API requests and responses.
+
+## Tasks
+
+TO get a better understanding of the user stories, their status, and people contributing to them,
+
+1. [@PulkitGarg777](https://github.com/PulkitGarg777) # Frontend
+    - Landing page with feature list
+    - Dashboard with time tracking and goal setting
+    - Daily, weekly, and monthly view for tracking time
+    - Browser insights and tracking data
+
+2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
+    - Profile page with user information
+    - Theme toggle for light and dark mode
+    - Settings page for customizing the application
+
+3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
+    - Initialized the project and added Cobra CLI support
+    - Implemented GORM for ORM and database management
+    - Added Gorilla Mux for API routing and middleware
+    - Set up Swaggo for API documentation
+    - Added godoc comments to API routes and controllers
+
+4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
+    - Created models for user, time tracking, and goals
+    - Created API routes for user, time tracking, and goals
+    - Implemented CRUD operations for user data
+
+## Conclusion
+
+The first sprint of the project focused on setting up the project structure, defining the main objectives, and evaluating feasibility. The team discussed the project structure, goals, tech stack, documentation, and repository settings. User stories were defined for frontend and backend development, and tasks were assigned to team members. The sprint laid the foundation for future development and established a roadmap for the project. The team will continue to work on the platform and provide updates in the next sprint.
