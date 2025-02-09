@@ -1,8 +1,9 @@
-## SE Project : Sprint 1
+# SE Project : Sprint 1
 
 This document contains the details of the first sprint of the Software Engineering project. The sprint focused on setting up the project structure, defining the main objectives, and evaluating feasibility. The goal of the sprint is to establish a solid foundation for the project and define the roadmap for future development.
 
 Table of contents:
+
 - [Discussions](#discussion-1--project-structure)
   - [Project structure](#discussion-1--project-structure)
   - [Goals and competing products](#discussion-2--goals-and-competing-products)
@@ -13,9 +14,10 @@ Table of contents:
 - [Tasks](#tasks)
 - [Conclusion](#conclusion)
 
-### Discussion 1 : Project structure
+## Discussion 1 : Project structure
 
 For the project structure, we decided following points,
+
 - A monorepo approach with separate folders for frontend and backend codebases.
 - Documentation will be hosted in a separate folder.
 - Semantic versioning will be followed for versioning the project.
@@ -23,8 +25,7 @@ For the project structure, we decided following points,
 
 The project structure is as follows:
 
-```
-project-name/
+```project-name/
 ├── web-ui/              # Frontend codebase
 ├── server/              # Backend codebase
 ├── docs/                # Documentation
@@ -40,6 +41,7 @@ project-name/
 ### Discussion 2 : Goals and competing products
 
 The main objectives of the project are:
+
 - To provide automated time tracking with minimal user input.
 - Store time series data for analysis and reporting.
 - Provide insights and recommendations based on user data.
@@ -47,6 +49,7 @@ The main objectives of the project are:
 - Create a user-friendly interface for tracking time and setting goals.
 
 We have also identified some competing products in the market:
+
 - [Rize](https://www.rize.io/)
 - [Toggl](https://toggl.com/)
 - [ActivityWatch](https://activitywatch.net/)
@@ -54,6 +57,7 @@ We have also identified some competing products in the market:
 ### Discussion 3 : Tech stack
 
 For the tech stack, we decided to use the following technologies:
+
 - Frontend:
   - [ongoing topic](https://github.com/timelygator/TimelyGator/discussions/2)
 
@@ -73,6 +77,7 @@ For documentation, we decided to use [swaggo/swag](https://github.com/swaggo/swa
 ### Discussion 5 : Repository settings
 
 We discussed the repository settings and decided to:
+
 - Enable branch protection for the `main` and `develop` branches.
 - Use GitHub discussions for team communication and decision-making.
 - Use GitHub issues for tracking tasks and bugs.
