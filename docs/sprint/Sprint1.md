@@ -81,7 +81,6 @@ We discussed the repository settings and decided to:
 
 > Links: [discussion #3](https://github.com/timelygator/TimelyGator/discussions/3) [discussion #12](https://github.com/timelygator/TimelyGator/discussions/12)
 
-
 ## User stories
 
 The user stories planned for the first sprint have been,
@@ -140,15 +139,15 @@ The user stories planned for the first sprint have been,
 TO get a better understanding of the user stories, their status, and people contributing to them,
 
 1. [@PulkitGarg777](https://github.com/PulkitGarg777) # Frontend
-    - Landing page with feature list
-    - Dashboard with time tracking and goal setting
-    - Daily, weekly, and monthly view for tracking time
-    - Browser insights and tracking data
+    - Created landing page with feature list
+    - Added dashboard with time tracking and goal setting
+    - Displaying daily, weekly, and monthly view for tracking time
+    - Added browser insights and tracking data
 
 2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
-    - Profile page with user information
-    - Theme toggle for light and dark mode
-    - Settings page for customizing the application
+    - Set up a profile page with user information
+    - Implemented theme toggle for light and dark mode
+    - Created settings page for customizing the application
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
     - Initialized the project and added Cobra CLI support
