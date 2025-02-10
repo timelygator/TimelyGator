@@ -5,6 +5,7 @@ import (
 	"log"
 	"path/filepath"
 	"time"
+	"os"
 
 	"timelygator/server/models"
 	"timelygator/server/tg-core/core"
@@ -53,8 +54,15 @@ func NewDatastore(testing bool, extraParams map[string]interface{}, logger *log.
 	return ds, nil
 }
 
+func EnsurePathExists(path string) {
+    if err := os.MkdirAll(path, 0o755); err != nil {
+        log.Fatalf("Failed to create directory %s: %v", path, err)
+    }
+}
+
 func buildSQLitePath(testing bool) (string, error) {
 	dir := core.GetDataDir("tg-server")
+	EnsurePathExists(dir) // Ensure directory exists
 	suffix := ""
 	if testing {
 		suffix = "-testing"
