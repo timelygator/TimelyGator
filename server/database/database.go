@@ -53,6 +53,22 @@ func NewDatastore(testing bool, extraParams map[string]interface{}, logger *log.
 	return ds, nil
 }
 
+	// Auto-migrate models
+	if err := db.AutoMigrate(&models.Bucket{}, &models.Event{}); err != nil {
+		return nil, fmt.Errorf("auto-migrate error: %w", err)
+	}
+
+	logger.Printf("Using GORM-based SQLite at: %s", filepath)
+
+	ds := &Datastore{
+		logger:      logger,
+		db:          db,
+		testing:     testing,
+		extraParams: extraParams,
+	}
+	return ds, nil
+}
+
 func buildSQLitePath(testing bool) (string, error) {
 	dir := core.GetDataDir("tg-server")
 	suffix := ""
