@@ -3,40 +3,39 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
+	"strings"
 	"timelygator/server/database"
 	"timelygator/server/routes"
+	"timelygator/server/utils/types"
 
 	"github.com/caarlos0/env"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
 
-type Config struct {
-	Environment        string `env:"ENVIRONMENT" envDefault:"development"`
-	Domain             string `env:"DOMAIN" envDefault:"localhost"`
-	Port               string `env:"PORT" envDefault:"8080"`
-	GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
-	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
-}
-
 var rootCmd = &cobra.Command{
 	Use:   "tg-server",
 	Short: "TimelyGator is a time tracking application. This is the server cli for the project",
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := database.InitDB(); err != nil {
-			log.Fatalf("Could not connect to database: %v", err)
+		cfg := types.Config{}
+		if err := env.Parse(&cfg); err != nil {
+			log.Fatalf("Error parsing config: %v", err)
+		}
+		if strings.Contains(cfg.DataSourceName, "@") {
+			log.Fatalf("Only SQLite DSN is supported")
 		}
 
-		cfg := Config{}
-		if err := env.Parse(&cfg); err != nil {
-			log.Fatalf("Could not parse environment variables: %v", err)
+		datastore, err := database.InitDB(cfg)
+		if err != nil {
+			log.Fatalf("Error initializing database: %v", err)
 		}
 
 		r := mux.NewRouter()
-		routes.RegisterRoutes(r)
+		routes.RegisterRoutes(cfg, datastore, r)
 
-		fmt.Printf("Server running on port :%s\n", cfg.Port)
+		slog.Info(fmt.Sprintf("Server running on :%s", cfg.Port))
 		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", cfg.Port), r))
 	},
 }

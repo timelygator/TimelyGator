@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 	"timelygator/server/database"
-	"timelygator/server/models"
+	"timelygator/server/database/models"
+	"timelygator/server/utils/types"
 
 	"github.com/gorilla/mux"
 )
 
-func RegisterRoutes(r *mux.Router) {
+func RegisterRoutes(cfg types.Config, datastore *database.Datastore, r *mux.Router) {
 	r.HandleFunc("/tasks", createTask).Methods("POST")
 	r.HandleFunc("/tasks", getTasks).Methods("GET")
 }

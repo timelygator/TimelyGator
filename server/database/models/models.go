@@ -10,24 +10,22 @@ type Duration interface{}
 type Data map[string]interface{}
 
 type Event struct {
-    ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
-    BucketID  string         `gorm:"index" json:"bucket_id"`
-    Timestamp time.Time      `gorm:"not null;type:timestamp" json:"timestamp"`
-    Duration  time.Duration  `gorm:"not null" json:"duration"`
-    Data      Data           `gorm:"type:json" json:"data"`
+	ID        uint          `gorm:"primaryKey;autoIncrement" json:"id"`
+	BucketID  string        `gorm:"index" json:"bucket_id"`
+	Timestamp time.Time     `gorm:"not null;type:timestamp" json:"timestamp"`
+	Duration  time.Duration `gorm:"not null" json:"duration"`
+	Data      Data          `gorm:"type:json" json:"data"`
 }
-
 
 type Bucket struct {
-    ID        string `gorm:"primaryKey" json:"id"`
-    Name      *string
-    Type      string
-    Client    string
-    Hostname  string
-    Created   time.Time
-    Data      Data   `gorm:"type:json" json:"data"`
+	ID       string `gorm:"primaryKey" json:"id"`
+	Name     *string
+	Type     string
+	Client   string
+	Hostname string
+	Created  time.Time
+	Data     Data `gorm:"type:json" json:"data"`
 }
-
 
 func NewEvent(id uint, timestamp ConvertibleTimestamp, duration Duration, data Data) *Event {
 	if timestamp == nil {
@@ -74,7 +72,6 @@ func timestampParse(tsIn ConvertibleTimestamp) time.Time {
 	}
 	return ts
 }
-
 
 func parseDuration(dur Duration) time.Duration {
 	switch v := dur.(type) {
