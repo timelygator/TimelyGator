@@ -59,7 +59,15 @@ We have also identified some competing products in the market:
 For the tech stack, we decided to use the following technologies:
 
 - Frontend:
-  - [ongoing topic](https://github.com/timelygator/TimelyGator/discussions/2)
+  - `react: 18.3.1`: JavaScript library for building user interfaces.
+  - `react-dom: 18.3.1`: DOM-specific methods that can be used at the top level of a web app.
+  - `react-router-dom: 6.25.1`: A library for routing in React applications.
+  - `vite: 5.3.4`: Fast build tool.
+  -`tailwindcss: 3.4.7`: Utility-first CSS framework for rapid UI development.
+  - `recharts: 2.12.7`: Charting library built on React components.
+  - `framer-motion: 11.3.19`: for animations and gestures in React.
+  - `lucide-react: 0.417.0`: Customizable SVG icons for React.
+  - [Other dependencies](https://github.com/timelygator/TimelyGator/discussions/2#discussioncomment-12105543) 
 
 - Backend:
   - `spf13/cobra` for CLI support.
@@ -70,9 +78,11 @@ For the tech stack, we decided to use the following technologies:
 
 ### Discussion 4 : Documentation
 
-For documentation, we decided to use [swaggo/swag](https://github.com/swaggo/swag) for backend API and for frontend [ongoing topic](https://github.com/timelygator/TimelyGator/discussions/9). The documentation will be hosted in the `docs/` folder and will include guides, API references, and user manuals.
+For documentation, we decided to use [swaggo/swag](https://github.com/swaggo/swag) for backend API and for frontend [Vite](https://vite.dev/guide). The documentation will be hosted in the `docs/` folder and will include guides, API references, and user manuals.
 
-> Links: [issue #19](https://github.com/timelygator/TimelyGator/issues/19) [draft PR #17](https://github.com/timelygator/TimelyGator/pull/17)
+> Links:
+  Backend - [issue #19](https://github.com/timelygator/TimelyGator/issues/19) [draft PR #17](https://github.com/timelygator/TimelyGator/pull/17)
+  Frontend - [issue #11](https://github.com/timelygator/TimelyGator/issues/11) [PR #27](https://github.com/timelygator/TimelyGator/pull/27)
 
 ### Discussion 5 : Repository settings
 
@@ -94,20 +104,20 @@ The user stories planned for the first sprint have been,
 
 > As a potential user, I want to know how the application works and what features are available.
 
-- [ ] Create a landing page with an overview of the application.
+- [x] Create a landing page with an overview of the application.
 - [ ] Add a feature list with descriptions.
 
 > As a user, I want to maintain my profile and settings.
 
-- [ ] Create a profile page with user information.
+- [x] Create a profile page with user information.
 - [ ] Add Theme toggle for light and dark mode.
-- [ ] Add settings page for customizing the application.
+- [x] Add settings page for customizing the application.
 
 > As a user, I want a centralized dashboard for tracking time and goals.
 
-- [ ] Create a dashboard with time tracking and goal setting.
-- [ ] Add a daily, weekly, and monthly view for tracking time.
-- [ ] Show browser insights and tracking data.
+- [x] Create a dashboard with time tracking and goal setting.
+- [x] Add a daily, weekly, and monthly view for tracking time.
+- [x] Show browser insights and tracking data.
 
 ### Backend
 
