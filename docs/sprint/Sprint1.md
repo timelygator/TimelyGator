@@ -174,9 +174,11 @@ TO get a better understanding of the user stories, their status, and people cont
     - Added godoc comments to API routes and controllers
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
+    - Created the Backend Architecture Design
     - Implemented GORM for ORM and database management
     - Created models for events, time tracking, and goals
     - Added API routes for user, time tracking, and goals
+    - Initialize Server using Gorilla Mux
 
 ## Conclusion
 
