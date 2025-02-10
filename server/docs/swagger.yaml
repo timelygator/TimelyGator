@@ -1,0 +1,112 @@
+basePath: /api/v1
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  middleware.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  models.Task:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      end_time:
+        type: string
+      id:
+        type: integer
+      start_time:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+    url: http://github.com/timelygator/timelygator
+  description: This is the API documentation for the TimelyGator Server API.
+  license:
+    name: GPLv3
+    url: https://github.com/timelygator/TimelyGator/blob/main/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: TimelyGator Server API
+  version: "0.1"
+paths:
+  /tasks:
+    get:
+      description: Get all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Task'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/middleware.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/middleware.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.HTTPError'
+      summary: Get all tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: create new task, returns the created task
+      parameters:
+      - description: Task object that needs to be created
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/middleware.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/middleware.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/middleware.HTTPError'
+      summary: Create a new task
+      tags:
+      - tasks
+swagger: "2.0"
