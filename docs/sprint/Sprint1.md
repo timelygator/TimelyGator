@@ -110,7 +110,7 @@ The user stories planned for the first sprint have been,
 > As a user, I want to maintain my profile and settings.
 
 - [x] Create a profile page with user information.
-- [ ] Add Theme toggle for light and dark mode.
+- [x] Add Theme toggle for light and dark mode.
 - [x] Add settings page for customizing the application.
 
 > As a user, I want a centralized dashboard for tracking time and goals.
@@ -162,7 +162,8 @@ TO get a better understanding of the user stories, their status, and people cont
 2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
     - Set up a profile page with user information
     - Implemented theme toggle for light and dark mode
-    - Created settings page for customizing the application
+    - Tested chart libraries like Apexcharts and recharts
+    - basic setup for theme  
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
     - Initialized the project and added Cobra CLI support
