@@ -67,7 +67,7 @@ For the tech stack, we decided to use the following technologies:
   - `recharts: 2.12.7`: Charting library built on React components.
   - `framer-motion: 11.3.19`: for animations and gestures in React.
   - `lucide-react: 0.417.0`: Customizable SVG icons for React.
-  - [Other dependencies](https://github.com/timelygator/TimelyGator/discussions/2#discussioncomment-12105543) 
+  - [Other dependencies](https://github.com/timelygator/TimelyGator/discussions/2#discussioncomment-12105543)
 
 - Backend:
   - `spf13/cobra` for CLI support.
@@ -125,6 +125,7 @@ The user stories planned for the first sprint have been,
 
 - [x] Initialize the project with Cobra CLI support.
 - [x] Add GORM for ORM and database management.
+- [x] Support environment files, logging, and configuration.
 - [ ] Create models for user, time tracking, and goals.
 
 > As a developer, I want to set up the API routes and controllers.
@@ -146,7 +147,7 @@ The user stories planned for the first sprint have been,
 
 > As a developer, I want a centralized logging system for tracking errors and events.
 
-- [ ] Add logging support.
+- [x] Add logging support.
 - [ ] Implement logging for API requests and responses.
 
 ## Tasks
@@ -163,19 +164,19 @@ TO get a better understanding of the user stories, their status, and people cont
     - Set up a profile page with user information
     - Implemented theme toggle for light and dark mode
     - Tested chart libraries like Apexcharts and recharts
-    - basic setup for theme  
+    - basic setup for theme
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
     - Initialized the project and added Cobra CLI support
-    - Implemented GORM for ORM and database management
     - Added Gorilla Mux for API routing and middleware
+    - Implemented logging support and .env configuration setup
     - Set up Swaggo for API documentation
     - Added godoc comments to API routes and controllers
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
-    - Created models for user, time tracking, and goals
-    - Created API routes for user, time tracking, and goals
-    - Implemented CRUD operations for user data
+    - Implemented GORM for ORM and database management
+    - Created models for events, time tracking, and goals
+    - Added API routes for user, time tracking, and goals
 
 ## Conclusion
 
