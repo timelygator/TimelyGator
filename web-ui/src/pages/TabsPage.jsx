@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 
 import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
-import UsersTable from "../components/tabs/TabTable";
-import UserGrowthChart from "../components/tabs/TabGrowthChart";
-import UserActivityHeatmap from "../components/tabs/TabActivityHeatmap";
-import UserDemographicsChart from "../components/tabs/TabDemographicsChart";
+import TabTable from "../components/tabs/TabTable";
+// import UserGrowthChart from "../components/tabs/TabGrowthChart";
+// import UserActivityHeatmap from "../components/tabs/TabActivityHeatmap";
+import WebsiteDistChart from "../components/tabs/TabDemographicsChart";
 
 const TabStats = {
 	totaltabs: 56,
@@ -52,13 +52,13 @@ const TabsPage = () => {
 					color='#EF4444' 
 				/>
 				</motion.div>
-				<UsersTable />
+				<TabTable />
 
 				{/* USER CHARTS */}
 				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
-					<UserGrowthChart />
-					<UserActivityHeatmap />
-					<UserDemographicsChart />
+					{/* <UserGrowthChart />
+					<UserActivityHeatmap /> */}
+					<WebsiteDistChart />
 				</div>
 			</main>
 		</div>
