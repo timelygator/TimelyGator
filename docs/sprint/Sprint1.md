@@ -105,18 +105,18 @@ The user stories planned for the first sprint have been,
 > As a potential user, I want to know how the application works and what features are available.
 
 - [x] Create a landing page with an overview of the application.
-- [ ] Add a feature list with descriptions.
+- [ ] Add a feature list with descriptions. (reason: Basic templates have to be finalized before uploading with a feature list with description)
 
 > As a user, I want to maintain my profile and settings.
 
 - [x] Create a profile page with user information.
-- [x] Add Theme toggle for light and dark mode.
-- [x] Add settings page for customizing the application.
+- [x] Add Theme toggle for light and dark mode. (A bit buggy ([Issue #38](https://github.com/timelygator/TimelyGator/issues/38)))
+- [ ] Add settings page for customizing the application. (reason: Settings/Controls have to be finalized)
 
 > As a user, I want a centralized dashboard for tracking time and goals.
 
 - [x] Create a dashboard with time tracking and goal setting.
-- [x] Add a daily, weekly, and monthly view for tracking time.
+- [x] Add a daily, weekly, and monthly view for tracking time. 
 - [x] Show browser insights and tracking data.
 
 ### Backend
@@ -155,25 +155,26 @@ The user stories planned for the first sprint have been,
 TO get a better understanding of the user stories, their status, and people contributing to them,
 
 1. [@PulkitGarg777](https://github.com/PulkitGarg777) # Frontend
+    - Setup basic `React` App using `Vite`
     - Created landing page with feature list
     - Added dashboard with time tracking and goal setting
     - Displaying daily, weekly, and monthly view for tracking time
-    - Added browser insights and tracking data
+    - Added browser insights and tracking data templates
 
-2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
+3. [@YashDVerma](https://github.com/YashDVerma) # Frontend
     - Set up a profile page with user information
     - Implemented theme toggle for light and dark mode
     - Tested chart libraries like Apexcharts and recharts
-    - basic setup for theme
+    - Basic setup for theme
 
-3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
+4. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
     - Initialized the project and added Cobra CLI support
     - Added Gorilla Mux for API routing and middleware
     - Implemented logging support and .env configuration setup
     - Set up Swaggo for API documentation
     - Added godoc comments to API routes and controllers
 
-4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
+5. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
     - Created the Backend Architecture Design
     - Implemented GORM for ORM and database management
     - Created models for events, time tracking, and goals
