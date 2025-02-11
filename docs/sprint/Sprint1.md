@@ -2,6 +2,9 @@
 
 This document contains the details of the first sprint of the Software Engineering project. The sprint focused on setting up the project structure, defining the main objectives, and evaluating feasibility. The goal of the sprint is to establish a solid foundation for the project and define the roadmap for future development.
 
+Repository Link: [Timelygator/Timelygator](https://github.com/timelygator/TimelyGator)
+Sprint1.md: [docs/sprint/sprint1.md](https://github.com/timelygator/TimelyGator/blob/main/docs/sprint1.md)
+
 Table of contents:
 
 - [Discussions](#discussion-1--project-structure)
@@ -116,7 +119,7 @@ The user stories planned for the first sprint have been,
 > As a user, I want a centralized dashboard for tracking time and goals.
 
 - [x] Create a dashboard with time tracking and goal setting.
-- [x] Add a daily, weekly, and monthly view for tracking time. 
+- [x] Add a daily, weekly, and monthly view for tracking time.
 - [x] Show browser insights and tracking data.
 
 ### Backend
@@ -126,29 +129,29 @@ The user stories planned for the first sprint have been,
 - [x] Initialize the project with Cobra CLI support.
 - [x] Add GORM for ORM and database management.
 - [x] Support environment files, logging, and configuration.
-- [ ] Create models for user, time tracking, and goals.
+- [ ] Create models for user, time tracking, and goals. (reason: OAuth have to be finalized)
 
 > As a developer, I want to set up the API routes and controllers.
 
 - [x] Add Gorilla Mux for API routing and middleware.
-- [ ] Create API routes for user, time tracking, and goals.
-- [ ] Implement CRUD operations for user data.
+- [x] Create API routes for buckets, time tracking, and goals.
+- [ ] Implement CRUD operations for user data. (reason: OAuth have to be finalized)
 
 > As a developer, I want to enable OAuth2 authentication for user login.
 
-- [ ] Add OAuth2 support for user authentication.
-- [ ] Implement login and registration endpoints.
+- [ ] Add OAuth2 support for user authentication. (reason: Google Client ID and Consent Screen requires confirmation)
+- [ ] Implement login and registration endpoints. (reason: Callback URL and Redirect URL require CORS and other headers to be set)
 
 > As a developer, I want a documentation system for API references and guides.
 
 - [x] Set up Swaggo for API documentation.
 - [x] Add godoc comments to API routes and controllers.
-- [ ] Generate Swagger docs for API endpoints automatically.
+- [ ] Generate Swagger docs for API endpoints automatically. (reason: go generate command requires setup)
 
 > As a developer, I want a centralized logging system for tracking errors and events.
 
 - [x] Add logging support.
-- [ ] Implement logging for API requests and responses.
+- [x] Implement logging for API requests and responses.
 
 ## Tasks
 
