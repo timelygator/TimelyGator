@@ -400,60 +400,63 @@ func (s *ServerAPI) DeleteEvent(bucketID string, eventID int) (bool, error) {
 }
 
 func (s *ServerAPI) Heartbeat(bucketID string, heartbeat *models.Event, pulseTime float64) (*models.Event, error) {
-	if err := s.checkBucketExists(bucketID); err != nil {
-		return nil, err
-	}
-	log.Printf("Received heartbeat in bucket '%s'\n\ttimestamp: %v, duration: %v, pulsetime: %f\n\tdata: %+v\n",
-		bucketID, heartbeat.Timestamp, heartbeat.Duration, pulseTime, heartbeat.Data)
+    if err := s.checkBucketExists(bucketID); err != nil {
+        return nil, err
+    }
+    log.Printf("Received heartbeat in bucket '%s'\n\ttimestamp: %v, duration: %v, pulsetime: %f\n\tdata: %+v\n",
+        bucketID, heartbeat.Timestamp, heartbeat.Duration, pulseTime, heartbeat.Data)
 
-	var lastEvent *models.Event
-	lastEvent = s.lastEvent[bucketID] // from memory
-	if lastEvent == nil {
-		bucket, err := s.ds.GetBucket(bucketID)
-		if err != nil {
-			return nil, err
-		}
-		evts, err := bucket.Get(1, nil, nil)
-		if err == nil && len(evts) > 0 {
-			lastEvent = evts[0]
-		}
-	}
+    // Attempt to retrieve the last event from memory
+    var lastEvent *models.Event
+    lastEvent = s.lastEvent[bucketID]
+    if lastEvent == nil {
+        // Or load from DB if not in memory
+        bucket, err := s.ds.GetBucket(bucketID)
+        if err != nil {
+            return nil, err
+        }
+        evts, err := bucket.Get(1, nil, nil)
+        if err == nil && len(evts) > 0 {
+            lastEvent = evts[0]
+        }
+    }
 
-	if lastEvent != nil {
-		if lastEvent.DataEqual(heartbeat.Data) {
-			// Merge
-			merged := transform.HeartbeatMerge(*lastEvent, *heartbeat, pulseTime)
-			if merged != nil {
-				log.Printf("Merging heartbeat in bucket '%s'\n", bucketID)
-				s.lastEvent[bucketID] = merged
-				bucket, err := s.ds.GetBucket(bucketID)
-				if err != nil {
-					return nil, err
-				}
-				if err := bucket.ReplaceLast(merged); err != nil {
-					return nil, err
-				}
-				return merged, nil
-			}
-			log.Printf("Heartbeat outside pulse window, inserting new event. (bucket: %s)\n", bucketID)
-		} else {
-			log.Printf("Heartbeat data differs, inserting new event. (bucket: %s)\n", bucketID)
-		}
-	} else {
-		log.Printf("Received heartbeat, but bucket was empty, inserting new event. (bucket: %s)\n", bucketID)
-	}
+    if lastEvent != nil {
+        // Compare JSON data by unmarshal & compare maps
+        if lastEvent.DataEqualEvent(heartbeat) {
+            // Merge
+            merged := transform.HeartbeatMerge(*lastEvent, *heartbeat, pulseTime)
+            if merged != nil {
+                log.Printf("Merging heartbeat in bucket '%s'\n", bucketID)
+                s.lastEvent[bucketID] = merged
+                bucket, err := s.ds.GetBucket(bucketID)
+                if err != nil {
+                    return nil, err
+                }
+                if err := bucket.ReplaceLast(merged); err != nil {
+                    return nil, err
+                }
+                return merged, nil
+            }
+            log.Printf("Heartbeat outside pulse window, inserting new event. (bucket: %s)\n", bucketID)
+        } else {
+            log.Printf("Heartbeat data differs, inserting new event. (bucket: %s)\n", bucketID)
+        }
+    } else {
+        log.Printf("Received heartbeat, but bucket was empty, inserting new event. (bucket: %s)\n", bucketID)
+    }
 
-	// Insert as new event
-	bucket, err := s.ds.GetBucket(bucketID)
-	if err != nil {
-		return nil, err
-	}
-	_, insertErr := bucket.Insert([]*models.Event{heartbeat})
-	if insertErr != nil {
-		return nil, insertErr
-	}
-	s.lastEvent[bucketID] = heartbeat
-	return heartbeat, nil
+    // Insert as new event
+    bucket, err := s.ds.GetBucket(bucketID)
+    if err != nil {
+        return nil, err
+    }
+    _, insertErr := bucket.Insert([]*models.Event{heartbeat})
+    if insertErr != nil {
+        return nil, insertErr
+    }
+    s.lastEvent[bucketID] = heartbeat
+    return heartbeat, nil
 }
 
 func (s *ServerAPI) GetSetting(key string) interface{} {

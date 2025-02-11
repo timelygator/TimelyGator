@@ -1,23 +1,27 @@
 package db
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"time"
-	"os"
-
-	"timelygator/server/models"
-	"timelygator/server/tg-core/core"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	// "gorm.io/gorm/logger"
+	"gorm.io/datatypes"
+
+	"timelygator/server/models"
+	"timelygator/server/tg-core/core"
 )
 
+// Datastore is your high-level DB manager
 type Datastore struct {
-	logger    *log.Logger
-	db        *gorm.DB
-	testing   bool
+	logger      *log.Logger
+	db          *gorm.DB
+	testing     bool
 	extraParams map[string]interface{}
 }
 
@@ -27,23 +31,27 @@ func NewDatastore(testing bool, extraParams map[string]interface{}, logger *log.
 		logger = log.Default()
 	}
 
-	// Decides the DB filepath
-	filepath, err := buildSQLitePath(testing)
+	sqlitePath, err := buildSQLitePath(testing)
 	if err != nil {
 		return nil, err
 	}
 
-	db, err := gorm.Open(sqlite.Open(filepath), &gorm.Config{})
+	// // Optionally set GORM config; e.g. log mode:
+	// gormConfig := &gorm.Config{
+	// 	Logger: logger.Default.LogMode(logger.Silent), // or Info, Debug if you want logs
+	// }
+
+	db, err := gorm.Open(sqlite.Open(sqlitePath), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to open sqlite db with gorm: %w", err)
 	}
 
-	// Auto-migrate models
+	// Auto-migrate Bucket and Event
 	if err := db.AutoMigrate(&models.Bucket{}, &models.Event{}); err != nil {
 		return nil, fmt.Errorf("auto-migrate error: %w", err)
 	}
 
-	logger.Printf("Using GORM-based SQLite at: %s", filepath)
+	logger.Printf("Using GORM-based SQLite at: %s", sqlitePath)
 
 	ds := &Datastore{
 		logger:      logger,
@@ -54,15 +62,11 @@ func NewDatastore(testing bool, extraParams map[string]interface{}, logger *log.
 	return ds, nil
 }
 
-func EnsurePathExists(path string) {
-    if err := os.MkdirAll(path, 0o755); err != nil {
-        log.Fatalf("Failed to create directory %s: %v", path, err)
-    }
-}
-
+// buildSQLitePath decides the DB file location based on "testing" etc.
 func buildSQLitePath(testing bool) (string, error) {
 	dir := core.GetDataDir("tg-server")
-	EnsurePathExists(dir) // Ensure directory exists
+	EnsurePathExists(dir)
+
 	suffix := ""
 	if testing {
 		suffix = "-testing"
@@ -71,7 +75,18 @@ func buildSQLitePath(testing bool) (string, error) {
 	return filepath.Join(dir, filename), nil
 }
 
-// Batches returns a map of bucket_id -> metadata. 
+// EnsurePathExists ensures the directory exists (for the DB file).
+func EnsurePathExists(path string) {
+	if err := os.MkdirAll(path, 0o755); err != nil {
+		log.Fatalf("Failed to create directory %s: %v", path, err)
+	}
+}
+
+// ----------------------------------------------------------------------
+// Bucket-Related Methods
+// ----------------------------------------------------------------------
+
+// Buckets returns a map of bucket_id -> metadata
 func (ds *Datastore) Buckets() map[string]map[string]interface{} {
 	result := make(map[string]map[string]interface{})
 
@@ -82,21 +97,21 @@ func (ds *Datastore) Buckets() map[string]map[string]interface{} {
 	}
 
 	for _, b := range buckets {
-		// Convert GORM model -> metadata map
-		meta := map[string]interface{}{
+		result[b.ID] = map[string]interface{}{
 			"id":       b.ID,
 			"name":     b.Name,
 			"type":     b.Type,
 			"client":   b.Client,
 			"hostname": b.Hostname,
 			"created":  b.Created.Format(time.RFC3339),
-			"data":     b.Data,
+			// Datatypes.JSON stored in Bucket.Data => might want to unmarshal it to a map
+			"data": b.Data, // you can leave it as is, or parse if needed
 		}
-		result[b.ID] = meta
 	}
 	return result
 }
 
+// CreateBucket inserts a new Bucket into the DB
 func (ds *Datastore) CreateBucket(
 	bucketID string,
 	bucketType string,
@@ -106,63 +121,74 @@ func (ds *Datastore) CreateBucket(
 	name *string,
 	data map[string]interface{},
 ) (*Bucket, error) {
-	// Insert into DB via GORM
+
+	// Convert the incoming map[string]interface{} -> datatypes.JSON
+	jsonData, err := mapToJSON(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert data to JSON: %w", err)
+	}
+
 	newBucket := models.Bucket{
-		ID:        bucketID,
-		Type:      bucketType,
-		Client:    client,
-		Hostname:  hostname,
-		Created:   created,
-		Name:      name,
-		Data:      data,
+		ID:       bucketID,
+		Type:     bucketType,
+		Client:   client,
+		Hostname: hostname,
+		Created:  created,
+		Name:     name,
+		Data:     jsonData, // store as JSON
 	}
 
 	if err := ds.db.Create(&newBucket).Error; err != nil {
 		return nil, err
 	}
-	// Return a *Bucket object that references the GORM model.
 	return NewBucket(ds, bucketID), nil
 }
 
+// UpdateBucket updates the specified bucket in DB
 func (ds *Datastore) UpdateBucket(bucketID string, updates map[string]interface{}) error {
-	// We find the existing row, then apply updates
 	var existing models.Bucket
 	if err := ds.db.First(&existing, "id = ?", bucketID).Error; err != nil {
 		return err
 	}
 
+	// If "type" is set
 	if v, ok := updates["type"]; ok {
 		if vs, _ := v.(string); vs != "" {
 			existing.Type = vs
 		}
 	}
+	// If "client" is set
 	if v, ok := updates["client"]; ok {
 		if vs, _ := v.(string); vs != "" {
 			existing.Client = vs
 		}
 	}
+	// If "hostname" is set
 	if v, ok := updates["hostname"]; ok {
 		if vs, _ := v.(string); vs != "" {
 			existing.Hostname = vs
 		}
 	}
+	// If data is set
 	if v, ok := updates["datastr"]; ok {
 		if dataMap, _ := v.(map[string]interface{}); dataMap != nil {
-			existing.Data = dataMap
+			jsonData, err := mapToJSON(dataMap)
+			if err != nil {
+				return fmt.Errorf("failed to convert datastr to JSON: %w", err)
+			}
+			existing.Data = jsonData
 		}
 	}
 
 	return ds.db.Save(&existing).Error
 }
 
-// DeleteBucket
+// DeleteBucket removes the bucket row from DB
 func (ds *Datastore) DeleteBucket(bucketID string) error {
-	// If we want to also delete associated events, we can define a foreign-key relationship
-	// with "OnDelete:CASCADE" or do a separate .Where("bucket_id=?").Delete(&Event{})
 	return ds.db.Where("id = ?", bucketID).Delete(&models.Bucket{}).Error
 }
 
-// GetBucket returns the "bucket" if it exists
+// GetBucket checks existence and returns a handle to operate on the bucket
 func (ds *Datastore) GetBucket(bucketID string) (*Bucket, error) {
 	var count int64
 	if err := ds.db.Model(&models.Bucket{}).
@@ -176,7 +202,9 @@ func (ds *Datastore) GetBucket(bucketID string) (*Bucket, error) {
 	return NewBucket(ds, bucketID), nil
 }
 
-// Bucket is the GORM-backed "bucket handle"
+// ----------------------------------------------------------------------
+// Bucket struct for runtime logic
+// ----------------------------------------------------------------------
 type Bucket struct {
 	ds       *Datastore
 	bucketID string
@@ -189,7 +217,7 @@ func NewBucket(ds *Datastore, bucketID string) *Bucket {
 	}
 }
 
-// Metadata can read the bucket row from DB
+// Metadata loads the bucket row from DB and returns a metadata map
 func (b *Bucket) Metadata() map[string]interface{} {
 	var bucket models.Bucket
 	if err := b.ds.db.First(&bucket, "id = ?", b.bucketID).Error; err != nil {
@@ -203,12 +231,12 @@ func (b *Bucket) Metadata() map[string]interface{} {
 		"client":   bucket.Client,
 		"hostname": bucket.Hostname,
 		"created":  bucket.Created.Format(time.RFC3339),
-		"data":     bucket.Data,
+		"data":     bucket.Data, // still stored as datatypes.JSON
 	}
 }
 
+// Get retrieves events for this bucket with optional limit/time filters
 func (b *Bucket) Get(limit int, starttime, endtime *time.Time) ([]*models.Event, error) {
-	// Round start/end times to nearest millisecond
 	if starttime != nil {
 		ms := starttime.UnixNano() / int64(time.Millisecond)
 		*starttime = time.Unix(0, ms*int64(time.Millisecond))
@@ -218,21 +246,17 @@ func (b *Bucket) Get(limit int, starttime, endtime *time.Time) ([]*models.Event,
 		*endtime = time.Unix(0, ms*int64(time.Millisecond))
 	}
 
-	// Build the base query filtering on bucket_id
 	dbq := b.ds.db.Model(&models.Event{}).
 		Where("bucket_id = ?", b.bucketID)
 
-	// If start/end time are provided, filter by them
 	if starttime != nil && !starttime.IsZero() && endtime != nil && !endtime.IsZero() {
 		dbq = dbq.Where("timestamp >= ? AND timestamp <= ?", *starttime, *endtime)
 	}
 
-	// If limit > 0, apply it. If limit == -1, do no limit
 	if limit > 0 {
 		dbq = dbq.Limit(limit)
 	}
 
-	// Sort by timestamp descending
 	dbq = dbq.Order("timestamp DESC")
 
 	var events []*models.Event
@@ -242,10 +266,10 @@ func (b *Bucket) Get(limit int, starttime, endtime *time.Time) ([]*models.Event,
 	return events, nil
 }
 
-// GetByID
+// GetByID loads a single event from DB
 func (b *Bucket) GetByID(eventID int) (*models.Event, error) {
 	var evt models.Event
-	if err := b.ds.db.First(&evt, "id = ?", eventID).Error; err != nil {
+	if err := b.ds.db.First(&evt, "id = ? AND bucket_id = ?", eventID, b.bucketID).Error; err != nil {
 		return nil, err
 	}
 	return &evt, nil
@@ -253,8 +277,11 @@ func (b *Bucket) GetByID(eventID int) (*models.Event, error) {
 
 // GetEventCount
 func (b *Bucket) GetEventCount(starttime, endtime *time.Time) (int, error) {
-	dbq := b.ds.db.Model(&models.Event{})
-	// Add filters if desired
+	dbq := b.ds.db.Model(&models.Event{}).Where("bucket_id = ?", b.bucketID)
+	if starttime != nil && !starttime.IsZero() && endtime != nil && !endtime.IsZero() {
+		dbq = dbq.Where("timestamp >= ? AND timestamp <= ?", *starttime, *endtime)
+	}
+
 	var count int64
 	if err := dbq.Count(&count).Error; err != nil {
 		return 0, err
@@ -262,15 +289,20 @@ func (b *Bucket) GetEventCount(starttime, endtime *time.Time) (int, error) {
 	return int(count), nil
 }
 
-// Insert can handle single or multiple events
+// Insert can handle one or multiple events
 func (b *Bucket) Insert(events interface{}) (*models.Event, error) {
 	switch ev := events.(type) {
 	case *models.Event:
+		ev.BucketID = b.bucketID // ensure correct BucketID
 		if err := b.ds.db.Create(ev).Error; err != nil {
 			return nil, err
 		}
 		return ev, nil
+
 	case []*models.Event:
+		for _, e := range ev {
+			e.BucketID = b.bucketID
+		}
 		if len(ev) == 0 {
 			return nil, nil
 		}
@@ -278,7 +310,11 @@ func (b *Bucket) Insert(events interface{}) (*models.Event, error) {
 			return nil, err
 		}
 		return nil, nil
+
 	case []models.Event:
+		for i := range ev {
+			ev[i].BucketID = b.bucketID
+		}
 		if len(ev) == 0 {
 			return nil, nil
 		}
@@ -286,41 +322,61 @@ func (b *Bucket) Insert(events interface{}) (*models.Event, error) {
 			return nil, err
 		}
 		return nil, nil
+
 	default:
 		return nil, fmt.Errorf("invalid events type in Insert(...)")
 	}
 }
 
-// Delete
+// Delete removes a specific event
 func (b *Bucket) Delete(eventID int) (bool, error) {
-	if err := b.ds.db.Delete(&models.Event{}, eventID).Error; err != nil {
-		return false, err
+	res := b.ds.db.Where("bucket_id = ?", b.bucketID).Delete(&models.Event{}, eventID)
+	if res.Error != nil {
+		return false, res.Error
 	}
-	return true, nil
+	return (res.RowsAffected == 1), nil
 }
 
-// ReplaceLast - do a GORM query for the last event, then update it
+// ReplaceLast updates the most recent event in the bucket
 func (b *Bucket) ReplaceLast(event *models.Event) error {
 	var last models.Event
-	// find the last event for this bucket
-	if err := b.ds.db.Order("timestamp desc").First(&last).Error; err != nil {
+	if err := b.ds.db.Where("bucket_id = ?", b.bucketID).
+		Order("timestamp desc").
+		First(&last).Error; err != nil {
 		return err
 	}
-	// Update last with data from the new event
+	// Update with new data
 	last.Timestamp = event.Timestamp
 	last.Duration = event.Duration
 	last.Data = event.Data
 	return b.ds.db.Save(&last).Error
 }
 
-// Replace replaces the event with eventID
+// Replace updates an event by ID
 func (b *Bucket) Replace(eventID int, event *models.Event) error {
 	var existing models.Event
-	if err := b.ds.db.First(&existing, "id = ?", eventID).Error; err != nil {
+	if err := b.ds.db.Where("bucket_id = ?", b.bucketID).
+		First(&existing, "id = ?", eventID).Error; err != nil {
 		return err
 	}
 	existing.Timestamp = event.Timestamp
 	existing.Duration = event.Duration
 	existing.Data = event.Data
 	return b.ds.db.Save(&existing).Error
+}
+
+// ----------------------------------------------------------------------
+// Helper: mapToJSON
+// ----------------------------------------------------------------------
+
+// mapToJSON converts a map into datatypes.JSON for storing in GORM.
+func mapToJSON(data map[string]interface{}) (datatypes.JSON, error) {
+	if data == nil {
+		return datatypes.JSON([]byte("{}")), nil
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
