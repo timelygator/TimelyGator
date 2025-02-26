@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"log/slog"
+	"os"
 	"timelygator/server/cmd"
 
 	"github.com/joho/godotenv"
@@ -19,10 +20,11 @@ import (
 // @host			localhost:8080
 // @BasePath		/api/v1
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil).WithAttrs([]slog.Attr{slog.String("component", "server")}))
+	slog.SetDefault(logger)
+
+	// Try to load .env file
+	godotenv.Load()
 
 	cmd.Execute()
 }

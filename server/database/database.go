@@ -1,39 +1,31 @@
-package db
+package database
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"path/filepath"
 	"time"
-	"os"
 
-	"timelygator/server/models"
-	"timelygator/server/tg-core/core"
+	"timelygator/server/database/models"
+	"timelygator/server/utils"
+	"timelygator/server/utils/types"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type Datastore struct {
-	logger    *log.Logger
-	db        *gorm.DB
-	testing   bool
-	extraParams map[string]interface{}
+	db *gorm.DB
 }
 
-// NewDatastore opens a SQLite DB with GORM, auto-migrates the models, and returns a Datastore.
-func NewDatastore(testing bool, extraParams map[string]interface{}, logger *log.Logger) (*Datastore, error) {
-	if logger == nil {
-		logger = log.Default()
-	}
-
-	// Decides the DB filepath
-	filepath, err := buildSQLitePath(testing)
+func InitDB(cfg types.Config) (*Datastore, error) {
+	datadir, err := utils.GetDir("data")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get data dir: %w", err)
 	}
+	file := filepath.Join(datadir, cfg.DataSourceName)
 
-	db, err := gorm.Open(sqlite.Open(filepath), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(file), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to open sqlite db with gorm: %w", err)
 	}
@@ -43,41 +35,24 @@ func NewDatastore(testing bool, extraParams map[string]interface{}, logger *log.
 		return nil, fmt.Errorf("auto-migrate error: %w", err)
 	}
 
-	logger.Printf("Using GORM-based SQLite at: %s", filepath)
+	slog.Debug(fmt.Sprintf("Using GORM-based SQLite at: %s", file))
 
-	ds := &Datastore{
-		logger:      logger,
-		db:          db,
-		testing:     testing,
-		extraParams: extraParams,
-	}
-	return ds, nil
+	return &Datastore{
+		db: db,
+	}, nil
 }
 
-func EnsurePathExists(path string) {
-    if err := os.MkdirAll(path, 0o755); err != nil {
-        log.Fatalf("Failed to create directory %s: %v", path, err)
-    }
+func (ds *Datastore) DB() *gorm.DB {
+	return ds.db
 }
 
-func buildSQLitePath(testing bool) (string, error) {
-	dir := core.GetDataDir("tg-server")
-	EnsurePathExists(dir) // Ensure directory exists
-	suffix := ""
-	if testing {
-		suffix = "-testing"
-	}
-	filename := fmt.Sprintf("sqlite%s.v1.db", suffix)
-	return filepath.Join(dir, filename), nil
-}
-
-// Batches returns a map of bucket_id -> metadata. 
+// Batches returns a map of bucket_id -> metadata.
 func (ds *Datastore) Buckets() map[string]map[string]interface{} {
 	result := make(map[string]map[string]interface{})
 
 	var buckets []models.Bucket
 	if err := ds.db.Find(&buckets).Error; err != nil {
-		ds.logger.Printf("Error listing buckets: %v\n", err)
+		slog.Warn(fmt.Sprintf("Error listing buckets: %v\n", err))
 		return result
 	}
 
@@ -106,15 +81,21 @@ func (ds *Datastore) CreateBucket(
 	name *string,
 	data map[string]interface{},
 ) (*Bucket, error) {
+	// Convert the incoming map[string]interface{} -> datatypes.JSON
+	jsonData, err := utils.MapToJSON(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert data to JSON: %w", err)
+	}
+
 	// Insert into DB via GORM
 	newBucket := models.Bucket{
-		ID:        bucketID,
-		Type:      bucketType,
-		Client:    client,
-		Hostname:  hostname,
-		Created:   created,
-		Name:      name,
-		Data:      data,
+		ID:       bucketID,
+		Type:     bucketType,
+		Client:   client,
+		Hostname: hostname,
+		Created:  created,
+		Name:     name,
+		Data:     jsonData,
 	}
 
 	if err := ds.db.Create(&newBucket).Error; err != nil {
@@ -148,7 +129,11 @@ func (ds *Datastore) UpdateBucket(bucketID string, updates map[string]interface{
 	}
 	if v, ok := updates["datastr"]; ok {
 		if dataMap, _ := v.(map[string]interface{}); dataMap != nil {
-			existing.Data = dataMap
+			jsonData, err := utils.MapToJSON(dataMap)
+			if err != nil {
+				return fmt.Errorf("failed to convert datastr to JSON: %w", err)
+			}
+			existing.Data = jsonData
 		}
 	}
 
@@ -193,7 +178,7 @@ func NewBucket(ds *Datastore, bucketID string) *Bucket {
 func (b *Bucket) Metadata() map[string]interface{} {
 	var bucket models.Bucket
 	if err := b.ds.db.First(&bucket, "id = ?", b.bucketID).Error; err != nil {
-		b.ds.logger.Printf("Error in Metadata() for bucket %s: %v", b.bucketID, err)
+		slog.Warn(fmt.Sprintf("Error in Metadata() for bucket %s: %v", b.bucketID, err))
 		return nil
 	}
 	return map[string]interface{}{
