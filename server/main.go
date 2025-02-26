@@ -20,7 +20,7 @@ import (
 // @host			localhost:8080
 // @BasePath		/api/v1
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil).WithAttrs([]slog.Attr{slog.String("component", "server")}))
 	slog.SetDefault(logger)
 
 	// Try to load .env file

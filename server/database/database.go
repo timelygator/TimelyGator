@@ -81,6 +81,12 @@ func (ds *Datastore) CreateBucket(
 	name *string,
 	data map[string]interface{},
 ) (*Bucket, error) {
+	// Convert the incoming map[string]interface{} -> datatypes.JSON
+	jsonData, err := utils.MapToJSON(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert data to JSON: %w", err)
+	}
+
 	// Insert into DB via GORM
 	newBucket := models.Bucket{
 		ID:       bucketID,
@@ -89,7 +95,7 @@ func (ds *Datastore) CreateBucket(
 		Hostname: hostname,
 		Created:  created,
 		Name:     name,
-		Data:     data,
+		Data:     jsonData,
 	}
 
 	if err := ds.db.Create(&newBucket).Error; err != nil {
@@ -123,7 +129,11 @@ func (ds *Datastore) UpdateBucket(bucketID string, updates map[string]interface{
 	}
 	if v, ok := updates["datastr"]; ok {
 		if dataMap, _ := v.(map[string]interface{}); dataMap != nil {
-			existing.Data = dataMap
+			jsonData, err := utils.MapToJSON(dataMap)
+			if err != nil {
+				return fmt.Errorf("failed to convert datastr to JSON: %w", err)
+			}
+			existing.Data = jsonData
 		}
 	}
 
