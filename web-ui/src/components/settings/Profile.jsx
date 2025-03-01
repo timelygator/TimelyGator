@@ -12,7 +12,7 @@ const Profile = () => {
 				/>
 
 				<div>
-					<h3 className='text-lg font-semibold text-gray-100'>ABC XYZ</h3>
+					<h3 className='text-lg font-semibold text-text'>ABC XYZ</h3>
 					<p className='text-gray-400'>abc.xyz@example.com</p>
 				</div>
 			</div>
