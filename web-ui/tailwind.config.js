@@ -5,6 +5,7 @@ export default {
 		extend: {
 			colors:{
 				background: "var(--color-primary-bg)",
+				backgroundSecondary: "var(--color-secondary-bg)",
 				text: "var(--color-primary-text)",
 				border: "var(--color-border)",
 				cardSecondaryText: "var(--color-card-secondary-text)",

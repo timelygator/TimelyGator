@@ -4,6 +4,7 @@
 
 .dark {
     --color-primary-bg: #1a202c;
+    --color-secondary-bg: #1f2937; 
     --color-primary-text: #f7fafc;
     --color-card-text-secondary: #d1d5db; 
     /* --color-primary-dark: #646cffaa; */

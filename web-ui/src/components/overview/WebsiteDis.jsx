@@ -13,12 +13,12 @@ const WEBSITE_DISTRIBUTION = [
 const SalesChannelChart = () => {
     return (
         <motion.div
-            className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 lg:col-span-2 border border-gray-700'
+            className='bg-backgroundSecondary bg-opacity-100 backdrop-blur-md shadow-lg rounded-xl p-6 lg:col-span-2 border border-border'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
         >
-            <h2 className='text-lg font-medium mb-4 text-gray-100'>Website Distribution</h2>
+            <h2 className='text-lg font-medium mb-4 text-text'>Website Distribution</h2>
 
             <div className='h-80'>
                 <ResponsiveContainer>
