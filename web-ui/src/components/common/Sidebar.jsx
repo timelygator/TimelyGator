@@ -45,7 +45,7 @@ const Sidebar = () => {
 					whileHover={{ scale: 1.1 }}
 					whileTap={{ scale: 0.9 }}
 					onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-					className='p-2 rounded-full hover:bg-gray-700 transition-colors max-w-fit'
+					className='p-2 rounded-full hover:bg-actionHover transition-colors max-w-fit'
 				>
 					<Menu size={24} />
 				</motion.button>
@@ -53,7 +53,7 @@ const Sidebar = () => {
 				<nav className='mt-8 flex-grow'>
 					{SIDEBAR_ITEMS.map((item) => (
 						<Link key={item.href} to={item.href}>
-							<motion.div className='flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2'>
+							<motion.div className='flex items-center p-4 text-sm font-medium rounded-lg hover:bg-actionHover transition-colors mb-2'>
 								<item.icon size={20} style={{ color: item.color, minWidth: "20px" }} />
 								<AnimatePresence>
 									{isSidebarOpen && (

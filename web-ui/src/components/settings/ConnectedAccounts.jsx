@@ -29,11 +29,11 @@ const ConnectedAccounts = () => {
 				<div key={account.id} className='flex items-center justify-between py-3'>
 					<div className='flex gap-1'>
 						<img src={account.icon} alt='Social img' className='size-6 object-cover rounded-full mr-2' />
-						<span className='text-gray-300'>{account.name}</span>
+						<span className='text-cardText'>{account.name}</span>
 					</div>
 					<button
 						className={`px-3 py-1 rounded ${
-							account.connected ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"
+							account.connected ? "bg-green-600 hover:bg-green-700" : "bg-actionDefault hover:bg-action"
 						} transition duration-200`}
 						onClick={() => {
 							setConnectedAccounts(
