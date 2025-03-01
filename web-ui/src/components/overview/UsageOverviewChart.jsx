@@ -3,12 +3,17 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Axios from "axios";
 
+const UsageData = [
+    { name: "Mon", Hours: 9 },
+    { name: "Tue", Hours: 8 },
+    { name: "Wed", Hours: 10 },
+    { name: "Thur", Hours: 6.5 },
+    { name: "Fri", Hours: 9 },
+    { name: "Sat", Hours: 16 },
+    { name: "Sun", Hours: 14 }
+];
 
-
-// 	                         <  API CALLING FOR USAGE DATA TEST FORMAT >
-
-
-
+// Default data for usage overview
 // const defaultUsageData = [
 // 	{ name: "Mon", Hours: 0 },
 // 	{ name: "Tue", Hours: 0 },
@@ -31,15 +36,15 @@ import Axios from "axios";
 // 		});
 // }, []);
 
-const UsageData = [
-    { name: "Mon", Hours: 9 },
-    { name: "Tue", Hours: 8 },
-    { name: "Wed", Hours: 10 },
-    { name: "Thur", Hours: 6.5 },
-    { name: "Fri", Hours: 9 },
-    { name: "Sat", Hours: 16 },
-    { name: "Sun", Hours: 14 }
-];
+// API format that may be used:
+// [
+//     {
+//         "name": "Mon",
+//         "Hours": 9,
+//         "activityId": "12345"
+//     },
+//     ...
+// ]
 
 const UsageOverviewChart = () => {
     return (

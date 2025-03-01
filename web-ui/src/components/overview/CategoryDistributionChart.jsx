@@ -1,27 +1,28 @@
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { FaYoutube, FaCode, FaGithub, FaInstagram, FaShoppingCart } from "react-icons/fa";
 // import { useState, useEffect } from "react";
 // import Axios from "axios";
 
 const categoryData = [
-    { name: "YouTube", value: 3.7 },
-    { name: "LeetCode", value: 2.6 },
-    { name: "Github", value: 2.3 },
-    { name: "Instagram", value: 1.7 },
-    { name: "Amazon", value: 1.6 },
+    { name: "YouTube", value: 3.7, icon: FaYoutube },
+    { name: "LeetCode", value: 2.6, icon: FaCode },
+    { name: "Github", value: 2.3, icon: FaGithub },
+    { name: "Instagram", value: 1.7, icon: FaInstagram },
+    { name: "Amazon", value: 1.6, icon: FaShoppingCart },
 ];
 
 const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
 
-//            <   API CALLING FOR CATEGORY DISTRIBUTION TEST FORMAT   >
 
+//            <  API CALLING FOR CATEGORY DISTRIBUTION CHART TEST FORMAT >
 // Default data for category distribution
 // const defaultCategoryData = [
-// 	{ name: "YouTube", value: 0 },
-// 	{ name: "LeetCode", value: 0 },
-// 	{ name: "Github", value: 0 },
-// 	{ name: "Instagram", value: 0 },
-// 	{ name: "Amazon", value: 0 },
+// 	{ name: "YouTube", value: 0, icon: FaYoutube },
+// 	{ name: "LeetCode", value: 0, icon: FaCode },
+// 	{ name: "Github", value: 0, icon: FaGithub },
+// 	{ name: "Instagram", value: 0, icon: FaInstagram },
+// 	{ name: "Amazon", value: 0, icon: FaShoppingCart },
 // ];
 
 // const [categoryData, setCategoryData] = useState(defaultCategoryData);
@@ -36,7 +37,8 @@ const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
 // 				const timeSpent = (endTime - startTime) / (1000 * 60 * 60); // Convert milliseconds to hours
 // 				return {
 // 					name: item.Category,
-// 					value: timeSpent
+// 					value: timeSpent,
+// 					icon: getIcon(item.Category) // Function to get the corresponding icon
 // 				};
 // 			});
 // 			setCategoryData(data);
@@ -46,7 +48,25 @@ const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
 // 		});
 // }, []);
 
-//                     <     API format that may be used:    >
+// Function to get the corresponding icon
+const getIcon = (category) => {
+    switch (category) {
+        case "YouTube":
+            return <FaYoutube />;
+        case "LeetCode":
+            return <FaCode />;
+        case "Github":
+            return <FaGithub />;
+        case "Instagram":
+            return <FaInstagram />;
+        case "Amazon":
+            return <FaShoppingCart />;
+        default:
+            return null;
+    }
+};
+
+//         <  API format that may be used >
 // [
 //     {
 //         "Category": "YouTube",
@@ -54,7 +74,7 @@ const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
 //         "EndTime": "2025-02-28T09:00:00Z",
 //         "activityId": "12345"
 //     },
-//     ...
+//     
 // ]
 
 const CategoryDistributionChart = () => {
