@@ -3,12 +3,15 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
-	"os"
 
 	"github.com/caarlos0/env"
 
@@ -17,47 +20,53 @@ import (
 	"timelygator/server/utils/types"
 )
 
-type RequestQueueItem struct {
-	Endpoint string
-	Data     map[string]interface{}
-}
-
-type BucketRegistration struct {
-	ID   string
-	Type string
-}
-
 type ActivityWatchClient struct {
-	Testing        bool
-	ClientName     string
-	ClientHostname string
-	ServerAddress  string
+	Testing         bool
+	ClientName      string
+	ClientHostname  string
+	ServerAddress   string
+	Instance        *SingleInstance
+	CommitInterval  float64
 
-	Instance *SingleInstance
-
-	CommitInterval float64
-
-	logger        *log.Logger
 	lastHeartbeat map[string]*models.Event
 
+	// queue for requests if offline
 	requestQueue *RequestQueue
 }
 
-func NewActivityWatchClient(clientName string, testing bool) *ActivityWatchClient {
+func NewActivityWatchClient(
+	clientName string,
+	testing bool,
+	hostOverride *string,
+	portOverride *string,
+	protocol string,
+) *ActivityWatchClient {
+	if protocol == "" {
+		protocol = "http"
+	}
+
 	var cfg types.Config
 	if err := env.Parse(&cfg); err != nil {
-		log.Fatalf("Failed to parse env config: %v", err)
+		log.Fatalf("Failed to parse environment config: %v", err)
 	}
 
 	serverHost := cfg.Interface
+	if hostOverride != nil && *hostOverride != "" {
+		serverHost = *hostOverride
+	}
 	serverPort := cfg.Port
-	serverAddress := fmt.Sprintf("http://%s:%s", serverHost, serverPort)
-
-	clientHostname, err := osHostname()
-	if err != nil {
-		clientHostname = "unknown-host"
+	if portOverride != nil && *portOverride != "" {
+		serverPort = *portOverride
 	}
 
+	serverAddress := fmt.Sprintf("%s://%s:%s", protocol, serverHost, serverPort)
+
+	h, err := os.Hostname()
+	if err != nil || h == "" {
+		h = "unknown-host"
+	}
+
+	// singleinstance
 	inst, err := NewSingleInstance(
 		fmt.Sprintf("%s-at-%s-on-%s", clientName, serverHost, serverPort),
 	)
@@ -65,31 +74,20 @@ func NewActivityWatchClient(clientName string, testing bool) *ActivityWatchClien
 	c := &ActivityWatchClient{
 		Testing:        testing,
 		ClientName:     clientName,
-		ClientHostname: clientHostname,
+		ClientHostname: h,
 		ServerAddress:  serverAddress,
 		Instance:       inst,
 		CommitInterval: 60.0,
-		logger:         log.Default(),
 		lastHeartbeat:  make(map[string]*models.Event),
 	}
-
 	c.requestQueue = NewRequestQueue(c)
 	return c
-}
-
-func osHostname() (string, error) {
-	hn, err := os.Hostname()
-	if err != nil || hn == "" {
-		return "", err
-	}
-	return hn, nil
 }
 
 func (c *ActivityWatchClient) _url(endpoint string) string {
 	return fmt.Sprintf("%s/api/0/%s", c.ServerAddress, endpoint)
 }
 
-// get does a simple GET call
 func (c *ActivityWatchClient) get(endpoint string, params map[string]string) (*http.Response, error) {
 	url := c._url(endpoint)
 	if len(params) > 0 {
@@ -106,8 +104,11 @@ func (c *ActivityWatchClient) get(endpoint string, params map[string]string) (*h
 	return resp, nil
 }
 
-// post does a POST call
-func (c *ActivityWatchClient) post(endpoint string, data interface{}, params map[string]string) (*http.Response, error) {
+func (c *ActivityWatchClient) post(
+	endpoint string,
+	data interface{},
+	params map[string]string,
+) (*http.Response, error) {
 	url := c._url(endpoint)
 	if len(params) > 0 {
 		url = appendQuery(url, params)
@@ -134,7 +135,6 @@ func (c *ActivityWatchClient) post(endpoint string, data interface{}, params map
 	return resp, nil
 }
 
-// deleteReq does a DELETE call
 func (c *ActivityWatchClient) deleteReq(endpoint string, data interface{}) (*http.Response, error) {
 	url := c._url(endpoint)
 	var body []byte
@@ -150,6 +150,7 @@ func (c *ActivityWatchClient) deleteReq(endpoint string, data interface{}) (*htt
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -162,22 +163,21 @@ func (c *ActivityWatchClient) deleteReq(endpoint string, data interface{}) (*htt
 	return resp, nil
 }
 
-// appendQuery is a helper to attach params to a URL
 func appendQuery(base string, params map[string]string) string {
-	query := "?"
+	base += "?"
 	for k, v := range params {
-		query += fmt.Sprintf("%s=%s&", k, v)
+		base += fmt.Sprintf("%s=%s&", k, v)
 	}
-	return base + query[:len(query)-1]
+	return base[:len(base)-1]
 }
 
-// GetInfo => GET /info
 func (c *ActivityWatchClient) GetInfo() (map[string]interface{}, error) {
 	resp, err := c.get("info", nil)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
 	var result map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
@@ -185,21 +185,166 @@ func (c *ActivityWatchClient) GetInfo() (map[string]interface{}, error) {
 	return result, nil
 }
 
-// GetBuckets => GET /buckets/
-func (c *ActivityWatchClient) GetBuckets() (map[string]interface{}, error) {
+func (c *ActivityWatchClient) GetEvent(bucketID string, eventID int) (map[string]interface{}, error) {
+	endpoint := fmt.Sprintf("buckets/%s/events/%d", bucketID, eventID)
+	resp, err := c.get(endpoint, nil)
+	if err != nil {
+		// Check if error is 404
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var raw map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, err
+	}
+	return raw, nil
+}
+
+func (c *ActivityWatchClient) GetEvents(
+	bucketID string,
+	limit int,
+	start, end *time.Time,
+) ([]map[string]interface{}, error) {
+	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
+	params := make(map[string]string)
+	if limit >= 0 {
+		params["limit"] = strconv.Itoa(limit)
+	}
+	if start != nil {
+		params["start"] = start.Format(time.RFC3339)
+	}
+	if end != nil {
+		params["end"] = end.Format(time.RFC3339)
+	}
+	resp, err := c.get(endpoint, params)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var raw []map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, err
+	}
+	return raw, nil
+}
+
+func (c *ActivityWatchClient) InsertEvent(bucketID string, evt interface{}) error {
+	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
+	data := []interface{}{evt} // single event
+	_, err := c.post(endpoint, data, nil)
+	return err
+}
+
+func (c *ActivityWatchClient) InsertEvents(bucketID string, evts []interface{}) error {
+	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
+	_, err := c.post(endpoint, evts, nil)
+	return err
+}
+
+func (c *ActivityWatchClient) DeleteEvent(bucketID string, eventID int) error {
+	endpoint := fmt.Sprintf("buckets/%s/events/%d", bucketID, eventID)
+	_, err := c.deleteReq(endpoint, nil)
+	return err
+}
+
+func (c *ActivityWatchClient) GetEventCount(
+	bucketID string,
+	start, end *time.Time,
+) (int, error) {
+	endpoint := fmt.Sprintf("buckets/%s/events/count", bucketID)
+	params := make(map[string]string)
+	if start != nil {
+		params["start"] = start.Format(time.RFC3339)
+	}
+	if end != nil {
+		params["end"] = end.Format(time.RFC3339)
+	}
+	resp, err := c.get(endpoint, params)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(resp.Body); err != nil {
+		return 0, err
+	}
+	countStr := buf.String()
+	count, err := strconv.Atoi(countStr)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// If queued=true, we do merging logic, else direct post
+func (c *ActivityWatchClient) Heartbeat(
+	bucketID string,
+	event interface{},
+	pulseTime float64,
+	queued bool,
+	commitInterval *float64,
+) error {
+	endpoint := fmt.Sprintf("buckets/%s/heartbeat?pulsetime=%f", bucketID, pulseTime)
+	ci := c.CommitInterval
+	if commitInterval != nil {
+		ci = *commitInterval
+	}
+
+	if queued {
+		// Pre-merge in memory
+		last, ok := c.lastHeartbeat[bucketID]
+		var newEvent *models.Event
+		// Convert event interface{} => *models.Event if needed
+		// or just store raw?
+		ev, ok2 := event.(*models.Event)
+		if !ok2 {
+			log.Println("Heartbeat event not *models.Event, skipping merge.")
+			_, err := c.post(endpoint, event, nil)
+			return err
+		}
+		newEvent = ev
+
+		if !ok {
+			c.lastHeartbeat[bucketID] = newEvent
+			return nil
+		}
+		merged := utils.HeartbeatMerge(*last, *newEvent, pulseTime)
+		if merged != nil {
+			diff := merged.Duration.Seconds()
+			if diff >= ci {
+				data := merged.ToJSONDict()
+				c.requestQueue.AddRequest(endpoint, data)
+				c.lastHeartbeat[bucketID] = newEvent
+			} else {
+				c.lastHeartbeat[bucketID] = merged
+			}
+		} else {
+			data := last.ToJSONDict()
+			c.requestQueue.AddRequest(endpoint, data)
+			c.lastHeartbeat[bucketID] = newEvent
+		}
+		return nil
+	}
+
+	// direct post
+	_, err := c.post(endpoint, event, nil)
+	return err
+}
+
+func (c *ActivityWatchClient) GetBucketsMap() (map[string]interface{}, error) {
 	resp, err := c.get("buckets/", nil)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	var result map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var raw map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
 		return nil, err
 	}
-	return result, nil
+	return raw, nil
 }
 
-// CreateBucket => POST /buckets/{bucket_id}
 func (c *ActivityWatchClient) CreateBucket(bucketID, eventType string, queued bool) error {
 	if queued {
 		c.requestQueue.RegisterBucket(bucketID, eventType)
@@ -215,7 +360,6 @@ func (c *ActivityWatchClient) CreateBucket(bucketID, eventType string, queued bo
 	return err
 }
 
-// DeleteBucket => DELETE /buckets/{bucket_id}?force=1 if force
 func (c *ActivityWatchClient) DeleteBucket(bucketID string, force bool) error {
 	endpoint := fmt.Sprintf("buckets/%s", bucketID)
 	if force {
@@ -225,141 +369,202 @@ func (c *ActivityWatchClient) DeleteBucket(bucketID string, force bool) error {
 	return err
 }
 
-// InsertEvent => POST /buckets/{bucket_id}/events
-func (c *ActivityWatchClient) InsertEvent(bucketID string, evt *models.Event) error {
-	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
-	data := []interface{}{evt.ToJSONDict()}
+func (c *ActivityWatchClient) ExportAll() (map[string]interface{}, error) {
+	resp, err := c.get("export", nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var raw map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, err
+	}
+	return raw, nil
+}
+
+func (c *ActivityWatchClient) ExportBucket(bucketID string) (map[string]interface{}, error) {
+	endpoint := fmt.Sprintf("buckets/%s/export", bucketID)
+	resp, err := c.get(endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var raw map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, err
+	}
+	return raw, nil
+}
+
+func (c *ActivityWatchClient) ImportBucket(bucket map[string]interface{}) error {
+	endpoint := "import"
+
+	bucketID, ok := bucket["id"].(string)
+	if !ok {
+		return fmt.Errorf("bucket ID is not a string: %v", bucket["id"])
+	}
+
+	data := map[string]interface{}{
+		"buckets": map[string]interface{}{
+			bucketID: bucket,
+		},
+	}
+
 	_, err := c.post(endpoint, data, nil)
 	return err
 }
 
-// InsertEvents => multiple events
-func (c *ActivityWatchClient) InsertEvents(bucketID string, evts []*models.Event) error {
-	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
-	var data []interface{}
-	for _, e := range evts {
-		data = append(data, e.ToJSONDict())
+
+func (c *ActivityWatchClient) Query(
+	queryStr string,
+	timeperiods [][2]time.Time,
+	name *string,
+	cache bool,
+) ([]interface{}, error) {
+	endpoint := "query/"
+	params := make(map[string]string)
+	if cache {
+		if name == nil || *name == "" {
+			return nil, errors.New("not allowed to do caching without a query name")
+		}
+		params["name"] = *name
+		params["cache"] = "1"
 	}
-	_, err := c.post(endpoint, data, nil)
+
+	var tps []string
+	for _, tp := range timeperiods {
+		start, end := tp[0], tp[1]
+		// e.g. "2023-03-20T05:00:00Z/2023-03-20T10:00:00Z"
+		tps = append(tps, start.Format(time.RFC3339)+"/"+end.Format(time.RFC3339))
+	}
+
+	data := map[string]interface{}{
+		"timeperiods": tps,
+		"query":       strings.Split(queryStr, "\n"),
+	}
+	resp, err := c.post(endpoint, data, params)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var raw []interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, err
+	}
+	return raw, nil
+}
+
+func (c *ActivityWatchClient) GetSetting(key *string) (map[string]interface{}, error) {
+	endpoint := "settings"
+	if key != nil && *key != "" {
+		endpoint = fmt.Sprintf("settings/%s", *key)
+	}
+	resp, err := c.get(endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var raw map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, err
+	}
+	return raw, nil
+}
+
+func (c *ActivityWatchClient) SetSetting(key string, value string) error {
+	endpoint := fmt.Sprintf("settings/%s", key)
+	_, err := c.post(endpoint, value, nil)
 	return err
 }
 
-// Heartbeat => POST /buckets/{bucket_id}/heartbeat?pulsetime=XYZ
-func (c *ActivityWatchClient) Heartbeat(bucketID string, evt *models.Event, pulsetime float64, queued bool, commitInterval *float64) error {
-	endpoint := fmt.Sprintf("buckets/%s/heartbeat?pulsetime=%f", bucketID, pulsetime)
-	ci := c.CommitInterval
-	if commitInterval != nil {
-		ci = *commitInterval
-	}
-
-	if queued {
-		last, ok := c.lastHeartbeat[bucketID]
-		if !ok {
-			c.lastHeartbeat[bucketID] = evt
-			return nil
-		}
-		merged := utils.HeartbeatMerge(*last, *evt, pulsetime)
-		if merged != nil {
-			diff := merged.Duration.Seconds()
-			if diff >= ci {
-				data := merged.ToJSONDict()
-				c.requestQueue.AddRequest(endpoint, data)
-				c.lastHeartbeat[bucketID] = evt
-			} else {
-				c.lastHeartbeat[bucketID] = merged
-			}
-		} else {
-			data := last.ToJSONDict()
-			c.requestQueue.AddRequest(endpoint, data)
-			c.lastHeartbeat[bucketID] = evt
-		}
-		return nil
-	}
-	// direct call
-	_, err := c.post(endpoint, evt.ToJSONDict(), nil)
-	return err
-}
-
-// Connect => start requestQueue
 func (c *ActivityWatchClient) Connect() {
-	c.requestQueue.Start()
+	if !c.requestQueue.IsAlive() {
+		c.requestQueue.Start()
+	}
 }
 
-// Disconnect => stop requestQueue
 func (c *ActivityWatchClient) Disconnect() {
 	c.requestQueue.Stop()
 	c.requestQueue.Wait()
-
-	// Recreate a fresh queue
+	// discard old thread object, create new
 	c.requestQueue = NewRequestQueue(c)
 }
 
-// WaitForStart => tries /info until success or timeout
-func (c *ActivityWatchClient) WaitForStart(timeoutSeconds int) error {
+// WaitForStart => replicates wait_for_start
+func (c *ActivityWatchClient) WaitForStart(timeout int) error {
 	start := time.Now()
 	sleepTime := 100 * time.Millisecond
-	for {
-		if time.Since(start).Seconds() > float64(timeoutSeconds) {
-			return fmt.Errorf("server at %s did not start in time", c.ServerAddress)
-		}
-		_, err := c.GetInfo()
-		if err == nil {
-			break
+	for time.Since(start).Seconds() < float64(timeout) {
+		if _, err := c.GetInfo(); err == nil {
+			return nil
 		}
 		time.Sleep(sleepTime)
 		sleepTime *= 2
 	}
-	return nil
+	return fmt.Errorf("server at %s did not start in time", c.ServerAddress)
 }
 
-// RequestQueue => simulates a background thread for retrying requests
+type QueuedRequest struct {
+	Endpoint string
+	Data     map[string]interface{}
+}
+
+type BucketReg struct {
+	ID   string
+	Type string
+}
+
 type RequestQueue struct {
-	client           *ActivityWatchClient
-	mu               sync.Mutex
-	stopped          bool
-	stopChan         chan struct{}
-	wg               sync.WaitGroup
-	connected        bool
-	attemptReconnect time.Duration
+	client *ActivityWatchClient
+
+	connected bool
+	stopChan  chan struct{}
+	wg        sync.WaitGroup
+	mu        sync.Mutex // for isAlive
+
+	registeredBuckets []BucketReg
+	attemptReconnect  time.Duration
 
 	queueMu   sync.Mutex
-	queue     []RequestQueueItem
-	buckets   []BucketRegistration
+	queue     []QueuedRequest
 	ticker    *time.Ticker
-	tickerDur time.Duration
+
+	current *QueuedRequest
 }
 
-// NewRequestQueue => constructs the queue
 func NewRequestQueue(client *ActivityWatchClient) *RequestQueue {
 	return &RequestQueue{
 		client:           client,
 		stopChan:         make(chan struct{}),
-		attemptReconnect: 10 * time.Second,
-		queue:            []RequestQueueItem{},
-		buckets:          []BucketRegistration{},
-		tickerDur:        200 * time.Millisecond,
+		registeredBuckets: []BucketReg{},
+		attemptReconnect:  10 * time.Second,
+		queue:            []QueuedRequest{},
 	}
 }
 
-// Start => spawns the goroutine
+func (rq *RequestQueue) IsAlive() bool {
+	rq.mu.Lock()
+	defer rq.mu.Unlock()
+	// if stopChan is closed or we never started?
+	return true // if we want to check a "stopped" bool
+}
+
 func (rq *RequestQueue) Start() {
-	rq.ticker = time.NewTicker(rq.tickerDur)
+	rq.mu.Lock()
+	defer rq.mu.Unlock()
+
+	// start background goroutine
 	rq.wg.Add(1)
+	rq.ticker = time.NewTicker(200 * time.Millisecond)
 	go rq.run()
 }
 
-// Stop => signals goroutine
 func (rq *RequestQueue) Stop() {
 	rq.mu.Lock()
 	defer rq.mu.Unlock()
-	if rq.stopped {
-		return
-	}
-	rq.stopped = true
 	close(rq.stopChan)
 }
 
-// Wait => blocks until goroutine ends
 func (rq *RequestQueue) Wait() {
 	rq.wg.Wait()
 }
@@ -369,14 +574,14 @@ func (rq *RequestQueue) run() {
 	for {
 		select {
 		case <-rq.stopChan:
-			rq.client.logger.Println("RequestQueue stopping.")
+			log.Println("RequestQueue stopping.")
 			rq.ticker.Stop()
 			return
 		case <-rq.ticker.C:
 			if !rq.connected {
 				rq.tryConnect()
 			} else {
-				rq.dispatchRequest()
+				rq.dispatch()
 			}
 		}
 	}
@@ -384,16 +589,16 @@ func (rq *RequestQueue) run() {
 
 func (rq *RequestQueue) tryConnect() {
 	if err := rq.createBuckets(); err != nil {
-		rq.client.logger.Printf("Not connected. Will retry in a bit: %v", err)
+		log.Printf("Not connected, will retry. Err=%v", err)
 		rq.connected = false
 	} else {
 		rq.connected = true
-		rq.client.logger.Printf("Connected. queue size=%d", len(rq.queue))
+		log.Printf("Connection established. queue size=%d", len(rq.queue))
 	}
 }
 
 func (rq *RequestQueue) createBuckets() error {
-	for _, b := range rq.buckets {
+	for _, b := range rq.registeredBuckets {
 		if err := rq.client.CreateBucket(b.ID, b.Type, false); err != nil {
 			return err
 		}
@@ -401,47 +606,41 @@ func (rq *RequestQueue) createBuckets() error {
 	return nil
 }
 
-func (rq *RequestQueue) dispatchRequest() {
+func (rq *RequestQueue) dispatch() {
 	rq.queueMu.Lock()
 	defer rq.queueMu.Unlock()
 	if len(rq.queue) == 0 {
 		return
 	}
 	item := rq.queue[0]
-	err := rq.dispatch(item)
-	if err != nil {
+	if err := rq.send(item); err != nil {
 		rq.connected = false
-		rq.client.logger.Printf("Failed dispatch => %v", err)
+		log.Printf("Failed to dispatch => %v", err)
 		time.Sleep(500 * time.Millisecond)
 		return
 	}
 	rq.queue = rq.queue[1:]
 }
 
-func (rq *RequestQueue) dispatch(item RequestQueueItem) error {
+func (rq *RequestQueue) send(item QueuedRequest) error {
 	_, err := rq.client.post(item.Endpoint, item.Data, nil)
 	return err
 }
 
-func (rq *RequestQueue) AddRequest(endpoint string, data map[string]interface{}) {
-	if endpoint == "" {
-		return
-	}
+func (rq *RequestQueue) addRequest(endpoint string, data map[string]interface{}) {
 	rq.queueMu.Lock()
 	defer rq.queueMu.Unlock()
-	rq.queue = append(rq.queue, RequestQueueItem{Endpoint: endpoint, Data: data})
+	rq.queue = append(rq.queue, QueuedRequest{Endpoint: endpoint, Data: data})
+}
+
+func (rq *RequestQueue) AddRequest(endpoint string, data map[string]interface{}) {
+	if endpoint == "" {
+		log.Println("AddRequest: endpoint is empty, ignoring.")
+		return
+	}
+	rq.addRequest(endpoint, data)
 }
 
 func (rq *RequestQueue) RegisterBucket(bucketID, eventType string) {
-	rq.buckets = append(rq.buckets, BucketRegistration{ID: bucketID, Type: eventType})
-}
-
-func (rq *RequestQueue) IsAlive() bool {
-	rq.mu.Lock()
-	defer rq.mu.Unlock()
-	return !rq.stopped
-}
-
-func (c *ActivityWatchClient) IsQueueAlive() bool {
-	return c.requestQueue.IsAlive()
+	rq.registeredBuckets = append(rq.registeredBuckets, BucketReg{ID: bucketID, Type: eventType})
 }
