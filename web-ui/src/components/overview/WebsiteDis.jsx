@@ -1,7 +1,34 @@
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
+import { useState, useEffect } from "react";
+import Axios from "axios";
 
 const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
+
+// Default data for website distribution
+// const defaultWebsiteDistribution = [
+//     { name: "Educational", value: 0 },
+//     { name: "eCommerce", value: 0 },
+//     { name: "Entertainment", value: 0 },
+//     { name: "Social Media", value: 0 }
+// ];
+
+// const [websiteDistribution, setWebsiteDistribution] = useState(defaultWebsiteDistribution);
+
+// useEffect(() => {
+//     Axios.get("http://localhost:5000/api/website-distribution")
+//         .then((res) => {
+//             // Extract the 'Category' attribute from the API response
+//             const data = res.data.map(item => ({
+//                 name: item.Category,
+//                 value: item.value // Assuming 'value' is the attribute you want to display
+//             }));
+//             setWebsiteDistribution(data);
+//         })
+//         .catch((error) => {
+//             console.error("Error fetching website distribution data:", error);
+//         });
+// }, []);
 
 const WEBSITE_DISTRIBUTION = [
     { name: "Educational", value: 4.9 },
@@ -10,7 +37,7 @@ const WEBSITE_DISTRIBUTION = [
     { name: "Social Media", value: 1.7 }
 ];
 
-const SalesChannelChart = () => {
+const WebsiteDistributionChart = () => {
     return (
         <motion.div
             className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 lg:col-span-2 border border-gray-700'
@@ -45,4 +72,5 @@ const SalesChannelChart = () => {
         </motion.div>
     );
 };
-export default SalesChannelChart;
+
+export default WebsiteDistributionChart;

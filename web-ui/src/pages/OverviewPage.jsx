@@ -7,7 +7,7 @@ import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
 import UsageOverviewChart from "../components/overview/UsageOverviewChart";
 import CategoryDistributionChart from "../components/overview/CategoryDistributionChart";
-import SalesChannelChart from "../components/overview/WebsiteDis";
+import WebsiteDistributionChart from "../components/overview/WebsiteDis";
 
 const OverviewPage = () => {
 	
@@ -60,7 +60,7 @@ const OverviewPage = () => {
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
                     <UsageOverviewChart />
                     <CategoryDistributionChart />
-                    <SalesChannelChart />
+                    <WebsiteDistributionChart />
                 </div>
             </main>
         </div>
