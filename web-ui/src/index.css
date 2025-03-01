@@ -2,14 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light mode styles */
-body {
-    background-color: white;
-    color: black;
-}
-
-/* Dark mode styles */
-.dark body {
-    background-color: black;
-    color: white;
+.dark {
+    --color-primary-bg: #1a202c;
+    --color-primary-text: #f7fafc;
+    --color-card-text-secondary: #d1d5db; 
+    /* --color-primary-dark: #646cffaa; */
+    --color-secondary: #61dafb;
+    --color-border: #4a5568;
+    /* --color-secondary-light: #61dafbaa;
+    --color-secondary-dark: #61dafbaa;     */
 }
