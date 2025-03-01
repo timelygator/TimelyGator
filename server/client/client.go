@@ -20,7 +20,7 @@ import (
 	"timelygator/server/utils/types"
 )
 
-type ActivityWatchClient struct {
+type TimelyGatorClient struct {
 	Testing         bool
 	ClientName      string
 	ClientHostname  string
@@ -34,13 +34,13 @@ type ActivityWatchClient struct {
 	requestQueue *RequestQueue
 }
 
-func NewActivityWatchClient(
+func NewTimelyGatorClient(
 	clientName string,
 	testing bool,
 	hostOverride *string,
 	portOverride *string,
 	protocol string,
-) *ActivityWatchClient {
+) *TimelyGatorClient {
 	if protocol == "" {
 		protocol = "http"
 	}
@@ -71,7 +71,7 @@ func NewActivityWatchClient(
 		fmt.Sprintf("%s-at-%s-on-%s", clientName, serverHost, serverPort),
 	)
 
-	c := &ActivityWatchClient{
+	c := &TimelyGatorClient{
 		Testing:        testing,
 		ClientName:     clientName,
 		ClientHostname: h,
@@ -84,11 +84,11 @@ func NewActivityWatchClient(
 	return c
 }
 
-func (c *ActivityWatchClient) _url(endpoint string) string {
+func (c *TimelyGatorClient) _url(endpoint string) string {
 	return fmt.Sprintf("%s/api/0/%s", c.ServerAddress, endpoint)
 }
 
-func (c *ActivityWatchClient) get(endpoint string, params map[string]string) (*http.Response, error) {
+func (c *TimelyGatorClient) get(endpoint string, params map[string]string) (*http.Response, error) {
 	url := c._url(endpoint)
 	if len(params) > 0 {
 		url = appendQuery(url, params)
@@ -104,7 +104,7 @@ func (c *ActivityWatchClient) get(endpoint string, params map[string]string) (*h
 	return resp, nil
 }
 
-func (c *ActivityWatchClient) post(
+func (c *TimelyGatorClient) post(
 	endpoint string,
 	data interface{},
 	params map[string]string,
@@ -135,7 +135,7 @@ func (c *ActivityWatchClient) post(
 	return resp, nil
 }
 
-func (c *ActivityWatchClient) deleteReq(endpoint string, data interface{}) (*http.Response, error) {
+func (c *TimelyGatorClient) deleteReq(endpoint string, data interface{}) (*http.Response, error) {
 	url := c._url(endpoint)
 	var body []byte
 	if data != nil {
@@ -171,7 +171,7 @@ func appendQuery(base string, params map[string]string) string {
 	return base[:len(base)-1]
 }
 
-func (c *ActivityWatchClient) GetInfo() (map[string]interface{}, error) {
+func (c *TimelyGatorClient) GetInfo() (map[string]interface{}, error) {
 	resp, err := c.get("info", nil)
 	if err != nil {
 		return nil, err
@@ -185,7 +185,7 @@ func (c *ActivityWatchClient) GetInfo() (map[string]interface{}, error) {
 	return result, nil
 }
 
-func (c *ActivityWatchClient) GetEvent(bucketID string, eventID int) (map[string]interface{}, error) {
+func (c *TimelyGatorClient) GetEvent(bucketID string, eventID int) (map[string]interface{}, error) {
 	endpoint := fmt.Sprintf("buckets/%s/events/%d", bucketID, eventID)
 	resp, err := c.get(endpoint, nil)
 	if err != nil {
@@ -201,7 +201,7 @@ func (c *ActivityWatchClient) GetEvent(bucketID string, eventID int) (map[string
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) GetEvents(
+func (c *TimelyGatorClient) GetEvents(
 	bucketID string,
 	limit int,
 	start, end *time.Time,
@@ -229,26 +229,26 @@ func (c *ActivityWatchClient) GetEvents(
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) InsertEvent(bucketID string, evt interface{}) error {
+func (c *TimelyGatorClient) InsertEvent(bucketID string, evt interface{}) error {
 	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
 	data := []interface{}{evt} // single event
 	_, err := c.post(endpoint, data, nil)
 	return err
 }
 
-func (c *ActivityWatchClient) InsertEvents(bucketID string, evts []interface{}) error {
+func (c *TimelyGatorClient) InsertEvents(bucketID string, evts []interface{}) error {
 	endpoint := fmt.Sprintf("buckets/%s/events", bucketID)
 	_, err := c.post(endpoint, evts, nil)
 	return err
 }
 
-func (c *ActivityWatchClient) DeleteEvent(bucketID string, eventID int) error {
+func (c *TimelyGatorClient) DeleteEvent(bucketID string, eventID int) error {
 	endpoint := fmt.Sprintf("buckets/%s/events/%d", bucketID, eventID)
 	_, err := c.deleteReq(endpoint, nil)
 	return err
 }
 
-func (c *ActivityWatchClient) GetEventCount(
+func (c *TimelyGatorClient) GetEventCount(
 	bucketID string,
 	start, end *time.Time,
 ) (int, error) {
@@ -278,7 +278,7 @@ func (c *ActivityWatchClient) GetEventCount(
 }
 
 // If queued=true, we do merging logic, else direct post
-func (c *ActivityWatchClient) Heartbeat(
+func (c *TimelyGatorClient) Heartbeat(
 	bucketID string,
 	event interface{},
 	pulseTime float64,
@@ -332,7 +332,7 @@ func (c *ActivityWatchClient) Heartbeat(
 	return err
 }
 
-func (c *ActivityWatchClient) GetBucketsMap() (map[string]interface{}, error) {
+func (c *TimelyGatorClient) GetBucketsMap() (map[string]interface{}, error) {
 	resp, err := c.get("buckets/", nil)
 	if err != nil {
 		return nil, err
@@ -345,7 +345,7 @@ func (c *ActivityWatchClient) GetBucketsMap() (map[string]interface{}, error) {
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) CreateBucket(bucketID, eventType string, queued bool) error {
+func (c *TimelyGatorClient) CreateBucket(bucketID, eventType string, queued bool) error {
 	if queued {
 		c.requestQueue.RegisterBucket(bucketID, eventType)
 		return nil
@@ -360,7 +360,7 @@ func (c *ActivityWatchClient) CreateBucket(bucketID, eventType string, queued bo
 	return err
 }
 
-func (c *ActivityWatchClient) DeleteBucket(bucketID string, force bool) error {
+func (c *TimelyGatorClient) DeleteBucket(bucketID string, force bool) error {
 	endpoint := fmt.Sprintf("buckets/%s", bucketID)
 	if force {
 		endpoint += "?force=1"
@@ -369,7 +369,7 @@ func (c *ActivityWatchClient) DeleteBucket(bucketID string, force bool) error {
 	return err
 }
 
-func (c *ActivityWatchClient) ExportAll() (map[string]interface{}, error) {
+func (c *TimelyGatorClient) ExportAll() (map[string]interface{}, error) {
 	resp, err := c.get("export", nil)
 	if err != nil {
 		return nil, err
@@ -382,7 +382,7 @@ func (c *ActivityWatchClient) ExportAll() (map[string]interface{}, error) {
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) ExportBucket(bucketID string) (map[string]interface{}, error) {
+func (c *TimelyGatorClient) ExportBucket(bucketID string) (map[string]interface{}, error) {
 	endpoint := fmt.Sprintf("buckets/%s/export", bucketID)
 	resp, err := c.get(endpoint, nil)
 	if err != nil {
@@ -396,7 +396,7 @@ func (c *ActivityWatchClient) ExportBucket(bucketID string) (map[string]interfac
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) ImportBucket(bucket map[string]interface{}) error {
+func (c *TimelyGatorClient) ImportBucket(bucket map[string]interface{}) error {
 	endpoint := "import"
 
 	bucketID, ok := bucket["id"].(string)
@@ -415,7 +415,7 @@ func (c *ActivityWatchClient) ImportBucket(bucket map[string]interface{}) error 
 }
 
 
-func (c *ActivityWatchClient) Query(
+func (c *TimelyGatorClient) Query(
 	queryStr string,
 	timeperiods [][2]time.Time,
 	name *string,
@@ -454,7 +454,7 @@ func (c *ActivityWatchClient) Query(
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) GetSetting(key *string) (map[string]interface{}, error) {
+func (c *TimelyGatorClient) GetSetting(key *string) (map[string]interface{}, error) {
 	endpoint := "settings"
 	if key != nil && *key != "" {
 		endpoint = fmt.Sprintf("settings/%s", *key)
@@ -471,19 +471,19 @@ func (c *ActivityWatchClient) GetSetting(key *string) (map[string]interface{}, e
 	return raw, nil
 }
 
-func (c *ActivityWatchClient) SetSetting(key string, value string) error {
+func (c *TimelyGatorClient) SetSetting(key string, value string) error {
 	endpoint := fmt.Sprintf("settings/%s", key)
 	_, err := c.post(endpoint, value, nil)
 	return err
 }
 
-func (c *ActivityWatchClient) Connect() {
+func (c *TimelyGatorClient) Connect() {
 	if !c.requestQueue.IsAlive() {
 		c.requestQueue.Start()
 	}
 }
 
-func (c *ActivityWatchClient) Disconnect() {
+func (c *TimelyGatorClient) Disconnect() {
 	c.requestQueue.Stop()
 	c.requestQueue.Wait()
 	// discard old thread object, create new
@@ -491,7 +491,7 @@ func (c *ActivityWatchClient) Disconnect() {
 }
 
 // WaitForStart => replicates wait_for_start
-func (c *ActivityWatchClient) WaitForStart(timeout int) error {
+func (c *TimelyGatorClient) WaitForStart(timeout int) error {
 	start := time.Now()
 	sleepTime := 100 * time.Millisecond
 	for time.Since(start).Seconds() < float64(timeout) {
@@ -515,7 +515,7 @@ type BucketReg struct {
 }
 
 type RequestQueue struct {
-	client *ActivityWatchClient
+	client *TimelyGatorClient
 
 	connected bool
 	stopChan  chan struct{}
@@ -532,7 +532,7 @@ type RequestQueue struct {
 	current *QueuedRequest
 }
 
-func NewRequestQueue(client *ActivityWatchClient) *RequestQueue {
+func NewRequestQueue(client *TimelyGatorClient) *RequestQueue {
 	return &RequestQueue{
 		client:           client,
 		stopChan:         make(chan struct{}),
