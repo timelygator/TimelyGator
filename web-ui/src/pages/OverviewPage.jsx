@@ -5,7 +5,7 @@ import Axios from "axios";
 
 import Header from "../components/common/Header";
 import StatCard from "../components/common/StatCard";
-import SalesOverviewChart from "../components/overview/UsageOverviewChart";
+import UsageOverviewChart from "../components/overview/UsageOverviewChart";
 import CategoryDistributionChart from "../components/overview/CategoryDistributionChart";
 import SalesChannelChart from "../components/overview/WebsiteDis";
 
@@ -50,7 +50,7 @@ const OverviewPage = () => {
 
                 {/* CHARTS */}
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-                    <SalesOverviewChart />
+                    <UsageOverviewChart />
                     <CategoryDistributionChart />
                     <SalesChannelChart />
                 </div>
