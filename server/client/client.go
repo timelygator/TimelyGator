@@ -67,6 +67,7 @@ func NewTimelyGatorClient(
 	}
 
 	// singleinstance
+	// TODO: error handling
 	inst, err := NewSingleInstance(
 		fmt.Sprintf("%s-at-%s-on-%s", clientName, serverHost, serverPort),
 	)
@@ -85,9 +86,10 @@ func NewTimelyGatorClient(
 }
 
 func (c *TimelyGatorClient) _url(endpoint string) string {
-	return fmt.Sprintf("%s/api/0/%s", c.ServerAddress, endpoint)
+	return fmt.Sprintf("%s/api/v1/v1/%s", c.ServerAddress, endpoint)
 }
 
+// GET request to fetch data from the server.
 func (c *TimelyGatorClient) get(endpoint string, params map[string]string) (*http.Response, error) {
 	url := c._url(endpoint)
 	if len(params) > 0 {
@@ -104,6 +106,7 @@ func (c *TimelyGatorClient) get(endpoint string, params map[string]string) (*htt
 	return resp, nil
 }
 
+// POST request to send data to the server.
 func (c *TimelyGatorClient) post(
 	endpoint string,
 	data interface{},
@@ -135,6 +138,7 @@ func (c *TimelyGatorClient) post(
 	return resp, nil
 }
 
+// DELETE request to remove data from the server.
 func (c *TimelyGatorClient) deleteReq(endpoint string, data interface{}) (*http.Response, error) {
 	url := c._url(endpoint)
 	var body []byte
@@ -171,6 +175,7 @@ func appendQuery(base string, params map[string]string) string {
 	return base[:len(base)-1]
 }
 
+// GetInfo fetches server info.
 func (c *TimelyGatorClient) GetInfo() (map[string]interface{}, error) {
 	resp, err := c.get("info", nil)
 	if err != nil {
@@ -332,6 +337,7 @@ func (c *TimelyGatorClient) Heartbeat(
 	return err
 }
 
+// GetBucketsMap fetches all bucket metadata.
 func (c *TimelyGatorClient) GetBucketsMap() (map[string]interface{}, error) {
 	resp, err := c.get("buckets/", nil)
 	if err != nil {
@@ -490,7 +496,6 @@ func (c *TimelyGatorClient) Disconnect() {
 	c.requestQueue = NewRequestQueue(c)
 }
 
-// WaitForStart => replicates wait_for_start
 func (c *TimelyGatorClient) WaitForStart(timeout int) error {
 	start := time.Now()
 	sleepTime := 100 * time.Millisecond
@@ -528,8 +533,6 @@ type RequestQueue struct {
 	queueMu   sync.Mutex
 	queue     []QueuedRequest
 	ticker    *time.Ticker
-
-	current *QueuedRequest
 }
 
 func NewRequestQueue(client *TimelyGatorClient) *RequestQueue {
