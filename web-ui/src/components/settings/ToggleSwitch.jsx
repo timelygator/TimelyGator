@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ToggleSwitch = ({ label, isOn, onToggle }) => {
+const ToggleSwitch = ({ label, isOn, onToggle, dataCy }) => {
     const [isToggled, setIsToggled] = useState(isOn);
 
     const handleToggle = () => {
@@ -12,7 +12,7 @@ const ToggleSwitch = ({ label, isOn, onToggle }) => {
         <div className='flex items-center justify-between py-3'>
             <span className='text-gray-300'>{label}</span>
             <button
-                data-cy="toggle-switch"
+                data-cy={dataCy}
                 className={`
         relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none
         ${isToggled ? "bg-indigo-600" : "bg-gray-600"}
