@@ -3,7 +3,7 @@ import { Sun, Moon } from 'lucide-react';
 
 
 const Header = ({ title }) => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
     useEffect(() => {
         if (isDarkMode) {
