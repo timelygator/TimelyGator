@@ -61,7 +61,7 @@ const TabsPage = () => {
                     name='Total Tabs'
                     icon={GalleryVerticalEnd}
                     value={TabStats.totaltabs.toLocaleString()}
-                    color='#6366F1'
+                    color='#EC4899'
                 />
                 <StatCard 
                     name='Active Tabs' 
