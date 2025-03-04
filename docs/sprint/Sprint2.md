@@ -55,10 +55,53 @@ Frontend Work Summary as mentioned in [Discussion #49](https://github.com/timely
 Backend Work Summary inlcudes completion of the following tasks,
 
 - `Client` package
-  - Implement the `Client` package to handle API requests.
+The `TimelyGatorClient` serves as the primary interface for interacting with the TimelyGator server. The following tasks were completed as part of the client implementation:
+  - **GET, POST, DELETE Requests:** Added utility methods (`get`, `post`, `deleteReq`) for interacting with the server API.
+  - **Bucket Management:**
+    - Create, delete, and manage buckets on the server.
+    - Integrated functionality to handle both queued and immediate requests.
+  - **Event Handling:**
+    - Implemented methods to retrieve, insert, and delete events from specific buckets.
+    - Added support for retrieving event counts and exporting/importing event data.
+  - **Heartbeat Functionality:**
+    - Developed `Heartbeat` method to manage activity data through server heartbeats.
+    - Included pre-merge and post-merge logic to optimize event data flow.
+  - **Query Execution:**
+    - Added `Query` method to send custom queries to the server and retrieve results.
+
 - `AFK Observer`
+The `AFKWatcher` module was developed to monitor user inactivity and send AFK status to the server through the client. The work included:
+  - **Platform Validation:** Ensured that the `AFKWatcher` only runs on supported platforms (Linux).
+  - **Signal Handling:** Added graceful shutdown capabilities using system signals (`os.Interrupt`, `syscall.SIGTERM`).
+  - **AFK Detection Loop:**
+    - Implemented the `heartbeatLoop()` to regularly check AFK status.
+    - Utilized `SecondsSinceLastInput()` to detect inactivity.
+  - **Heartbeat Event Creation:**
+    - Created `Event` objects with status (`afk` or `not-afk`) as JSON.
+    - Sent accurate heartbeat data to the server using the `client.Heartbeat()` method.
+
 - `Chrome Browser Observer`
-- Testing
+The Chrome Browser Extension for TimelyGator was developed to capture detailed browsing activity, including active tabs, URLs, and time spent on websites. The extension integrates seamlessly with the TimelyGator client to provide accurate and categorized tracking of web activity.
+  - **URL Tracking**
+     - Automatically captures the active tab's URL.
+     - Sends browsing data to the TimelyGator server at regular intervals.
+  
+  - **Tab Activity Monitoring**
+     - Detects when a tab is opened, closed, or switched.
+     - Tracks time spent on each tab and categorizes the data.
+  
+  - **Event Communication**
+     - Utilizes message passing between content scripts and the background script.
+     - Establishes a secure and efficient connection with the TimelyGator client.
+
+  - **Manifest v3 Compatibility:**
+    - Built using the latest Chrome extension guidelines and technologies.
+    - Ensures compliance with Chrome Web Store policies.
+  
+  - **Next Steps**
+    - Explore adding support for other Chromium-based browsers.
+    - Consider enhancing data privacy features (e.g., site whitelisting, data anonymization).
+    - Evaluate the feasibility of integrating with non-Chromium browsers like Firefox.
 
 ## Unit Tests
 
