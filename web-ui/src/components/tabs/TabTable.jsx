@@ -23,7 +23,6 @@ const tabData = [
 //             console.error("Error fetching tab data:", error);
 //         });
 // }, []);
-
 const TabTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredUsers, setFilteredUsers] = useState(tabData);
@@ -55,7 +54,7 @@ const TabTable = () => {
                         onChange={handleSearch}
                         data-cy="search-input"
                     />
-                    <Search className='absolute left-3 top-2.5 text-gray-400' size={18} />
+                    <Icons.Search className='absolute left-3 top-2.5 text-gray-400' size={18} />
                 </div>
             </div>
 
@@ -96,51 +95,46 @@ const TabTable = () => {
                                                 {/* Add icon here if needed */}
                                             </div>
                                         </div>
-                                        <div className='ml-4'>
-                                            <div className='text-sm font-medium text-gray-100'>{tab.website}</div>
-                                        </div>
-                                    </div>
-                                </td>
+                                    </td>
 
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <div className='text-sm text-gray-300'>{tab.name}</div>
-                                </td>
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <span
-                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                            tab.Type === "Educational"
+                                    <td className='px-6 py-4 whitespace-nowrap'>
+                                        <div className='text-sm text-gray-300'>{tab.name}</div>
+                                    </td>
+                                    <td className='px-6 py-4 whitespace-nowrap'>
+                                        <span
+                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${tab.Type === "Educational"
                                                 ? "bg-green-800 text-green-100"
                                                 : tab.Type === "Entertainment"
-                                                ? "bg-red-800 text-red-100"
-                                                : tab.Type === "Social"
-                                                ? "bg-pink-800 text-pink-100"
-                                                : tab.Type === "eCommerce"
-                                                ? "bg-yellow-800 text-yellow-100"
-                                                : "bg-gray-800 text-gray-100"
-                                        }`}
-                                    >
-                                        {tab.Type}
-                                    </span>
-                                </td>
+                                                    ? "bg-red-800 text-red-100"
+                                                    : tab.Type === "Social"
+                                                        ? "bg-pink-800 text-pink-100"
+                                                        : tab.Type === "eCommerce"
+                                                            ? "bg-yellow-800 text-yellow-100"
+                                                            : "bg-gray-800 text-gray-100"
+                                                }`}
+                                        >
+                                            {tab.Type}
+                                        </span>
+                                    </td>
 
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <span
-                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                            tab.status === "Active"
+                                    <td className='px-6 py-4 whitespace-nowrap'>
+                                        <span
+                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${tab.status === "Active"
                                                 ? "bg-green-800 text-green-100"
                                                 : "bg-red-800 text-red-100"
-                                        }`}
-                                    >
-                                        {tab.status}
-                                    </span>
-                                </td>
+                                                }`}
+                                        >
+                                            {tab.status}
+                                        </span>
+                                    </td>
 
-                                <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-                                    <button className='text-indigo-400 hover:text-indigo-300 mr-2'>Edit</button>
-                                    <button className='text-red-400 hover:text-red-300'>Delete</button>
-                                </td>
-                            </motion.tr>
-                        ))}
+                                    <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+                                        <button className='text-indigo-400 hover:text-indigo-300 mr-2'>Edit</button>
+                                        <button className='text-red-400 hover:text-red-300'>Delete</button>
+                                    </td>
+                                </motion.tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
