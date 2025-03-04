@@ -28,7 +28,7 @@ type TimelyGatorClient struct {
 	Instance        *SingleInstance
 	CommitInterval  float64
 
-	lastHeartbeat map[string]*models.Event
+	LastHeartbeat map[string]*models.Event
 
 	// queue for requests if offline
 	requestQueue *RequestQueue
@@ -79,7 +79,7 @@ func NewTimelyGatorClient(
 		ServerAddress:  serverAddress,
 		Instance:       inst,
 		CommitInterval: 60.0,
-		lastHeartbeat:  make(map[string]*models.Event),
+		LastHeartbeat:  make(map[string]*models.Event),
 	}
 	c.requestQueue = NewRequestQueue(c)
 	return c
@@ -298,7 +298,7 @@ func (c *TimelyGatorClient) Heartbeat(
 
 	if queued {
 		// Pre-merge in memory
-		last, ok := c.lastHeartbeat[bucketID]
+		last, ok := c.LastHeartbeat[bucketID]
 		var newEvent *models.Event
 		// Convert event interface{} => *models.Event if needed
 		// or just store raw?
@@ -311,7 +311,7 @@ func (c *TimelyGatorClient) Heartbeat(
 		newEvent = ev
 
 		if !ok {
-			c.lastHeartbeat[bucketID] = newEvent
+			c.LastHeartbeat[bucketID] = newEvent
 			return nil
 		}
 		merged := utils.HeartbeatMerge(*last, *newEvent, pulseTime)
@@ -320,14 +320,14 @@ func (c *TimelyGatorClient) Heartbeat(
 			if diff >= ci {
 				data := merged.ToJSONDict()
 				c.requestQueue.AddRequest(endpoint, data)
-				c.lastHeartbeat[bucketID] = newEvent
+				c.LastHeartbeat[bucketID] = newEvent
 			} else {
-				c.lastHeartbeat[bucketID] = merged
+				c.LastHeartbeat[bucketID] = merged
 			}
 		} else {
 			data := last.ToJSONDict()
 			c.requestQueue.AddRequest(endpoint, data)
-			c.lastHeartbeat[bucketID] = newEvent
+			c.LastHeartbeat[bucketID] = newEvent
 		}
 		return nil
 	}
@@ -356,6 +356,7 @@ func (c *TimelyGatorClient) CreateBucket(bucketID, eventType string, queued bool
 		c.requestQueue.RegisterBucket(bucketID, eventType)
 		return nil
 	}
+
 	endpoint := fmt.Sprintf("buckets/%s", bucketID)
 	data := map[string]interface{}{
 		"client":   c.ClientName,
@@ -363,6 +364,7 @@ func (c *TimelyGatorClient) CreateBucket(bucketID, eventType string, queued bool
 		"type":     eventType,
 	}
 	_, err := c.post(endpoint, data, nil)
+	log.Printf("BUCKET CREATED")
 	return err
 }
 
@@ -497,17 +499,31 @@ func (c *TimelyGatorClient) Disconnect() {
 }
 
 func (c *TimelyGatorClient) WaitForStart(timeout int) error {
-	start := time.Now()
-	sleepTime := 100 * time.Millisecond
-	for time.Since(start).Seconds() < float64(timeout) {
-		if _, err := c.GetInfo(); err == nil {
-			return nil
-		}
-		time.Sleep(sleepTime)
-		sleepTime *= 2
-	}
-	return fmt.Errorf("server at %s did not start in time", c.ServerAddress)
+    if timeout == 0 {
+        timeout = 10
+    }
+
+    start := time.Now()
+    sleepTime := 100 * time.Millisecond
+    maxSleepTime := 2 * time.Second // Cap max sleep time to 2 seconds
+
+    for time.Since(start).Seconds() < float64(timeout) {
+        if _, err := c.GetInfo(); err == nil {
+            log.Printf("[WaitForStart] Server at %s is ready.", c.ServerAddress)
+            return nil
+        } else {
+            log.Printf("[WaitForStart] Server not ready: %v (retrying in %s)", err, sleepTime)
+        }
+
+        time.Sleep(sleepTime)
+        if sleepTime < maxSleepTime {
+            sleepTime *= 2
+        }
+    }
+
+    return fmt.Errorf("[WaitForStart] Server at %s did not start in time", c.ServerAddress)
 }
+
 
 type QueuedRequest struct {
 	Endpoint string
