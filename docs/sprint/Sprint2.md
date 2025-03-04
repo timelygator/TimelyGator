@@ -26,7 +26,7 @@ Some of the tasks from Sprint 1 were carried over to Sprint 2. These tasks were 
 - Backend
   - Completed pending endpoints for `/heartbeat` and `/data`.
   - Ensure proper error handling and response formats.
-  
+
 ## User Stories
 
 ### Frontend
@@ -77,7 +77,65 @@ The following unit tests were written for the frontend and backend components.
 ### Backend
 
 - Unit tests for the `Client` package to ensure proper API request handling.
+
+1. **`TestGetInfo`**
+   - Verifies that `GetInfo()` correctly fetches server information and returns the expected status.
+2. **`TestGetEvent`**
+   - Tests the `GetEvent()` method to ensure the correct retrieval of a specific event by ID.
+   - Simulates a server response with event data and checks if the event ID matches.
+3. **`TestGetEvents`**
+   - Confirms that `GetEvents()` fetches a list of events with the expected length and structure.
+4. **`TestInsertEvent`**
+   - Validates that `InsertEvent()` successfully posts a single event to the server without errors.
+5. **`TestInsertEvents`**
+   - Similar to `TestInsertEvent` but for multiple events, verifying batch event insertion.
+6. **`TestDeleteEvent`**
+   - Ensures `DeleteEvent()` properly handles event deletion requests and server responses.
+7. **`TestGetEventCount`**
+   - Checks that `GetEventCount()` returns the correct number of events as indicated by the mock server.
+8. **`TestHeartbeat`**
+   - Evaluates the `Heartbeat()` method in both queued and non-queued modes.
+   - Simulates a "heartbeat received" response from the server.
+9. **`TestGetBucketsMap`**
+   - Tests the `GetBucketsMap()` method to ensure it correctly retrieves the list of buckets from the server.
+10. **`TestCreateAndDeleteBucket`**
+    - Combines testing for `CreateBucket()` and `DeleteBucket()` methods.
+    - Simulates the full lifecycle of bucket creation and deletion.
+11. **`TestExportAll`**
+    - Validates that `ExportAll()` properly fetches all export data from the server.
+12. **`TestExportBucket`**
+    - Similar to `TestExportAll`, but specific to exporting data from a single bucket.
+    - Confirms that the returned data matches the expected "bucket data" value.
+13. **`TestImportBucket`**
+    - Checks that `ImportBucket()` correctly posts import data to the server and handles the response.
+14. **`TestQuery`**
+    - Tests the `Query()` method by sending a sample query with time periods and validating the result count.
+    - Simulates a "result1" and "result2" response from the server.
+15. **`TestGetAndSetSetting`**
+    - Covers both `GetSetting()` and `SetSetting()` methods.
+    - Verifies that settings are correctly retrieved and updated.
+16. **`TestWaitForStart`**
+    - Simulates server readiness using `WaitForStart()`.
+    - Tests both immediate success and timeout scenarios.
+
 - Unit tests for `Routes` under the `api` package to validate the response format and error handling.
+
+1. **`TestGetInfo`**
+    – Verifies that GetInfo() correctly fetches server information (hostname, version, server_name) from the API.
+2. **`TestGetBuckets`**
+    – Checks that GetBuckets() returns a map with all expected buckets and proper bucket details.
+3. **`TestGetBucket`**
+    – Confirms that CreateBucket() accepts the correct payload and returns a successful response when creating a new bucket.
+4. **`TestUpdateBucket`**
+    – Validates that UpdateBucket() properly updates the bucket information and returns success status.
+5. **`TestDeleteBucket`**
+    – Ensures that DeleteBucket() with a force flag correctly deletes the specified bucket.
+6. **`TestGetEvents`**
+    – Verifies that GetEvents() returns a list of events with correct details for a given bucket.
+7. **`TestGetEvent`**
+    – Checks that ExportAll() returns all the export data, including all buckets with their associated details.
+8. **`TestExportBucket`**
+    – Confirms that ImportAll() successfully posts bucket data to the API and handles the server response.
 
 ## Tasks
 
@@ -90,18 +148,18 @@ TO get a better understanding of the user stories, their status, and people cont
     - Configure Cypress unit testing
     - Test 1:1 functionalities using Cypress
 [issue #85](https://github.com/timelygator/TimelyGator/issues/85)
-[issue #53](https://github.com/timelygator/TimelyGator/issues/53) 
+[issue #53](https://github.com/timelygator/TimelyGator/issues/53)
 [PR #72](https://github.com/timelygator/TimelyGator/pull/72)
 [PR #84](https://github.com/timelygator/TimelyGator/pull/84)
 
 2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
-    - 
+    -
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
-    - 
+    -
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
-    - 
+    -
 
 ## Conclusion
 
