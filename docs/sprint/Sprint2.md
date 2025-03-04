@@ -220,6 +220,7 @@ TO get a better understanding of the user stories, their status, and people cont
     - Implemented keyboard and mouse listeners to capture user activity contributing to AFK detection.
     - Implemented API requests for data transfer between `AFK-Observer` and `Server` through the `Client`.
     - Wrote comprehensive unit tests for `Client`.
+    - Identified issues such as empty bucket_id fields, implemented fixes to ensure accurate data persistence.
 [issue #50](https://github.com/timelygator/TimelyGator/issues/50)
 [issue #74](https://github.com/timelygator/TimelyGator/issues/74)
 [PR #77](https://github.com/timelygator/TimelyGator/pull/77)
