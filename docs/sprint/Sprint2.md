@@ -85,23 +85,15 @@ The Chrome Browser Extension for TimelyGator was developed to capture detailed b
   - **URL Tracking**
      - Automatically captures the active tab's URL.
      - Sends browsing data to the TimelyGator server at regular intervals.
-  
   - **Tab Activity Monitoring**
      - Detects when a tab is opened, closed, or switched.
      - Tracks time spent on each tab and categorizes the data.
-  
   - **Event Communication**
      - Utilizes message passing between content scripts and the background script.
-     - Establishes a secure and efficient connection with the TimelyGator client.
-
+     - Establishes a secure and efficient connection with the TimelyGator client
   - **Manifest v3 Compatibility:**
     - Built using the latest Chrome extension guidelines and technologies.
     - Ensures compliance with Chrome Web Store policies.
-  
-  - **Next Steps**
-    - Explore adding support for other Chromium-based browsers.
-    - Consider enhancing data privacy features (e.g., site whitelisting, data anonymization).
-    - Evaluate the feasibility of integrating with non-Chromium browsers like Firefox.
 
 ## Unit Tests
 
@@ -164,21 +156,21 @@ The following unit tests were written for the frontend and backend components.
 - Unit tests for `Routes` under the `api` package to validate the response format and error handling.
 
 1. **`TestGetInfo`**
-    – Verifies that GetInfo() correctly fetches server information (hostname, version, server_name) from the API.
+    – Verifies that `GetInfo()` correctly fetches server information (hostname, version, server_name) from the API.
 2. **`TestGetBuckets`**
-    – Checks that GetBuckets() returns a map with all expected buckets and proper bucket details.
+    – Checks that `GetBuckets()` returns a map with all expected buckets and proper bucket details.
 3. **`TestGetBucket`**
-    – Confirms that CreateBucket() accepts the correct payload and returns a successful response when creating a new bucket.
+    – Confirms that `CreateBucket()` accepts the correct payload and returns a successful response when creating a new bucket.
 4. **`TestUpdateBucket`**
-    – Validates that UpdateBucket() properly updates the bucket information and returns success status.
+    – Validates that `UpdateBucket()` properly updates the bucket information and returns success status.
 5. **`TestDeleteBucket`**
-    – Ensures that DeleteBucket() with a force flag correctly deletes the specified bucket.
+    – Ensures that `DeleteBucket()` with a force flag correctly deletes the specified bucket.
 6. **`TestGetEvents`**
-    – Verifies that GetEvents() returns a list of events with correct details for a given bucket.
+    – Verifies that `GetEvents()` returns a list of events with correct details for a given bucket.
 7. **`TestGetEvent`**
-    – Checks that ExportAll() returns all the export data, including all buckets with their associated details.
+    – Checks that `ExportAll()` returns all the export data, including all buckets with their associated details.
 8. **`TestExportBucket`**
-    – Confirms that ImportAll() successfully posts bucket data to the API and handles the server response.
+    – Confirms that `ImportAll()` successfully posts bucket data to the API and handles the server response.
 
 ## Tasks
 
@@ -199,7 +191,14 @@ TO get a better understanding of the user stories, their status, and people cont
     -
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
-    -
+    - Worked on the `Browser Observer` module.
+    - Created a Manifest v3 compatible Chrome extension.
+    - Configured message passing between content scripts and background script.
+    - Implemented URL tracking and tab activity monitoring.
+    - Did complete testing of the `Server` routes.
+[issue #69](https://github.com/timelygator/TimelyGator/issues/69)
+[issue #70](https://github.com/timelygator/TimelyGator/issues/70)
+[issue #71](https://github.com/timelygator/TimelyGator/issues/71)
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
     -
