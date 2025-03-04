@@ -201,7 +201,15 @@ TO get a better understanding of the user stories, their status, and people cont
 [issue #71](https://github.com/timelygator/TimelyGator/issues/71)
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
-    -
+    - Implemented a `Client` module to interact with the TimelyGator `Server`
+    - Built `AFK-Observer` which detects AFK status and sends heartbeats to the server.
+    - Implemented keyboard and mouse listeners to capture user activity contributing to AFK detection.
+    - Implemented API requests for data transfer between `AFK-Observer` and `Server` through the `Client`.
+    - Wrote comprehensive unit tests for `Client`.
+[issue #50](https://github.com/timelygator/TimelyGator/issues/50)
+[issue #74](https://github.com/timelygator/TimelyGator/issues/74)
+[PR #77](https://github.com/timelygator/TimelyGator/pull/77)
+[PR #65](https://github.com/timelygator/TimelyGator/pull/65)
 
 ## Conclusion
 
