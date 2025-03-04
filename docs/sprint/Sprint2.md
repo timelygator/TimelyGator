@@ -1,6 +1,6 @@
 # SE Project : Sprint 2
 
-TODO: Add 3 line description of sprint here
+This document contains the details of the work done in Sprint 2 of the Software Engineering Project. This sprint we focused on integrating the frontend with the backend, setting up the necessary dependencies, and writing unit tests for the frontend and backend components. The main goal was to ensure that the frontend and backend work together seamlessly.
 
 Repository Link: [Timelygator/Timelygator](https://github.com/timelygator/TimelyGator)
 Sprint2.md: [docs/sprint/sprint2.md](https://github.com/timelygator/TimelyGator/blob/main/docs/sprint2.md)
@@ -8,25 +8,31 @@ Sprint2.md: [docs/sprint/sprint2.md](https://github.com/timelygator/TimelyGator/
 Table of contents:
 
 - [SE Project : Sprint 2](#se-project--sprint-2)
+  - [Sprint 1 Rolled Over Tasks](#sprint-1-rolled-over-tasks)
+  - [User Stories](#user-stories)
   - [Unit Tests](#unit-tests)
     - [Frontend](#frontend)
     - [Backend](#backend)
   - [Tasks](#tasks)
   - [Conclusion](#conclusion)
 
+## Sprint 1 Rolled Over Tasks
 
+Some of the tasks from Sprint 1 were carried over to Sprint 2. These tasks were completed in Sprint 2.
 
-## Unit Tests
-
-List of unit tests implemented in Sprint 2:
-
-### Frontend
-## Frontend Work Summary
-As mentioned in [Discussion #49](https://github.com/timelygator/TimelyGator/discussions/49)
-### Main Goals
-- Completing Sprint 1 Tasks
+- Frontend
   - Address any pending UI/UX improvements.
   - Refactor code where necessary for better maintainability.
+- Backend
+  - Completed pending endpoints for `/heartbeat` and `/data`.
+  - Ensure proper error handling and response formats.
+  
+## User Stories
+
+### Frontend
+
+Frontend Work Summary as mentioned in [Discussion #49](https://github.com/timelygator/TimelyGator/discussions/49)
+
 - Working with APIs & Data Display
   - Fetch and display data correctly in respective fields or StatBox components.
   - Ensure proper error handling and loading states.
@@ -44,11 +50,21 @@ As mentioned in [Discussion #49](https://github.com/timelygator/TimelyGator/disc
   - Ensure consistent coding styles across the frontend.
   - Add documentation for key components and API usage.
 
-### Completed Tasks
-- Codebase cleanup carried over from Sprint 1.
-- Set up API templates to fetch data.
-- As full integration could not be reached in this sprint, API placeholders were added to respective files for future integration.
-#### Testing
+### Backend
+
+Backend Work Summary inlcudes completion of the following tasks,
+
+- `Client` package
+  - Implement the `Client` package to handle API requests.
+- `AFK Observer`
+- `Chrome Browser Observer`
+- Testing
+
+## Unit Tests
+
+The following unit tests were written for the frontend and backend components.
+
+### Frontend
 - Configured Cypress testing and created related `.cy` files to achieve 1:1 testing, covering:
   1. Mounting of all components.
   2. Sidebar collapsing and expanding behavior.
@@ -58,15 +74,10 @@ As mentioned in [Discussion #49](https://github.com/timelygator/TimelyGator/disc
   6. Toggle functionality on the settings page.
   7. Button click functionality on the settings page.
 
-### Next Steps
-- Achieve full frontend-backend integration in the next sprint.
-- Begin end-to-end (E2E) testing to ensure seamless user workflows.
-
-
-
 ### Backend
 
-
+- Unit tests for the `Client` package to ensure proper API request handling.
+- Unit tests for `Routes` under the `api` package to validate the response format and error handling.
 
 ## Tasks
 
@@ -94,3 +105,4 @@ TO get a better understanding of the user stories, their status, and people cont
 
 ## Conclusion
 
+The tasks for Sprint 2 were completed successfully. The frontend and backend were integrated, and the necessary unit tests were written. The team will now focus on achieving full integration between the observers and the web UI in the next sprint. End-to-end (E2E) testing will be conducted to ensure seamless user workflows. Documentation for the API and key components will also be written.
