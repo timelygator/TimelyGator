@@ -199,7 +199,12 @@ TO get a better understanding of the user stories, their status, and people cont
 [PR #84](https://github.com/timelygator/TimelyGator/pull/84)
 
 2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
-    -
+    - Fixed a bug where icons were not displaying
+    - Finished implementing colour theme system
+    - Fixed inconsistencies between pages 
+[issue #38](https://github.com/timelygator/TimelyGator/issues/38)
+[issue #53](https://github.com/timelygator/TimelyGator/issues/54) 
+[PR #68](https://github.com/timelygator/TimelyGator/pull/68)
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
     - Worked on the `Browser Observer` module.
