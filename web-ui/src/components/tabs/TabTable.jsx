@@ -12,8 +12,6 @@ const tabData = [
     { activityId: 5, website: "Youtube", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
 ];
 
-
-//                <  API CALLING FOR TAB TABLE TEST FORMAT >
 // const [tabData, setTabData] = useState([]);
 
 // useEffect(() => {
@@ -25,18 +23,6 @@ const tabData = [
 //             console.error("Error fetching tab data:", error);
 //         });
 // }, []);
-
-// API format that may be used:
-// [
-//     {
-//         "activityId": 1,
-//         "website": "YouTube",
-//         "name": "React tutorial",
-//         "Type": "Entertainment",
-//         "status": "Active"
-//     },
-//     ...
-// ]
 
 const TabTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -67,6 +53,7 @@ const TabTable = () => {
                         className='bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         value={searchTerm}
                         onChange={handleSearch}
+                        data-cy="search-input"
                     />
                     <Search className='absolute left-3 top-2.5 text-gray-400' size={18} />
                 </div>
