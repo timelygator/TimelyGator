@@ -257,7 +257,7 @@ var reportCmd = &cobra.Command{
 
 		// parse out categories, window, etc. 
 		windowObj, _ := periodMap["window"].(map[string]interface{})
-		// example: cat_events => parse them
+		// `ex`ample: cat_events => parse them
 		catEventsRaw, _ := windowObj["cat_events"].([]interface{})
 		// do a partial sum or display logic
 		fmt.Printf("Category events. Found %d items.\n", len(catEventsRaw))
@@ -265,6 +265,34 @@ var reportCmd = &cobra.Command{
 		return nil
 	},
 }
+
+// exportCmd => `tg-cli export`
+var exportCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export all buckets and their events",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		data, err := gClient.ExportAll()
+		if err != nil {
+			return fmt.Errorf("failed to export all data: %v", err)
+		}
+
+		log.Println("Exported Data:")
+		for bucketID, bucketData := range data {
+			log.Printf(" - Bucket ID: %s\n", bucketID)
+			if bucketInfo, ok := bucketData.(map[string]interface{}); ok {
+				events, ok := bucketInfo["events"].([]interface{})
+				if ok {
+					log.Printf("   Events Count: %d\n", len(events))
+				} else {
+					log.Println("   No events found.")
+				}
+			}
+		}
+
+		return nil
+	},
+}
+
 
 // canonicalCmd => `tg-cli canonical <hostname> [--cache] [--start] [--stop]`
 var canonicalCmd = &cobra.Command{
@@ -288,8 +316,8 @@ var canonicalCmd = &cobra.Command{
 		}
 
 		// we do something similar to CanonicalEvents( queries.DesktopQueryParams(...) )
-		bidWindow := fmt.Sprintf("tg-watcher-window_%s", hostname)
-		bidAfk := fmt.Sprintf("tg-watcher-afk_%s", hostname)
+		bidWindow := fmt.Sprintf("tg-observer-window_%s", hostname)
+		bidAfk := fmt.Sprintf("tg-observer-afk_%s", hostname)
 
 		params := &client.DesktopQueryParams{
 			QueryParams: client.QueryParams{
@@ -406,6 +434,7 @@ func init() {
 	rootCmd.AddCommand(eventsCmd)
 	rootCmd.AddCommand(queryCmd)
 	rootCmd.AddCommand(reportCmd)
+	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(canonicalCmd)
 }
 
