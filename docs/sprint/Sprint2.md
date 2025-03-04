@@ -95,6 +95,17 @@ The Chrome Browser Extension for TimelyGator was developed to capture detailed b
     - Built using the latest Chrome extension guidelines and technologies.
     - Ensures compliance with Chrome Web Store policies.
 
+- Swagger API Documentation
+  - **API Documentation:** Generated detailed documentation for the TimelyGator API using Swagger.
+    - Used the `swag` package to automatically generate API documentation.
+    - Ensured that all API endpoints, request/response formats, and error codes were documented.
+  - **API Testing:** Validated the API documentation by testing each endpoint using Swagger UI.
+    - Verified that the API responses matched the expected formats.
+    - Ensured that the API was fully functional and ready for integration with the frontend.
+  - **Postman Collection:** Created a Postman collection for testing the TimelyGator API.
+    - Included sample requests for each endpoint to facilitate testing and debugging.
+    - Ensured that the Postman collection was up-to-date with the latest API changes.
+
 ## Unit Tests
 
 The following unit tests were written for the frontend and backend components.
@@ -196,9 +207,12 @@ TO get a better understanding of the user stories, their status, and people cont
     - Configured message passing between content scripts and background script.
     - Implemented URL tracking and tab activity monitoring.
     - Did complete testing of the `Server` routes.
+    - Created a Postman collection for testing the TimelyGator API.
+    - Generated detailed API documentation using Swagger.
 [issue #69](https://github.com/timelygator/TimelyGator/issues/69)
 [issue #70](https://github.com/timelygator/TimelyGator/issues/70)
 [issue #71](https://github.com/timelygator/TimelyGator/issues/71)
+[issue #19](https://github.com/timelygator/TimelyGator/issues/19)
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
     - Implemented a `Client` module to interact with the TimelyGator `Server`
