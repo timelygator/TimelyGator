@@ -20,10 +20,11 @@ var heartbeatLock sync.Mutex
 var api API
 
 func RegisterRoutes(cfg types.Config, datastore *database.Datastore, r *mux.Router) {
-	api = API{
-		config: &cfg,
-		ds:     datastore,
-	}
+    api = API{
+        config:    &cfg,
+        ds:        datastore,
+        lastEvent: make(map[string]*models.Event),
+    }
 	r.HandleFunc("/v1/info", getInfo).Methods("GET")
 	r.HandleFunc("/v1/export", export).Methods("GET")
 	r.HandleFunc("/v1/import", importer).Methods("POST")
@@ -33,7 +34,7 @@ func RegisterRoutes(cfg types.Config, datastore *database.Datastore, r *mux.Rout
 	r.HandleFunc("/v1/buckets/{bucket_id}/events", event).Methods("GET", "POST")
 	r.HandleFunc("/v1/buckets/{bucket_id}/events/count", getCount).Methods("GET")
 	r.HandleFunc("/v1/buckets/{bucket_id}/events/{event_id}", getEvent).Methods("GET", "DELETE")
-	// r.HandleFunc("/v1/buckets/{bucket_id}/heartbeat", heartbeat).Methods("POST")
+	r.HandleFunc("/v1/buckets/{bucket_id}/heartbeat", heartbeat).Methods("POST")
 	r.HandleFunc("/v1/buckets/{bucket_id}/export", exportB).Methods("GET")
 }
 
@@ -404,69 +405,69 @@ func getEvent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// // Heartbeat godoc
-// // @Summary Send a heartbeat event
-// // @Description Send a heartbeat event for a bucket to indicate it's still active.
-// // @Tags buckets
-// // @Accept json
-// // @Produce json
-// // @Param bucket_id path string true "Bucket ID"
-// // @Param pulsetime query number true "Pulsetime in seconds"
-// // @Param body body object true "Event payload"
-// // @Success 200 {object} models.Event
-// // @Failure 400 {object} types.HTTPError
-// // @Failure 409 {object} types.HTTPError
-// // @Failure 500 {object} types.HTTPError
-// // @Router /v1/buckets/{bucket_id}/heartbeat [post]
-// func heartbeat(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != "POST" {
-// 		errors.HttpErrorString(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-// 		return
-// 	}
-// 	bucketID := mux.Vars(r)["bucket_id"]
-// 	q := r.URL.Query()
-// 	pulseStr := q.Get("pulsetime")
-// 	if pulseStr == "" {
-// 		errors.HttpErrorString(w, "Missing pulsetime", http.StatusBadRequest)
-// 		return
-// 	}
-// 	pulsetime, err := strconv.ParseFloat(pulseStr, 64)
-// 	if err != nil {
-// 		errors.HttpErrorString(w, "Invalid pulsetime param", http.StatusBadRequest)
-// 		return
-// 	}
+// Heartbeat godoc
+// @Summary Send a heartbeat event
+// @Description Send a heartbeat event for a bucket to indicate it's still active.
+// @Tags buckets
+// @Accept json
+// @Produce json
+// @Param bucket_id path string true "Bucket ID"
+// @Param pulsetime query number true "Pulsetime in seconds"
+// @Param body body object true "Event payload"
+// @Success 200 {object} models.Event
+// @Failure 400 {object} types.HTTPError
+// @Failure 409 {object} types.HTTPError
+// @Failure 500 {object} types.HTTPError
+// @Router /v1/buckets/{bucket_id}/heartbeat [post]
+func heartbeat(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		errors.HttpErrorString(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	bucketID := mux.Vars(r)["bucket_id"]
+	q := r.URL.Query()
+	pulseStr := q.Get("pulsetime")
+	if pulseStr == "" {
+		errors.HttpErrorString(w, "Missing pulsetime", http.StatusBadRequest)
+		return
+	}
+	pulsetime, err := strconv.ParseFloat(pulseStr, 64)
+	if err != nil {
+		errors.HttpErrorString(w, "Invalid pulsetime param", http.StatusBadRequest)
+		return
+	}
 
-// 	var val map[string]interface{}
-// 	if err := json.NewDecoder(r.Body).Decode(&val); err != nil {
-// 		errors.HttpError(w, err, http.StatusBadRequest)
-// 		return
-// 	}
-// 	evt, err := utils.ConvertToEvent(val)
-// 	if err != nil {
-// 		errors.HttpError(w, err, http.StatusBadRequest)
-// 		return
-// 	}
+	var val map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&val); err != nil {
+		errors.HttpError(w, err, http.StatusBadRequest)
+		return
+	}
+	evt, err := utils.ConvertToEvent(val)
+	if err != nil {
+		errors.HttpError(w, err, http.StatusBadRequest)
+		return
+	}
 
-// 	// Acquire lock
-// 	locked := make(chan struct{}, 1)
-// 	go func() {
-// 		heartbeatLock.Lock()
-// 		locked <- struct{}{}
-// 	}()
-// 	select {
-// 	case <-locked:
-// 		defer heartbeatLock.Unlock()
-// 		e, err := api.Heartbeat(bucketID, evt, pulsetime)
-// 		if err != nil {
-// 			errors.HttpError(w, err, http.StatusInternalServerError)
-// 			return
-// 		}
-// 		errors.JsonOK(w, e.ToJSONDict())
-// 	case <-time.After(1 * time.Second):
-// 		// Could not acquire lock in 1s
-// 		errors.HttpErrorString(w, "Could not acquire heartbeat lock in reasonable time", http.StatusConflict)
-// 	}
-// }
+	// Acquire lock
+	locked := make(chan struct{}, 1)
+	go func() {
+		heartbeatLock.Lock()
+		locked <- struct{}{}
+	}()
+	select {
+	case <-locked:
+		defer heartbeatLock.Unlock()
+		e, err := api.Heartbeat(bucketID, evt, pulsetime)
+		if err != nil {
+			errors.HttpError(w, err, http.StatusInternalServerError)
+			return
+		}
+		errors.JsonOK(w, e.ToJSONDict())
+	case <-time.After(1 * time.Second):
+		// Could not acquire lock in 1s
+		errors.HttpErrorString(w, "Could not acquire heartbeat lock in reasonable time", http.StatusConflict)
+	}
+}
 
 // ExportAll godoc
 // @Summary Export all buckets
