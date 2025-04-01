@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
-
 const Header = ({ title }) => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        // Retrieve the dark mode preference from localStorage
+        const savedTheme = localStorage.getItem('isDarkMode');
+        return savedTheme === 'true'; // Default to false if not set
+    });
 
     useEffect(() => {
+        // Apply the theme class to the document
         if (isDarkMode) {
             document.documentElement.classList.remove('light');
             document.documentElement.classList.add('dark');
@@ -13,6 +17,9 @@ const Header = ({ title }) => {
             document.documentElement.classList.remove('dark');
             document.documentElement.classList.add('light');
         }
+
+        // Save the dark mode preference to localStorage
+        localStorage.setItem('isDarkMode', isDarkMode);
     }, [isDarkMode]);
 
     const toggleTheme = () => {
