@@ -98,3 +98,79 @@ func main() {
         log.Fatal(err)
     }
 }
+
+func runFakeData() error {
+    now := time.Now().UTC()
+
+    // Parse or default the until date
+    var until time.Time
+    if untilFlag == "" {
+        until = now
+    } else {
+        t, err := parseDateFlag(untilFlag)
+        if err != nil {
+            return fmt.Errorf("failed to parse --until date: %w", err)
+        }
+        until = t.UTC()
+    }
+
+    // Parse or default the since date
+    var since time.Time
+    if sinceFlag == "" {
+        since = until.AddDate(0, 0, -14) // default to 14 days prior
+    } else {
+        t, err := parseDateFlag(sinceFlag)
+        if err != nil {
+            return fmt.Errorf("failed to parse --since date: %w", err)
+        }
+        since = t.UTC()
+    }
+
+    fmt.Printf("Range: %s to %s\n", since, until)
+
+    // Create the client
+    emptyString := ""
+    c := client.NewTimelyGatorClient(clientName, false, &emptyString, &emptyString, emptyString)
+
+    if err := c.CreateBucket(bucketWindow, "currentwindow", false); err != nil {
+        return fmt.Errorf("failed to create window bucket: %w", err)
+    }
+    if err := c.CreateBucket(bucketAFK, "afkstatus", false); err != nil {
+        return fmt.Errorf("failed to create AFK bucket: %w", err)
+    }
+    if err := c.CreateBucket(bucketBrowserChrome, "web.tab.current", false); err != nil {
+        return fmt.Errorf("failed to create Chrome bucket: %w", err)
+    }
+    if err := c.CreateBucket(bucketBrowserFF, "web.tab.current", false); err != nil {
+        return fmt.Errorf("failed to create Firefox bucket: %w", err)
+    }
+
+    // 2) Generate fake data
+    buckets := generateAllDays(since, until)
+
+    // 3) Insert events into DB or server
+    for bucketID, evts := range buckets {
+        for i := 0; i < len(evts); i++ {
+            evts[i].BucketID = bucketID
+        }
+
+        // Log events before inserting
+        for _, evt := range evts {
+            log.Printf("%+v\n", evt)
+        }
+
+        // Convert evts to a slice of interface{} for your InsertEvents signature
+        eventsInterface := make([]interface{}, len(evts))
+        for i, evt := range evts {
+            eventsInterface[i] = evt
+        }
+
+        if err := c.InsertEvents(bucketID, eventsInterface); err != nil {
+            return fmt.Errorf("failed to insert events to bucket %q: %w", bucketID, err)
+        }
+        fmt.Printf("Inserted %d events into bucket %s\n", len(evts), bucketID)
+    }
+
+    return nil
+}
+
