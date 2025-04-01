@@ -58,15 +58,29 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 ### Backend Tests
 
-#### API Tests
-1. **A Tests**
-   - Test rate limiting
+#### `tg-fakedata` Tests
+1. **`TestParseDateFlag`**  
+   - Verifies that `parseDateFlag()` correctly parses valid date strings into `time.Time` objects.  
+   - Ensures that invalid formats return appropriate errors.
 
-2. **B Tests**
+2. **`TestSameDay`**  
+   - Tests the `sameDay()` function to confirm it accurately detects if two timestamps fall on the same calendar day in UTC.  
+   - Validates both positive (same day) and negative (different days) scenarios.
+
+3. **`TestWeightedChoice`**  
+   - Ensures `weightedChoice()` returns items based on defined probability weights.  
+   - Performs statistical assertions over multiple iterations to check that higher-weighted items appear more frequently.
+
+4. **`TestPickDuration`**  
+   - Validates that `pickDuration()` returns a duration within an expected range when a base minute value is provided.  
+   - Tests fallback behavior with `minutes == 0`, confirming it generates durations between 5 seconds and the max allowed seconds.
+
+5. **`TestGetString`**  
+   - Confirms that `getString()` extracts string values correctly from a JSON-encoded data blob.  
+   - Ensures it returns an empty string when a key is not present in the JSON.
+
+**Chrome Extension Tests**
    - Test Chrome extension integration
-
-3. **C Tests**
-   - Test concurrent connections
 
 ## Documentation
 
