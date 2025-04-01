@@ -21,12 +21,12 @@ Table of contents:
 The following tasks from Sprint 2 were completed in Sprint 3:
 
 ### Frontend
-- T1 - Component testing left in sprint 2
-- T2 - File cleanups for beter code quality 
+- Component testing left in sprint 2
+- File cleanups for beter code quality 
 
 ### Backend
-- T1
-- T2
+- Added `browser-observer` tree to `server/observers` code. [PR #98](https://github.com/timelygator/TimelyGator/pull/98)
+- Moved all API test cases to centralized file under `routes_test.go` [PR #100](https://github.com/timelygator/TimelyGator/pull/100)
 
 ## New Functionality
 
@@ -36,8 +36,7 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 - Persistent theme changes allows user to change website aesthetics.
 
 ### Backend
-- F1
-- F2
+- Utilize `chrome.storage.sync` for persistance in configuration of browser extension.
 
 ## Testing
 
@@ -84,13 +83,8 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 ## Documentation
 
-### Component Documentation
-- X1
-- X2
-
 ### API Documentation
-- Updated Swagger documentation with new endpoints
-- Added 
+- Updated Swagger documentation with new endpoints for `heartbeat`.
 
 ## Tasks
 
@@ -108,6 +102,8 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
     - Completed Chrome extension implementation
+    - Implemented `chrome.storage.sync` API
+    - Unified BE test cases under `routes_test.go`
 
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
