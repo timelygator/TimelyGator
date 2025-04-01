@@ -31,8 +31,9 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 ## New Functionality
 
 ### Frontend
-- F1 - Started off with a bit of e2e testing and some real-time updation feature retention
-- F2 - Testing API call behaviours manually to identify trend of data fetching and amking modifcations accordingly
+- Started off with a bit of e2e testing and some real-time updation feature retention
+- Testing API call behaviours manually to identify trend of data fetching and amking modifcations accordingly
+- Persistent theme changes allows user to change website aesthetics.
 
 ### Backend
 - F1
@@ -43,8 +44,8 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 ### Frontend Tests
 
 #### Component Tests
-1. **A Tests**
-   - Test real-time data updates by rendering and appying auto refresh library
+1. **The**
+   - Test real-time data updates
 
 2. **B Tests**
    - Test WebSocket connections and API fetch behaviour
@@ -87,6 +88,8 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
     - Fixed UI/UX inconsistencies
+    - Fixed theme persistence issues
+    - added unit testing for new features
 
 
 3. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
