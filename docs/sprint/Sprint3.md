@@ -21,8 +21,8 @@ Table of contents:
 The following tasks from Sprint 2 were completed in Sprint 3:
 
 ### Frontend
-- T1
-- T2
+- T1 - Component testing left in sprint 2
+- T2 - File cleanups for beter code quality 
 
 ### Backend
 - T1
@@ -31,8 +31,8 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 ## New Functionality
 
 ### Frontend
-- F1
-- F2
+- F1 - Started off with a bit of e2e testing and some real-time updation feature retention
+- F2 - Testing API call behaviours manually to identify trend of data fetching and amking modifcations accordingly
 
 ### Backend
 - F1
@@ -44,16 +44,16 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 #### Component Tests
 1. **A Tests**
-   - Test real-time data updates
+   - Test real-time data updates by rendering and appying auto refresh library
 
 2. **B Tests**
-   - Test WebSocket connections
+   - Test WebSocket connections and API fetch behaviour
 
 3. **C Tests**
-   - Test responsive design
+   - Test responsive design and other minor UI improvements 
 
 #### End-to-End Tests
-- Complete user registration flow
+- Complete user registration flow ,some tasks will be completed in later sprint but main goal is to produce good API fetches
 
 ### Backend Tests
 
@@ -81,6 +81,8 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 1. [@PulkitGarg777](https://github.com/PulkitGarg777) # Frontend
     - Implemented real-time data updates
+    - Setup basic e2e testing files for some components
+    - API fetch behaviour testing for Tabs Table
 
 
 2. [@YashDVerma](https://github.com/YashDVerma) # Frontend
