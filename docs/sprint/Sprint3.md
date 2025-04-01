@@ -97,7 +97,9 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 
 4. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
-    - Enhanced AFK Observer
+    - Developed `tg-fakedata` to generate synthetic event data for TimelyGator
+    - Included features for simulating AFK status, window focus, and browser activity
+    - Wrote tests for `tg-fakedata`
 
 
 ## Conclusion
