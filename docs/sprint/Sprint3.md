@@ -37,6 +37,7 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 ### Backend
 - Utilize `chrome.storage.sync` for persistence in the configuration of browser extension.
+- Added `tg-faedata` synthetic sample data generation tool for TimelyGator
 
 ## Testing
 
