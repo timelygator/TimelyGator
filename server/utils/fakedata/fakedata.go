@@ -334,3 +334,37 @@ func randomEvents(start, stop time.Time, samples []sampleData, maxSecs float64) 
     }
     return results
 }
+
+func pickDuration(minutes float64, maxSecs float64) time.Duration {
+    if minutes > 0 {
+        // random factor from 0.5..2.0
+        f := 0.5 + rand.Float64()*1.5
+        return time.Duration(f * minutes * float64(time.Minute))
+    }
+    // no base duration means pick random from 5 seconds..maxSecs
+    sec := 5.0 + rand.Float64()*(maxSecs-5.0)
+    return time.Duration(sec * float64(time.Second))
+}
+
+func weightedChoice(items []sampleData) sampleData {
+    var total int
+    for _, it := range items {
+        total += it.Weight
+    }
+    r := rand.Intn(total)
+    for _, it := range items {
+        if r < it.Weight {
+            return it
+        }
+        r -= it.Weight
+    }
+    return items[len(items)-1]
+}
+
+func getString(js datatypes.JSON, key string) string {
+    // Quick helper: decode the JSON into a map to retrieve a field.
+    var m map[string]interface{}
+    _ = json.Unmarshal(js, &m)
+    val, _ := m[key].(string)
+    return val
+}
