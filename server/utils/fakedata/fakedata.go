@@ -174,3 +174,74 @@ func runFakeData() error {
     return nil
 }
 
+func parseDateFlag(val string) (time.Time, error) {
+    layout := "2006-01-02"
+    return time.Parse(layout, val)
+}
+
+// generateAllDays iterates from start to end, day by day.
+func generateAllDays(start, end time.Time) map[string][]models.Event {
+    rand.Seed(int64(start.Unix() + end.Unix())) // So consistent for same range
+
+    results := make(map[string][]models.Event)
+    for d := start; d.Before(end) || sameDay(d, end); d = d.AddDate(0, 0, 1) {
+        dayEvents := generateDay(d, end)
+        for bucketID, evts := range dayEvents {
+            results[bucketID] = append(results[bucketID], evts...)
+        }
+    }
+    return results
+}
+
+// sameDay checks if two times share the same calendar date (UTC).
+func sameDay(t1, t2 time.Time) bool {
+    y1, m1, d1 := t1.UTC().Date()
+    y2, m2, d2 := t2.UTC().Date()
+    return y1 == y2 && m1 == m2 && d1 == d2
+}
+
+// generateDay picks a random start time (08:00), random day length, and then splits in half for a “break”.
+func generateDay(day, globalEnd time.Time) map[string][]models.Event {
+    res := make(map[string][]models.Event)
+
+    start := time.Date(day.Year(), day.Month(), day.Day(), 8, 0, 0, 0, time.UTC)
+    if start.After(globalEnd) {
+        return res
+    }
+
+    isWeekday := start.Weekday() >= time.Monday && start.Weekday() <= time.Friday
+    var dayDuration time.Duration
+    if isWeekday {
+        // 5 to 10 hours
+        dayDuration = time.Duration(float64(time.Hour)*5 + rand.Float64()*float64(time.Hour)*5)
+    } else {
+        // 1 to 5 hours
+        dayDuration = time.Duration(float64(time.Hour)*1 + rand.Float64()*float64(time.Hour)*4)
+    }
+
+    stop := start.Add(dayDuration)
+    if stop.After(globalEnd) {
+        stop = globalEnd
+    }
+
+    // Break in the middle
+    breakStart := start.Add((stop.Sub(start)) / 2)
+    breakDuration := time.Duration(60+rand.Intn(60)) * time.Minute // 60-120
+    breakStop := breakStart.Add(breakDuration)
+    if breakStop.After(stop) {
+        breakStop = stop
+    }
+
+    // Activity from [start, breakStart] and [breakStop, stop + breakDuration]
+    act1 := generateActivity(start, breakStart)
+    act2 := generateActivity(breakStop, stop.Add(breakDuration))
+
+    for k, v := range act1 {
+        res[k] = append(res[k], v...)
+    }
+    for k, v := range act2 {
+        res[k] = append(res[k], v...)
+    }
+
+    return res
+}
