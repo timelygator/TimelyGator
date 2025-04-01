@@ -12,7 +12,15 @@ const tabData = [
     { id: 5, website: "YouTube", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
     
     
+    { id: 5, website: "YouTube", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
+    
+    
 ];
+
+const getIconForWebsite = (website) => {
+    const normalizedWebsite = website.charAt(0).toUpperCase() + website.slice(1).toLowerCase().replace(/\s+/g, '');
+    return Icons[normalizedWebsite] || Icons.Globe; // Default to Globe icon if no mapping found
+};
 
 const getIconForWebsite = (website) => {
     const normalizedWebsite = website.charAt(0).toUpperCase() + website.slice(1).toLowerCase().replace(/\s+/g, '');
@@ -34,21 +42,22 @@ const TabTable = () => {
 
     return (
         <motion.div
-            className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700'
+            className='bg-backgroundSecondary bg-opacity-100 backdrop-blur-md shadow-lg rounded-xl p-6 border border-border'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
         >
             <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-xl font-semibold text-gray-100'>Tabs</h2>
+                <h2 className='text-xl font-semibold text-text'>Tabs</h2>
                 <div className='relative'>
                     <input
                         type='text'
                         placeholder='Search tabs...'
-                        className='bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        className='bg-actionDefault text-text placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
                         value={searchTerm}
                         onChange={handleSearch}
                     />
+                    <Icons.Search className='absolute left-3 top-2.5 text-gray-400' size={18} />
                     <Icons.Search className='absolute left-3 top-2.5 text-gray-400' size={18} />
                 </div>
             </div>
@@ -57,19 +66,19 @@ const TabTable = () => {
                 <table className='min-w-full divide-y divide-gray-700'>
                     <thead>
                         <tr>
-                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+                            <th className='px-6 py-3 text-left text-xs font-medium text-cardTextHeading uppercase tracking-wider'>
                                 Website
                             </th>
-                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+                            <th className='px-6 py-3 text-left text-xs font-medium text-cardTextHeading uppercase tracking-wider'>
                                 Name
                             </th>
-                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+                            <th className='px-6 py-3 text-left text-xs font-medium text-cardTextHeading uppercase tracking-wider'>
                                 Type
                             </th>
-                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+                            <th className='px-6 py-3 text-left text-xs font-medium text-cardTextHeading uppercase tracking-wider'>
                                 Status
                             </th>
-                            <th className='px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider'>
+                            <th className='px-6 py-3 text-left text-xs font-medium text-cardTextHeading uppercase tracking-wider'>
                                 Actions
                             </th>
                         </tr>
@@ -135,10 +144,18 @@ const TabTable = () => {
                                 </motion.tr>
                             );
                         })}
+                                    <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
+                                        <button className='text-indigo-400 hover:text-indigo-300 mr-2'>Edit</button>
+                                        <button className='text-red-400 hover:text-red-300'>Delete</button>
+                                    </td>
+                                </motion.tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
         </motion.div>
     );
 };
+
 export default TabTable;

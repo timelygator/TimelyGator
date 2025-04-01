@@ -2,14 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light mode styles */
-body {
-    background-color: white;
-    color: black;
+.light {
+    --color-primary-bg: #ffffff;
+    --color-secondary-bg: #f7fafc; 
+    --color-primary-text: #1a202c;
+    --color-card-text-heading: #2d3748;
+    --color-card-text: #4a5568;
+    --color-border: #e2e8f0;
+    --color-action-default: #e2e8f0; 
+    --color-action-hover: #cbd5e0; 
+    --color-action-toggle-selected: #3182ce;
+    --color-action-toggle-unselected: #e2e8f0;
+    --color-button-default-accent1: #3182ce;
+    --color-button-hover-accent1: #2b6cb0;
 }
 
-/* Dark mode styles */
-.dark body {
-    background-color: black;
-    color: white;
+.dark {
+    --color-primary-bg: #1a202c;
+    --color-secondary-bg: #1f2937; 
+    --color-primary-text: #f7fafc;
+    --color-card-text-heading: #9ca3af;
+    --color-card-text: #d1d5db;
+    --color-border: #4a5568;
+    --color-action-default: #374151; 
+    --color-action-hover: #4b5563;
+    --color-action-toggle-selected: #4f46e5;
+    --color-action-toggle-unselected: #4b5563;
+    --color-button-default-accent1: #4f46e5;
+    --color-button-hover-accent1: #4338ca; 
+    
+    
 }
+
+   
+
