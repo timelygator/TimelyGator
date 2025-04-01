@@ -245,3 +245,92 @@ func generateDay(day, globalEnd time.Time) map[string][]models.Event {
 
     return res
 }
+
+// generateActivity builds AFK events, window events, browser events.
+func generateActivity(start, end time.Time) map[string][]models.Event {
+    res := make(map[string][]models.Event)
+    if end.Before(start) {
+        return res
+    }
+
+    // Generate AFK
+    afkEvents := randomEvents(start, end, sampleDataAFK, 120*60)
+    var windowEvents []models.Event
+    var chromeEvents []models.Event
+    var firefoxEvents []models.Event
+
+    // For each non-afk chunk, generate window events
+    for _, e := range afkEvents {
+        status := getString(e.Data, "status")
+        if status == "not-afk" {
+            ts := e.Timestamp
+            evEnd := ts.Add(e.Duration)
+            evs := randomEvents(ts, evEnd, sampleDataWindow, 120*60)
+            windowEvents = append(windowEvents, evs...)
+        }
+    }
+
+    // For each window event that is Chrome/Firefox, generate tab events
+    for _, w := range windowEvents {
+        app := strings.ToLower(getString(w.Data, "app"))
+        evEnd := w.Timestamp.Add(w.Duration)
+        switch app {
+        case "chrome":
+            chromeEvents = append(chromeEvents, randomEvents(w.Timestamp, evEnd, sampleDataBrowser, 120*60)...)
+        case "firefox":
+            firefoxEvents = append(firefoxEvents, randomEvents(w.Timestamp, evEnd, sampleDataBrowser, 120*60)...)
+        }
+    }
+
+    res[bucketAFK] = afkEvents
+    res[bucketWindow] = windowEvents
+    res[bucketBrowserChrome] = chromeEvents
+    res[bucketBrowserFF] = firefoxEvents
+
+    return res
+}
+
+// randomEvents uses weightedChoice on the given sample data to build consecutive events up to [stop].
+func randomEvents(start, stop time.Time, samples []sampleData, maxSecs float64) []models.Event {
+    var results []models.Event
+    ts := start
+
+    for ts.Before(stop) {
+        s := weightedChoice(samples)
+        d := pickDuration(s.Minutes, maxSecs)
+        evEnd := ts.Add(d)
+        if evEnd.After(stop) {
+            evEnd = stop
+        }
+        dur := evEnd.Sub(ts)
+        if dur <= 0 {
+            break
+        }
+
+        // Build the data as a map, then encode to JSON
+        dataMap := map[string]interface{}{}
+        if s.App != "" {
+            dataMap["app"] = s.App
+        }
+        if s.Title != "" {
+            dataMap["title"] = s.Title
+        }
+        if s.Status != "" {
+            dataMap["status"] = s.Status
+        }
+        if s.URL != "" {
+            dataMap["url"] = s.URL
+        }
+        jsonData, _ := json.Marshal(dataMap)
+
+        e := models.Event{
+            Timestamp: ts,
+            Duration:  dur,
+            Data:      datatypes.JSON(jsonData),
+        }
+        results = append(results, e)
+
+        ts = evEnd
+    }
+    return results
+}
