@@ -44,13 +44,13 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 ### Frontend Tests
 
 #### Component Tests
-1. **The**
+1. **Real time updation testing**
    - Test real-time data updates
 
-2. **B Tests**
+2. **API behaviour analysis**
    - Test WebSocket connections and API fetch behaviour
 
-3. **C Tests**
+3. **UI Improvements**
    - Test responsive design and other minor UI improvements 
 
 #### End-to-End Tests
