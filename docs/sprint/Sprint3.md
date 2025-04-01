@@ -22,7 +22,7 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 ### Frontend
 - Component testing left in sprint 2
-- File cleanups for beter code quality 
+- File cleanups for better code quality 
 
 ### Backend
 - Added `browser-observer` tree to `server/observers` code. [PR #98](https://github.com/timelygator/TimelyGator/pull/98)
@@ -32,11 +32,11 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 ### Frontend
 - Started off with a bit of e2e testing and some real-time updation feature retention
-- Testing API call behaviours manually to identify trend of data fetching and amking modifcations accordingly
+- Testing API call behaviours manually to identify trends of data fetching and making modifications accordingly
 - Persistent theme changes allows user to change website aesthetics.
 
 ### Backend
-- Utilize `chrome.storage.sync` for persistance in configuration of browser extension.
+- Utilize `chrome.storage.sync` for persistence in the configuration of browser extension.
 
 ## Testing
 
@@ -53,7 +53,7 @@ The following tasks from Sprint 2 were completed in Sprint 3:
    - Test responsive design and other minor UI improvements 
 
 #### End-to-End Tests
-- Complete user registration flow ,some tasks will be completed in later sprint but main goal is to produce good API fetches
+- Complete user registration flow , some tasks will be completed in later sprint but main goal is to produce good API fetches
 
 ### Backend Tests
 
@@ -72,7 +72,7 @@ The following tasks from Sprint 2 were completed in Sprint 3:
 
 4. **`TestPickDuration`**  
    - Validates that `pickDuration()` returns a duration within an expected range when a base minute value is provided.  
-   - Tests fallback behavior with `minutes == 0`, confirming it generates durations between 5 seconds and the max allowed seconds.
+   - Tests fallback behaviour with `minutes == 0`, confirming it generates durations between 5 seconds and the max allowed seconds.
 
 5. **`TestGetString`**  
    - Confirms that `getString()` extracts string values correctly from a JSON-encoded data blob.  
