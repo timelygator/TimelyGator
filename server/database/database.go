@@ -204,8 +204,8 @@ func (b *Bucket) Get(limit int, starttime, endtime *time.Time) ([]*models.Event,
 	}
 
 	// Build the base query filtering on bucket_id
-	dbq := b.ds.db.Model(&models.Event{}).
-		Where("bucket_id = ?", b.bucketID)
+	dbq := b.ds.db.Debug().Model(&models.Event{}).
+    	Where("bucket_id = ?", b.bucketID)
 
 	// If start/end time are provided, filter by them
 	if starttime != nil && !starttime.IsZero() && endtime != nil && !endtime.IsZero() {
@@ -245,6 +245,22 @@ func (b *Bucket) GetEventCount(starttime, endtime *time.Time) (int, error) {
 		return 0, err
 	}
 	return int(count), nil
+}
+
+// currently not in use
+// GetLastEvent returns the event for this bucket with the highest timestamp 
+// that is less than or equal to the given cutoff time.
+func (b *Bucket) GetLastEvent(before time.Time) (*models.Event, error) {
+	var evt models.Event
+	// Query for events in this bucket that occurred before (or at) 'before'
+	if err := b.ds.db.
+		Model(&models.Event{}).
+		Where("bucket_id = ? AND timestamp <= ?", b.bucketID, before).
+		Order("timestamp DESC").
+		First(&evt).Error; err != nil {
+		return nil, err
+	}
+	return &evt, nil
 }
 
 // Insert can handle single or multiple events

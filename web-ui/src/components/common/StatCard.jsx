@@ -1,19 +1,26 @@
-import { motion } from "framer-motion";
+import React from 'react';
+import { motion } from 'framer-motion';
 
 const StatCard = ({ name, icon: Icon, value, color }) => {
-	return (
-		<motion.div
-			className='bg-gray-800 bg-opacity-50 backdrop-blur-md overflow-hidden shadow-lg rounded-xl border border-gray-700'
-			whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)" }}
-		>
-			<div className='px-4 py-5 sm:p-6'>
-				<span className='flex items-center text-sm font-medium text-gray-400'>
-					<Icon size={20} className='mr-2' style={{ color }} />
-					{name}
-				</span>
-				<p className='mt-1 text-3xl font-semibold text-gray-100'>{value}</p>
-			</div>
-		</motion.div>
-	);
+    return (
+        <motion.div
+            className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700'
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            data-cy={`stat-card-${name.toLowerCase().replace(/\s+/g, '-')}`}
+        >
+            <div className='flex items-center justify-between'>
+                <div>
+                    <h3 className='text-sm font-medium text-gray-400'>{name}</h3>
+                    <p className='mt-1 text-3xl font-semibold text-gray-100'>{value}</p>
+                </div>
+                <div className='p-3 rounded-full' style={{ backgroundColor: color }}>
+                    <Icon size={23} className='text-white' /> {/* Set the size prop to 32 */}
+                </div>
+            </div>
+        </motion.div>
+    );
 };
+
 export default StatCard;
