@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"encoding/json"
 
 	"timelygator/server/database"
 	"timelygator/server/database/models"
@@ -14,8 +15,9 @@ import (
 )
 
 type API struct {
-	config *types.Config
-	ds     *database.Datastore
+    config   *types.Config
+    ds       *database.Datastore
+    lastEvent map[string]*models.Event
 }
 
 // checkBucketExists is a helper that checks if a bucket is known, else returns NotFound.
@@ -287,6 +289,7 @@ func (s *API) GetEvents(bucketID string, limit int, start, end *time.Time) ([]ma
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("Number of events: %d", len(events))
 	var results []map[string]interface{}
 	for _, e := range events {
 		results = append(results, e.ToJSONDict())
@@ -301,6 +304,9 @@ func (s *API) CreateEvents(bucketID string, events []*models.Event) (*models.Eve
 	bucket, err := s.ds.GetBucket(bucketID)
 	if err != nil {
 		return nil, err
+	}
+	for _, event := range events {
+		event.BucketID = bucketID
 	}
 	insertedEvent, err := bucket.Insert(events) // Insert(interface{})
 	if err != nil {
@@ -333,69 +339,99 @@ func (s *API) DeleteEvent(bucketID string, eventID int) (bool, error) {
 	return bucket.Delete(eventID)
 }
 
-// func (s *API) Heartbeat(bucketID string, heartbeat *models.Event, pulseTime float64) (*models.Event, error) {
-// 	if err := s.checkBucketExists(bucketID); err != nil {
-// 		return nil, err
-// 	}
-// 	log.Printf("Received heartbeat in bucket '%s'\n\ttimestamp: %v, duration: %v, pulsetime: %f\n\tdata: %+v\n",
-// 		bucketID, heartbeat.Timestamp, heartbeat.Duration, pulseTime, heartbeat.Data)
+// Heartbeat merges consecutive heartbeats in memory or inserts new if needed.
+func (s *API) Heartbeat(bucketID string, heartbeat *models.Event, pulseTime float64) (*models.Event, error) {
+	if err := s.checkBucketExists(bucketID); err != nil {
+		return nil, err
+	}
+	log.Printf("Received heartbeat in bucket '%s'\n\ttimestamp: %v, duration: %v, pulsetime: %f\n\tdata: %+v\n",
+		bucketID, heartbeat.Timestamp, heartbeat.Duration, pulseTime, heartbeat.Data)
 
-// 	// Attempt to retrieve the last event from memory
-// 	var lastEvent *models.Event
-// 	lastEvent = s.lastEvent[bucketID]
-// 	if lastEvent == nil {
-// 		// Or load from DB if not in memory
-// 		bucket, err := s.ds.GetBucket(bucketID)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		evts, err := bucket.Get(1, nil, nil)
-// 		if err == nil && len(evts) > 0 {
-// 			lastEvent = evts[0]
-// 		}
-// 	}
+	var lastEvent *models.Event
+	// Try to get the last event from memory first.
+	lastEvent = s.lastEvent[bucketID]
+	if lastEvent == nil {
+		// Load the last event from DB that occurred at or before the heartbeat's timestamp.
+		bucket, err := s.ds.GetBucket(bucketID)
+		if err != nil {
+			return nil, err
+		}
+		lastEvent, err = bucket.GetLastEvent(heartbeat.Timestamp)
+		if err != nil {
+			// Log if no previous event found, but that's not fatal.
+			log.Printf("No previous event found for bucket '%s' before heartbeat timestamp %v: %v", bucketID, heartbeat.Timestamp, err)
+		}
+	}
 
-// 	if lastEvent != nil {
-// 		// Compare JSON data by unmarshal & compare maps
-// 		if lastEvent.DataEqualEvent(heartbeat) {
-// 			// Merge
-// 			merged := transform.HeartbeatMerge(*lastEvent, *heartbeat, pulseTime)
-// 			if merged != nil {
-// 				log.Printf("Merging heartbeat in bucket '%s'\n", bucketID)
-// 				s.lastEvent[bucketID] = merged
-// 				bucket, err := s.ds.GetBucket(bucketID)
-// 				if err != nil {
-// 					return nil, err
-// 				}
-// 				if err := bucket.ReplaceLast(merged); err != nil {
-// 					return nil, err
-// 				}
-// 				return merged, nil
-// 			}
-// 			log.Printf("Heartbeat outside pulse window, inserting new event. (bucket: %s)\n", bucketID)
-// 		} else {
-// 			log.Printf("Heartbeat data differs, inserting new event. (bucket: %s)\n", bucketID)
-// 		}
-// 	} else {
-// 		log.Printf("Received heartbeat, but bucket was empty, inserting new event. (bucket: %s)\n", bucketID)
-// 	}
+	if lastEvent != nil {
+		if lastEvent.DataEqualEvent(heartbeat) {
+			// Attempt to merge heartbeat with the last event.
+			merged := utils.HeartbeatMerge(*lastEvent, *heartbeat, pulseTime)
+			if merged != nil {
+				log.Printf("Merging heartbeat in bucket '%s'\n", bucketID)
+				s.lastEvent[bucketID] = merged
 
-// 	// Insert as new event
-// 	bucket, err := s.ds.GetBucket(bucketID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	_, insertErr := bucket.Insert([]*models.Event{heartbeat})
-// 	if insertErr != nil {
-// 		return nil, insertErr
-// 	}
-// 	s.lastEvent[bucketID] = heartbeat
-// 	return heartbeat, nil
-// }
+				// Update the last event in the DB.
+				bucket, err := s.ds.GetBucket(bucketID)
+				if err != nil {
+					return nil, err
+				}
+				if err := bucket.ReplaceLast(merged); err != nil {
+					return nil, err
+				}
+				return merged, nil
+			}
+			log.Printf("Heartbeat outside pulse window, inserting new event. (bucket: %s)\n", bucketID)
+		} else {
+			log.Printf("Heartbeat data differs, inserting new event. (bucket: %s)\n", bucketID)
+		}
+	} else {
+		log.Printf("No prior event found for bucket '%s', inserting new event.\n", bucketID)
+	}
 
-// MapToEvent is a helper to create an Event from a map[string]interface{}.
+	// Insert heartbeat as a new event.
+	bucket, err := s.ds.GetBucket(bucketID)
+	if err != nil {
+		return nil, err
+	}
+	heartbeat.BucketID = bucketID
+	if _, insertErr := bucket.Insert([]*models.Event{heartbeat}); insertErr != nil {
+		return nil, insertErr
+	}
+	s.lastEvent[bucketID] = heartbeat
+	return heartbeat, nil
+}
+
+
+// MapToEvent is a helper to create an Event from map[string]interface{}.
 func MapToEvent(m map[string]interface{}) *models.Event {
-	evt := &models.Event{}
-	// Fill in evt from m as needed
-	return evt
+    evt := &models.Event{}
+
+    // If “id” is present:
+    if idVal, ok := m["id"].(float64); ok {
+        evt.ID = uint(idVal)
+    }
+
+    // If “timestamp” is a string:
+    if tsStr, ok := m["timestamp"].(string); ok {
+        t, err := time.Parse(time.RFC3339, tsStr)
+        if err == nil {
+            evt.Timestamp = t
+        }
+    }
+
+    // If “duration” is a float => interpret as seconds
+    if durVal, ok := m["duration"].(float64); ok {
+        evt.Duration = time.Duration(durVal * float64(time.Second))
+    }
+
+    // If “data” is a map => marshal to JSON
+    if dataVal, ok := m["data"].(map[string]interface{}); ok {
+        b, err := json.Marshal(dataVal)
+        if err == nil {
+            evt.Data = b
+        }
+    }
+
+    return evt
 }

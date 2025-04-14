@@ -17,9 +17,12 @@ const Profile = () => {
 				</div>
 			</div>
 
-			<button className='bg-buttonDefaultAccent1 hover:bg-buttonHoverAccent1 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto'>
-				Edit Profile
-			</button>
+<button
+    className='bg-buttonDefaultAccent1 hover:bg-buttonHoverAccent1 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto'
+    data-cy="edit-profile-button"
+>
+    Edit Profile
+</button>
 		</SettingSection>
 	);
 };
