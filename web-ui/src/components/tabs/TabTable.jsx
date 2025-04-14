@@ -1,15 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
+// import Axios from "axios";
 
 // Add API data below in tabData
 const tabData = [
-    { id: 1, website: "YouTube", name: "React tutorial", Type: "Entertainment", status: "Active" },
-    { id: 2, website: "YouTube", name: "Git tutorial", Type: "Entertainment", status: "Active" },
-    { id: 3, website: "Github", name: "Github/PulkitGarg777", Type: "Educational", status: "Inactive" },
-    { id: 4, website: "Instagram", name: "Instagram.com", Type: "Social", status: "Active" },
-    { id: 5, website: "Youtube", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
+    { activityId: 1, website: "YouTube", name: "React tutorial", Type: "Entertainment", status: "Active" },
+    { activityId: 2, website: "YouTube", name: "Git tutorial", Type: "Entertainment", status: "Active" },
+    { activityId: 3, website: "Github", name: "Github/PulkitGarg777", Type: "Educational", status: "Inactive" },
+    { activityId: 4, website: "Instagram", name: "Instagram.com", Type: "Social", status: "Active" },
+    { activityId: 5, website: "Youtube", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
 ];
+
+
+//                <  API CALLING FOR TAB TABLE TEST FORMAT >
+// const [tabData, setTabData] = useState([]);
+
+// useEffect(() => {
+//     Axios.get("http://localhost:5000/api/tabs")
+//         .then((res) => {
+//             setTabData(res.data);
+//         })
+//         .catch((error) => {
+//             console.error("Error fetching tab data:", error);
+//         });
+// }, []);
+
+// API format that may be used:
+// [
+//     {
+//         "activityId": 1,
+//         "website": "YouTube",
+//         "name": "React tutorial",
+//         "Type": "Entertainment",
+//         "status": "Active"
+//     },
+//     ...
+// ]
 
 const TabTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -70,7 +97,7 @@ const TabTable = () => {
                     <tbody className='divide-y divide-gray-700'>
                         {filteredUsers.map((tab) => (
                             <motion.tr
-                                key={tab.id}
+                                key={tab.activityId}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}
@@ -79,7 +106,7 @@ const TabTable = () => {
                                     <div className='flex items-center'>
                                         <div className='flex-shrink-0 h-10 w-10'>
                                             <div className='h-10 w-10 bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold'>
-                                                {}
+                                                {/* Add icon here if needed */}
                                             </div>
                                         </div>
                                         <div className='ml-4'>
@@ -133,4 +160,5 @@ const TabTable = () => {
         </motion.div>
     );
 };
+
 export default TabTable;
