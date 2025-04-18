@@ -89,7 +89,8 @@ func (w *AFKWatcher) heartbeatLoop() {
         }
 
         now := time.Now().UTC()
-        secondsSinceInput := SecondsSinceLastInput() // Assume this is implemented for Linux
+        secondsSinceInput := SecondsSinceLastInput()
+        // compute the last‐input time by subtracting secondsSinceInput
         lastInput := now.Add(-time.Duration(secondsSinceInput * float64(time.Second)))
         if w.verbose {
             log.Printf("Seconds since last input: %.2f\n", secondsSinceInput)
@@ -138,7 +139,7 @@ func (w *AFKWatcher) ping(afk bool, timestamp time.Time, durationSeconds float64
 
     ev := &models.Event{
         Timestamp: timestamp,
-        Duration:  time.Duration(durationSeconds * float64(time.Second)),
+        Duration:  durationSeconds,
         Data:      datatypes.JSON(rawJSON),
     }
 

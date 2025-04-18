@@ -60,7 +60,7 @@ func (s *API) GetBuckets() (map[string]map[string]interface{}, error) {
 		}
 		if len(lastEvents) > 0 {
 			lastEvent := lastEvents[0]
-			endTime := lastEvent.Timestamp.Add(lastEvent.Duration)
+			endTime := lastEvent.Timestamp.Add(time.Duration(lastEvent.Duration * float64(time.Second)))
 			bMeta["last_updated"] = endTime.Format(time.RFC3339)
 		}
 	}
@@ -420,10 +420,10 @@ func MapToEvent(m map[string]interface{}) *models.Event {
         }
     }
 
-    // If “duration” is a float => interpret as seconds
-    if durVal, ok := m["duration"].(float64); ok {
-        evt.Duration = time.Duration(durVal * float64(time.Second))
-    }
+	// If “duration” is a float => interpret as seconds
+	if durVal, ok := m["duration"].(float64); ok {
+		evt.Duration = durVal  // already in seconds
+	}
 
     // If “data” is a map => marshal to JSON
     if dataVal, ok := m["data"].(map[string]interface{}); ok {
