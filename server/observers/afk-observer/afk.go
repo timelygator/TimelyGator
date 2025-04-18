@@ -138,7 +138,7 @@ func (w *AFKWatcher) ping(afk bool, timestamp time.Time, durationSeconds float64
 
     ev := &models.Event{
         Timestamp: timestamp,
-        Duration:  time.Duration(durationSeconds * float64(time.Second)),
+        Duration:  durationSeconds,
         Data:      datatypes.JSON(rawJSON),
     }
 

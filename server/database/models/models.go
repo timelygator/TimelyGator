@@ -20,7 +20,7 @@ type Event struct {
 	ID        uint           `gorm:"primaryKey;autoIncrement" json:"id"`
 	BucketID  string         `gorm:"index" json:"bucket_id"`
 	Timestamp time.Time      `gorm:"not null;type:timestamp" json:"timestamp"`
-	Duration  time.Duration  `gorm:"not null" json:"duration"`
+	Duration  float64  		 `gorm:"not null;type:real"      json:"duration"`
 	Data      datatypes.JSON `gorm:"type:json" json:"data"`
 }
 
@@ -64,10 +64,18 @@ func NewEvent(
 		jsonData = b
 	}
 
+	var dSeconds float64
+	switch v := duration.(type) {
+	case time.Duration:   dSeconds = v.Seconds()
+	case float64:         dSeconds = v
+	default:
+		log.Fatalf("invalid duration type %T, want time.Duration or float64", v)
+	}
+
 	return &Event{
 		ID:        id,
 		Timestamp: timestamp.(time.Time),
-		Duration:  parseDuration(duration),
+		Duration:  dSeconds,
 		Data:      jsonData,
 	}
 }
@@ -99,20 +107,6 @@ func timestampParse(tsIn ConvertibleTimestamp) time.Time {
 	return ts
 }
 
-// parseDuration converts a float64 or time.Duration to time.Duration.
-func parseDuration(dur Duration) time.Duration {
-	switch v := dur.(type) {
-	case time.Duration:
-		return v
-	case float64:
-		// interpret as "seconds"
-		return time.Duration(v * float64(time.Second))
-	default:
-		log.Fatalf("Couldn't parse duration of invalid type %T", v)
-	}
-	return 0
-}
-
 // ToJSONDict merges the event's Data JSON into a map and adds "id", "timestamp", "duration".
 func (e *Event) ToJSONDict() map[string]interface{} {
 	// Unmarshal e.Data (datatypes.JSON) into a map.
@@ -129,7 +123,7 @@ func (e *Event) ToJSONDict() map[string]interface{} {
 	}
 	jsonData["id"] = e.ID
 	jsonData["timestamp"] = e.Timestamp.Format(time.RFC3339)
-	jsonData["duration"] = e.Duration.Seconds()
+	jsonData["duration"] = e.Duration
 	return jsonData
 }
 
