@@ -109,7 +109,7 @@ func ConvertToEvent(m map[string]interface{}) (*models.Event, error) {
 }
 
 // HeartbeatMerge merges two consecutive heartbeats (same Data) if they fall
-// within the pulsetime window. Durations are in seconds.
+// within the pulsetime window. Durations are stored as float64 seconds.
 func HeartbeatMerge(lastEvent, heartbeat models.Event, pulsetime float64) *models.Event {
     // Only merge if the data payload is identical
     if !lastEvent.DataEqualEvent(&heartbeat) {
@@ -117,23 +117,23 @@ func HeartbeatMerge(lastEvent, heartbeat models.Event, pulsetime float64) *model
     }
 
     // Compute when the “pulse window” ends:
-    //   lastEvent.Timestamp + lastEvent.Duration + pulsetime
+    //    windowEnd = lastEvent.Timestamp + lastEvent.Duration + pulsetime
     windowEnd := lastEvent.Timestamp.
         Add(time.Duration(lastEvent.Duration * float64(time.Second))).
         Add(time.Duration(pulsetime * float64(time.Second)))
 
-    // If the new heartbeat arrives after the lastEvent, but before windowEnd, we can merge.
+    // If this heartbeat arrives after the lastEvent, but before windowEnd, we merge
     if lastEvent.Timestamp.Before(heartbeat.Timestamp) && heartbeat.Timestamp.Before(windowEnd) {
-        // Compute total span in seconds:
+        // Calculate the total span in seconds:
         spanSeconds := heartbeat.Timestamp.Sub(lastEvent.Timestamp).Seconds() + heartbeat.Duration
 
-        // Extend lastEvent.Duration to the maximum observed span
+        // Extend lastEvent.Duration if we’ve observed a longer span
         if spanSeconds > lastEvent.Duration {
             lastEvent.Duration = spanSeconds
         }
         return &lastEvent
     }
 
-    // Otherwise, don’t merge
+    // Otherwise, do not merge
     return nil
 }
