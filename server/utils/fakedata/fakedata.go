@@ -264,7 +264,7 @@ func generateActivity(start, end time.Time) map[string][]models.Event {
         status := getString(e.Data, "status")
         if status == "not-afk" {
             ts := e.Timestamp
-            evEnd := ts.Add(e.Duration)
+            evEnd := ts.Add(time.Duration(e.Duration * float64(time.Second)))
             evs := randomEvents(ts, evEnd, sampleDataWindow, 120*60)
             windowEvents = append(windowEvents, evs...)
         }
@@ -273,7 +273,7 @@ func generateActivity(start, end time.Time) map[string][]models.Event {
     // For each window event that is Chrome/Firefox, generate tab events
     for _, w := range windowEvents {
         app := strings.ToLower(getString(w.Data, "app"))
-        evEnd := w.Timestamp.Add(w.Duration)
+        evEnd := w.Timestamp.Add(time.Duration(w.Duration * float64(time.Second)))
         switch app {
         case "chrome":
             chromeEvents = append(chromeEvents, randomEvents(w.Timestamp, evEnd, sampleDataBrowser, 120*60)...)
@@ -325,7 +325,7 @@ func randomEvents(start, stop time.Time, samples []sampleData, maxSecs float64) 
 
         e := models.Event{
             Timestamp: ts,
-            Duration:  dur,
+            Duration:  dur.Seconds(),
             Data:      datatypes.JSON(jsonData),
         }
         results = append(results, e)
