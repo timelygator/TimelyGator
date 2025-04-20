@@ -1,0 +1,32 @@
+#!/usr/bin/osascript -l JavaScript
+
+var seApp = Application("System Events");
+var oProcess = seApp.processes.whose({frontmost: true})[0];
+var appName = oProcess.displayedName();
+
+var title = "";
+switch (appName) {
+  case "Safari":
+    title = Application(appName).documents[0].name();
+    break;
+  case "Google Chrome":
+  case "Google Chrome Canary":
+  case "Chromium":
+  case "Brave Browser":
+    title = Application(appName).windows[0].activeTab().name();
+    break;
+  case "Firefox":
+  case "Firefox Developer Edition":
+    title = Application(appName).windows[0].name();
+    break;
+  default:
+    var mainWindow = oProcess.windows().find(w => w.attributes.byName("AXMain").value() === true);
+    if (mainWindow) {
+      title = mainWindow.attributes.byName("AXTitle").value();
+    }
+}
+
+console.log(JSON.stringify({
+  app: appName,
+  title: title || ""
+}));
