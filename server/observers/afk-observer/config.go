@@ -11,8 +11,8 @@ import (
 
 // AFKConfig holds only the relevant fields for AFK detection
 type AFKConfig struct {
-    Timeout  int `env:"TIMEOUT"   envDefault:"6"` // seconds
-    PollTime int `env:"POLL_TIME" envDefault:"5"`   // seconds
+    Timeout  int `env:"TIMEOUT"   envDefault:"10"` // seconds
+    PollTime int `env:"POLL_TIME" envDefault:"2"`   // seconds
 }
 
 // LoadAFKConfig loads .env (if present) and parses environment variables

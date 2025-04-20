@@ -92,7 +92,7 @@ func ConvertToEvent(m map[string]interface{}) (*models.Event, error) {
 
 	// 3) Parse duration (float64 => time.Duration in seconds)
 	if durVal, ok := m["duration"].(float64); ok {
-		evt.Duration = time.Duration(durVal) * time.Second
+		evt.Duration = durVal
 	}
 
 	// 4) Parse data (map[string]interface{}) => datatypes.JSON
@@ -108,23 +108,32 @@ func ConvertToEvent(m map[string]interface{}) (*models.Event, error) {
 	return evt, nil
 }
 
+// HeartbeatMerge merges two consecutive heartbeats (same Data) if they fall
+// within the pulsetime window. Durations are stored as float64 seconds.
 func HeartbeatMerge(lastEvent, heartbeat models.Event, pulsetime float64) *models.Event {
-	if lastEvent.DataEqualEvent(&heartbeat) {
-		pulsePeriodEnd := lastEvent.Timestamp.Add(lastEvent.Duration).Add(time.Duration(pulsetime) * time.Second)
-		withinPulsetimeWindow := lastEvent.Timestamp.Before(heartbeat.Timestamp) && heartbeat.Timestamp.Before(pulsePeriodEnd)
-		
-		if withinPulsetimeWindow {
-			newDuration := heartbeat.Timestamp.Sub(lastEvent.Timestamp) + heartbeat.Duration
-			if lastEvent.Duration < 0 {
-				fmt.Println("Merging heartbeats would result in a negative duration, refusing to merge.")
-			} else {
-				// Taking the max of durations ensures heartbeats that end before the last event don't shorten it
-				if lastEvent.Duration < newDuration {
-					lastEvent.Duration = newDuration
-				}
-				return &lastEvent
-			}
-		}
-	}
-	return nil
+    // Only merge if the data payload is identical
+    if !lastEvent.DataEqualEvent(&heartbeat) {
+        return nil
+    }
+
+    // Compute when the “pulse window” ends:
+    //    windowEnd = lastEvent.Timestamp + lastEvent.Duration + pulsetime
+    windowEnd := lastEvent.Timestamp.
+        Add(time.Duration(lastEvent.Duration * float64(time.Second))).
+        Add(time.Duration(pulsetime * float64(time.Second)))
+
+    // If this heartbeat arrives after the lastEvent, but before windowEnd, we merge
+    if lastEvent.Timestamp.Before(heartbeat.Timestamp) && heartbeat.Timestamp.Before(windowEnd) {
+        // Calculate the total span in seconds:
+        spanSeconds := heartbeat.Timestamp.Sub(lastEvent.Timestamp).Seconds() + heartbeat.Duration
+
+        // Extend lastEvent.Duration if we’ve observed a longer span
+        if spanSeconds > lastEvent.Duration {
+            lastEvent.Duration = spanSeconds
+        }
+        return &lastEvent
+    }
+
+    // Otherwise, do not merge
+    return nil
 }
