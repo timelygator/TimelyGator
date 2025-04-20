@@ -1,4 +1,40 @@
 site_name: TimelyGator Docs
 site_url: https://timelygator.github.io/timelygator/
+repo_url: https://github.com/timelygator/timelygator/
+repo_name: TimelyGator/TimelyGator
+nav:
+  - index.md
+  - API Reference: api.md
 theme:
   name: material
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.top
+    - toc.follow
+markdown_extensions:
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+extra_css:
+  - css/mkdocsoad.css
+plugins:
+  - search
+  - neoteroi.mkdocsoad
