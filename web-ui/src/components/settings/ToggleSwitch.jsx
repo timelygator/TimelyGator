@@ -10,12 +10,12 @@ const ToggleSwitch = ({ label, isOn, onToggle, dataCy }) => {
 
     return (
         <div className='flex items-center justify-between py-3'>
-            <span className='text-gray-300'>{label}</span>
+            <span className='text-cardText'>{label}</span>
             <button
                 data-cy={dataCy}
                 className={`
         relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none
-        ${isToggled ? "bg-indigo-600" : "bg-gray-600"}
+        ${isToggled ? "bg-toggleSelected" : "bg-toggleUnselected"}
         `}
                 onClick={handleToggle}
             >

@@ -38,23 +38,23 @@ const UsageData = [
 
 // API format that may be used:
 // [
-//     {
-//         "name": "Mon",
-//         "Hours": 9,
-//         "activityId": "12345"
-//     },
-//     ...
+//     {
+//         "name": "Mon",
+//         "Hours": 9,
+//         "activityId": "12345"
+//     },
+//     ...
 // ]
 
 const UsageOverviewChart = () => {
     return (
         <motion.div
-            className='bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700'
+            className='bg-backgroundSecondary bg-opacity-100 backdrop-blur-md shadow-lg rounded-xl p-6 border border-border'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
         >
-            <h2 className='text-lg font-medium mb-4 text-gray-100'>Usage Overview</h2>
+            <h2 className='text-lg font-medium mb-4 text-text'>Usage Overview</h2>
 
             <div className='h-80'>
                 <ResponsiveContainer width={"100%"} height={"100%"}>
@@ -82,6 +82,7 @@ const UsageOverviewChart = () => {
             </div>
         </motion.div>
     );
-};
+}
+//};
 
 export default UsageOverviewChart;
