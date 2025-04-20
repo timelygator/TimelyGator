@@ -316,7 +316,7 @@ func (c *TimelyGatorClient) Heartbeat(
 		}
 		merged := utils.HeartbeatMerge(*last, *newEvent, pulseTime)
 		if merged != nil {
-			diff := merged.Duration.Seconds()
+			diff := merged.Duration
 			if diff >= ci {
 				data := merged.ToJSONDict()
 				c.requestQueue.AddRequest(endpoint, data)

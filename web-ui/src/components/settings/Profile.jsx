@@ -12,17 +12,17 @@ const Profile = () => {
 				/>
 
 				<div>
-					<h3 className='text-lg font-semibold text-gray-100'>ABC XYZ</h3>
-					<p className='text-gray-400'>abc.xyz@example.com</p>
+					<h3 className='text-lg font-semibold text-text'>ABC XYZ</h3>
+					<p className='text-cardTextHeading'>abc.xyz@example.com</p>
 				</div>
 			</div>
 
-				<button
-					className='bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto'
-					data-cy="edit-profile-button"
-				>
-					Edit Profile
-				</button>
+<button
+    className='bg-buttonDefaultAccent1 hover:bg-buttonHoverAccent1 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto'
+    data-cy="edit-profile-button"
+>
+    Edit Profile
+</button>
 		</SettingSection>
 	);
 };
