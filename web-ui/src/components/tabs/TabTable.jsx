@@ -11,6 +11,31 @@ const tabData = [
     { id: 5, website: "Google", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
 ];
 
+
+//                <  API CALLING FOR TAB TABLE TEST FORMAT >
+// const [tabData, setTabData] = useState([]);
+
+// useEffect(() => {
+//     Axios.get("http://localhost:5000/api/tabs")
+//         .then((res) => {
+//             setTabData(res.data);
+//         })
+//         .catch((error) => {
+//             console.error("Error fetching tab data:", error);
+//         });
+// }, []);
+
+// API format that may be used:
+// [
+//     {
+//         "activityId": 1,
+//         "website": "YouTube",
+//         "name": "React tutorial",
+//         "Type": "Entertainment",
+//         "status": "Active"
+//     },
+//     ...
+// ]
 const getIconForWebsite = (website) => {
     const normalizedWebsite = website.charAt(0).toUpperCase() + website.slice(1).toLowerCase().replace(/\s+/g, '');
     return Icons[normalizedWebsite] || Icons.Globe; // Default to Globe icon if no mapping found
