@@ -83,6 +83,6 @@ const UsageOverviewChart = () => {
         </motion.div>
     );
 }
-};
+//};
 
 export default UsageOverviewChart;
