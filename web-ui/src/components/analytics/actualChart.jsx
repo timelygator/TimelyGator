@@ -2,14 +2,14 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-// Daily data for the entire year (365 days)
+// Daily placeholder data for the entire year (365 days)
 const actualData = Array.from({ length: 365 }, (_, index) => {
     const date = new Date(new Date().getFullYear(), 0, index + 1); // Generate date for each day of the year
     return {
         day: date.toISOString().split("T")[0], // Format date as YYYY-MM-DD
-        weekday: date.toLocaleString("en-US", { weekday: "long" }), // Day of the week (e.g., Sunday, Monday)
+        weekday: date.toLocaleString("en-US", { weekday: "long" }), // Day of the week 
         week: Math.ceil((index + 1) / 7), // Week number
-        month: date.toLocaleString("en-US", { month: "short" }), // Month name (e.g., Jan, Feb)
+        month: date.toLocaleString("en-US", { month: "short" }), // Month name 
         actual: Math.floor(Math.random() * 8) + 1, // Random hours between 1 and 8
         target: Math.floor(Math.random() * 8) + 1, // Random hours between 1 and 8
     };
@@ -37,7 +37,7 @@ const aggregateData = (data, key) => {
         const weeksInMonth = ["Week 1", "Week 2", "Week 3", "Week 4"];
         return Object.values(aggregated).map((item, index) => ({
             ...item,
-            weekLabel: weeksInMonth[index % 4] || `Week ${index + 1}`, // Ensure 4 weeks per month
+            weekLabel: weeksInMonth[index % 4] || `Week ${index + 1}`, 
         }));
     }
 
@@ -49,8 +49,8 @@ const filterDataByTimeRange = (timeRange) => {
     const currentDayOfYear = Math.ceil(
         (currentDate - new Date(currentDate.getFullYear(), 0, 0)) / (24 * 60 * 60 * 1000)
     ); // Calculate the current day of the year
-    const currentMonth = currentDate.getMonth(); // 0-based index for months
-    const currentQuarter = Math.floor(currentMonth / 3); // 0-based index for quarters
+    const currentMonth = currentDate.getMonth(); 
+    const currentQuarter = Math.floor(currentMonth / 3); 
 
     switch (timeRange) {
         case "This Week":
@@ -102,7 +102,7 @@ const ActualChart = () => {
         selectedTimeRange === "This Week"
             ? "weekday" // Days of the week
             : selectedTimeRange === "This Month"
-            ? "weekLabel" // Week labels (e.g., Week 1, Week 2)
+            ? "weekLabel" // Week labels 
             : "month"; // Months for quarters and years
 
     return (
@@ -117,7 +117,7 @@ const ActualChart = () => {
                 <select
                     className='bg-actionDefault text-text rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500'
                     value={selectedTimeRange}
-                    onChange={(e) => setSelectedTimeRange(e.target.value)} // Update state on selection
+                    onChange={(e) => setSelectedTimeRange(e.target.value)} 
                 >
                     <option>This Week</option>
                     <option>This Month</option>
