@@ -10,13 +10,30 @@ const getIconByValue = (value) => {
 
 const overviewData = [
     { name: "Top Application", value: "Chrome", change: 3.5 },
-    { name: "Top Window Titles", value: "VS Code", change: 8.3 },
-    { name: "Top Browser Domains", value: "Github", change: 5.7 },
+    { name: "Most Visited Website", value: "Youtube", change: 8.3 },
+    { name: "Most Active Website", value: "Github", change: 5.7 },
     { name: "Top Category", value: "Educational", change: 15.7 },
 ].map((item) => ({
     ...item,
     icon: getIconByValue(item.value),
 }));
+
+// 	 API FORMAT TO FETCH VALUES
+// useEffect(() => {
+//     const fetchValues = async () => {
+//         try {
+//             const response = await axios.get("http://localhost:5000/api/analytics");
+//             const fetchedValues = response.data; // Assuming the API returns an array of values
+//             overviewData.forEach((item, index) => {
+//                 item.value = fetchedValues[index] || item.value; 
+//             });
+//         } catch (error) {
+//             console.error("Error fetching values:", error);
+//         }
+//     };
+
+//     fetchValues();
+// }, []);
 
 const OverviewCards = () => {
     return (
@@ -53,4 +70,5 @@ const OverviewCards = () => {
         </div>
     );
 };
+
 export default OverviewCards;
