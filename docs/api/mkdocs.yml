@@ -1,0 +1,4 @@
+site_name: TimelyGator Docs
+site_url: https://timelygator.github.io/
+theme:
+  name: material
