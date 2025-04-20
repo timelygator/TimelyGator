@@ -113,7 +113,7 @@ const ActualChart = () => {
             transition={{ delay: 0.2 }}
         >
             <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-xl font-semibold text-text'>Actual vs Target</h2>
+                <h2 className='text-xl font-semibold text-text'>Actual vs Target Productivity (in hours)</h2>
                 <select
                     className='bg-actionDefault text-text rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500'
                     value={selectedTimeRange}
