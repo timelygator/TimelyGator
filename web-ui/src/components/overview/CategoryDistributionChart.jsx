@@ -28,7 +28,7 @@ const CategoryDistributionChart = () => {
     const [categoryData, setCategoryData] = useState([]);
 
     useEffect(() => {
-        Axios.get("http://192.168.0.155:8080/api/v1/v1/buckets/tg-observer-window_yigirus/events")
+        Axios.get("http://192.168.0.166:8080/api/v1/v1/buckets/tg-observer-window_sidd-Predator-PHN16-72/events")
             .then((res) => {
                 // First, aggregate total duration and durations per category
                 let totalDuration = 0;
