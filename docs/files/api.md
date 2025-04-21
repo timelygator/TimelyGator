@@ -1,0 +1,1 @@
+[OAD(../server/docs/swagger.json)]

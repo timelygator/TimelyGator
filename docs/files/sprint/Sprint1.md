@@ -3,19 +3,7 @@
 This document contains the details of the first sprint of the Software Engineering project. The sprint focused on setting up the project structure, defining the main objectives, and evaluating feasibility. The goal of the sprint is to establish a solid foundation for the project and define the roadmap for future development.
 
 Repository Link: [Timelygator/Timelygator](https://github.com/timelygator/TimelyGator)
-Sprint1.md: [docs/sprint/sprint1.md](https://github.com/timelygator/TimelyGator/blob/main/docs/sprint1.md)
-
-Table of contents:
-
-- [Discussions](#discussion-1--project-structure)
-  - [Project structure](#discussion-1--project-structure)
-  - [Goals and competing products](#discussion-2--goals-and-competing-products)
-  - [Tech stack](#discussion-3--tech-stack)
-  - [Documentation](#discussion-4--documentation)
-  - [Repository settings](#discussion-5--repository-settings)
-- [User stories](#user-stories)
-- [Tasks](#tasks)
-- [Conclusion](#conclusion)
+Sprint1.md: [docs/files/sprint/sprint1.md](https://github.com/timelygator/TimelyGator/blob/main/docs/files/sprint/Sprint1.md)
 
 ## Discussion 1 : Project structure
 
@@ -28,7 +16,8 @@ For the project structure, we decided following points,
 
 The project structure is as follows:
 
-```project-name/
+```
+project-name/
 ├── web-ui/              # Frontend codebase
 ├── server/              # Backend codebase
 ├── docs/                # Documentation
