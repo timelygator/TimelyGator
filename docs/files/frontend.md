@@ -109,9 +109,3 @@ Configure your profile, preferences, and account settings.
 * **Q: How do I delete my account and data?**
     * A: Go to Settings -> Danger Zone and click 'Delete Account'. This removes data from servers and your local machine. It cannot be undone.
 
-## 8. Support
-
-Need help?
-* Contact us via email: `support@[appname].com` _(Replace with actual email)_
-* Visit our Help Center: `[Link to Help Center]` _(Replace with actual link)_
-
