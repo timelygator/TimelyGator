@@ -10,6 +10,9 @@ nav:
     - Sprint 2: sprint/Sprint2.md
     - Sprint 3: sprint/Sprint3.md
     - Sprint 4: sprint/Sprint4.md
+  - Observers:
+    - window-observer: observers/window-observer.md
+  - Frontend - Core Concepts & Features: frontend.md
   - API Reference: api.md
 theme:
   name: material
