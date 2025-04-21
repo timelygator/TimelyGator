@@ -1,12 +1,12 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 	"time"
-	"encoding/json"
 
 	"timelygator/server/database"
 	"timelygator/server/database/models"
@@ -15,9 +15,9 @@ import (
 )
 
 type API struct {
-    config   *types.Config
-    ds       *database.Datastore
-    lastEvent map[string]*models.Event
+	config    *types.Config
+	ds        *database.Datastore
+	lastEvent map[string]*models.Event
 }
 
 // checkBucketExists is a helper that checks if a bucket is known, else returns NotFound.
@@ -402,36 +402,35 @@ func (s *API) Heartbeat(bucketID string, heartbeat *models.Event, pulseTime floa
 	return heartbeat, nil
 }
 
-
 // MapToEvent is a helper to create an Event from map[string]interface{}.
 func MapToEvent(m map[string]interface{}) *models.Event {
-    evt := &models.Event{}
+	evt := &models.Event{}
 
-    // If “id” is present:
-    if idVal, ok := m["id"].(float64); ok {
-        evt.ID = uint(idVal)
-    }
+	// If “id” is present:
+	if idVal, ok := m["id"].(float64); ok {
+		evt.ID = uint(idVal)
+	}
 
-    // If “timestamp” is a string:
-    if tsStr, ok := m["timestamp"].(string); ok {
-        t, err := time.Parse(time.RFC3339, tsStr)
-        if err == nil {
-            evt.Timestamp = t
-        }
-    }
+	// If “timestamp” is a string:
+	if tsStr, ok := m["timestamp"].(string); ok {
+		t, err := time.Parse(time.RFC3339, tsStr)
+		if err == nil {
+			evt.Timestamp = t
+		}
+	}
 
 	// If “duration” is a float => interpret as seconds
 	if durVal, ok := m["duration"].(float64); ok {
-		evt.Duration = durVal  // already in seconds
+		evt.Duration = durVal // already in seconds
 	}
 
-    // If “data” is a map => marshal to JSON
-    if dataVal, ok := m["data"].(map[string]interface{}); ok {
-        b, err := json.Marshal(dataVal)
-        if err == nil {
-            evt.Data = b
-        }
-    }
+	// If “data” is a map => marshal to JSON
+	if dataVal, ok := m["data"].(map[string]interface{}); ok {
+		b, err := json.Marshal(dataVal)
+		if err == nil {
+			evt.Data = b
+		}
+	}
 
-    return evt
+	return evt
 }

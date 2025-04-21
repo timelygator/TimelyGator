@@ -21,12 +21,12 @@ import (
 )
 
 type TimelyGatorClient struct {
-	Testing         bool
-	ClientName      string
-	ClientHostname  string
-	ServerAddress   string
-	Instance        *SingleInstance
-	CommitInterval  float64
+	Testing        bool
+	ClientName     string
+	ClientHostname string
+	ServerAddress  string
+	Instance       *SingleInstance
+	CommitInterval float64
 
 	LastHeartbeat map[string]*models.Event
 
@@ -422,7 +422,6 @@ func (c *TimelyGatorClient) ImportBucket(bucket map[string]interface{}) error {
 	return err
 }
 
-
 func (c *TimelyGatorClient) Query(
 	queryStr string,
 	timeperiods [][2]time.Time,
@@ -499,31 +498,30 @@ func (c *TimelyGatorClient) Disconnect() {
 }
 
 func (c *TimelyGatorClient) WaitForStart(timeout int) error {
-    if timeout == 0 {
-        timeout = 10
-    }
+	if timeout == 0 {
+		timeout = 10
+	}
 
-    start := time.Now()
-    sleepTime := 100 * time.Millisecond
-    maxSleepTime := 2 * time.Second // Cap max sleep time to 2 seconds
+	start := time.Now()
+	sleepTime := 100 * time.Millisecond
+	maxSleepTime := 2 * time.Second // Cap max sleep time to 2 seconds
 
-    for time.Since(start).Seconds() < float64(timeout) {
-        if _, err := c.GetInfo(); err == nil {
-            log.Printf("[WaitForStart] Server at %s is ready.", c.ServerAddress)
-            return nil
-        } else {
-            log.Printf("[WaitForStart] Server not ready: %v (retrying in %s)", err, sleepTime)
-        }
+	for time.Since(start).Seconds() < float64(timeout) {
+		if _, err := c.GetInfo(); err == nil {
+			log.Printf("[WaitForStart] Server at %s is ready.", c.ServerAddress)
+			return nil
+		} else {
+			log.Printf("[WaitForStart] Server not ready: %v (retrying in %s)", err, sleepTime)
+		}
 
-        time.Sleep(sleepTime)
-        if sleepTime < maxSleepTime {
-            sleepTime *= 2
-        }
-    }
+		time.Sleep(sleepTime)
+		if sleepTime < maxSleepTime {
+			sleepTime *= 2
+		}
+	}
 
-    return fmt.Errorf("[WaitForStart] Server at %s did not start in time", c.ServerAddress)
+	return fmt.Errorf("[WaitForStart] Server at %s did not start in time", c.ServerAddress)
 }
-
 
 type QueuedRequest struct {
 	Endpoint string
@@ -546,18 +544,18 @@ type RequestQueue struct {
 	registeredBuckets []BucketReg
 	attemptReconnect  time.Duration
 
-	queueMu   sync.Mutex
-	queue     []QueuedRequest
-	ticker    *time.Ticker
+	queueMu sync.Mutex
+	queue   []QueuedRequest
+	ticker  *time.Ticker
 }
 
 func NewRequestQueue(client *TimelyGatorClient) *RequestQueue {
 	return &RequestQueue{
-		client:           client,
-		stopChan:         make(chan struct{}),
+		client:            client,
+		stopChan:          make(chan struct{}),
 		registeredBuckets: []BucketReg{},
 		attemptReconnect:  10 * time.Second,
-		queue:            []QueuedRequest{},
+		queue:             []QueuedRequest{},
 	}
 }
 
