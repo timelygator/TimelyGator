@@ -20,11 +20,11 @@ var heartbeatLock sync.Mutex
 var api API
 
 func RegisterRoutes(cfg types.Config, datastore *database.Datastore, r *mux.Router) {
-    api = API{
-        config:    &cfg,
-        ds:        datastore,
-        lastEvent: make(map[string]*models.Event),
-    }
+	api = API{
+		config:    &cfg,
+		ds:        datastore,
+		lastEvent: make(map[string]*models.Event),
+	}
 	r.HandleFunc("/v1/info", getInfo).Methods("GET")
 	r.HandleFunc("/v1/export", export).Methods("GET")
 	r.HandleFunc("/v1/import", importer).Methods("POST")

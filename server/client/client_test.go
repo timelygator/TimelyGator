@@ -57,7 +57,7 @@ func testServerHandler(w http.ResponseWriter, r *http.Request) {
 	case strings.HasPrefix(path, "/api/v1/v1/buckets/") && r.Method == http.MethodPost && !strings.Contains(path, "events"):
 		json.NewEncoder(w).Encode(map[string]interface{}{"result": "bucket created"})
 
-	// Handle DeleteBucket and DeleteEvent: DELETE /api/v1/v1/buckets/{bucketID}... 
+	// Handle DeleteBucket and DeleteEvent: DELETE /api/v1/v1/buckets/{bucketID}...
 	case strings.HasPrefix(path, "/api/v1/v1/buckets/") && r.Method == http.MethodDelete:
 		json.NewEncoder(w).Encode(map[string]interface{}{"result": "deleted"})
 

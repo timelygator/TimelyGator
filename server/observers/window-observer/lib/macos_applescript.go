@@ -3,10 +3,10 @@
 package lib
 
 import (
-    "bytes"
-    "fmt"
-    "os/exec"
-    "strings"
+	"bytes"
+	"fmt"
+	"os/exec"
+	"strings"
 )
 
 const appleScriptSource = `
@@ -30,25 +30,25 @@ return frontAppName & "\n" & windowTitle
 
 // GetInfo executes the embedded AppleScript and returns {"app": appName, "title": windowTitle}.
 func GetInfoAppleScript() (map[string]string, error) {
-    cmd := exec.Command("osascript", "-e", appleScriptSource)
-    var stdout bytes.Buffer
-    var stderr bytes.Buffer
-    cmd.Stdout = &stdout
-    cmd.Stderr = &stderr
+	cmd := exec.Command("osascript", "-e", appleScriptSource)
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 
-    if err := cmd.Run(); err != nil {
-        return nil, fmt.Errorf("osascript error: %v | stderr: %s", err, stderr.String())
-    }
+	if err := cmd.Run(); err != nil {
+		return nil, fmt.Errorf("osascript error: %v | stderr: %s", err, stderr.String())
+	}
 
-    // osascript prints with a trailing newline; trim and split.
-    output := strings.TrimSpace(stdout.String())
-    parts := strings.SplitN(output, "\n", 2)
-    if len(parts) != 2 {
-        return nil, fmt.Errorf("unexpected output format: %q", output)
-    }
+	// osascript prints with a trailing newline; trim and split.
+	output := strings.TrimSpace(stdout.String())
+	parts := strings.SplitN(output, "\n", 2)
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("unexpected output format: %q", output)
+	}
 
-    return map[string]string{
-        "app":   parts[0],
-        "title": parts[1],
-    }, nil
+	return map[string]string{
+		"app":   parts[0],
+		"title": parts[1],
+	}, nil
 }
