@@ -2,6 +2,7 @@ site_name: TimelyGator Docs
 site_url: https://timelygator.github.io/timelygator/
 repo_url: https://github.com/timelygator/timelygator/
 repo_name: TimelyGator/TimelyGator
+docs_dir: files
 nav:
   - index.md
   - API Reference: api.md
