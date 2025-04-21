@@ -37,7 +37,6 @@ const CategoryDistributionChart = () => {
                 res.data.forEach((item) => {
                     totalDuration += item.duration;
                     // Determine the category.
-                    // If the title includes "YouTube", then force the category to be YouTube.
                     let category = item.app;
                     if (item.title.includes("YouTube")) {
                         category = "YouTube";
