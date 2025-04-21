@@ -27,6 +27,7 @@ theme:
     - navigation.instant.prefetch
     - navigation.instant.progress
     - navigation.top
+    - navigation.footer
     - toc.follow
 markdown_extensions:
   - pymdownx.details
