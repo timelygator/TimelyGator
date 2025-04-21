@@ -10,22 +10,26 @@ Sprint4.md: [docs/files/sprint/sprint4.md](https://github.com/timelygator/Timely
 The following tasks from Sprint 3 were completed in Sprint 4:
 
 ### Frontend
+
 - Continued improvements to UsageOverviewChart component
 - Fixed UI/UX inconsistencies and theme persistence issues
 
 ### Backend
+
 - Enhanced browser-observer implementation with cross-platform support
 - Improved test coverage and documentation
 
 ## New Functionality
 
 ### Frontend
+
 - Updated UsageOverviewChart component with improved data visualization
 - Field modifications to extract specefic element from API calls
 - Fixed UI/UX issues for better user experience
 - Added FrontEnd documentation
 
 ### Backend
+
 - Implemented cross-platform window observer for Linux, Windows, and macOS
 - Added platform-specific window management using X11, Windows API, and macOS JXA
 - Added AppleScript and JXA scripts for retrieving front application and window title
@@ -48,30 +52,32 @@ This can now be visited at [timelygator.github.io/TimelyGator](https://timelygat
 
 ## Tasks
 
+## Tasks
+
 1. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
-   - Implemented cross-platform window observer
-   - Added platform-specific window management
-   - Fixed duration handling and configuration
-   - Added macOS permissions handling for accessibility access
-   - Wrote documentation for observers and client
+    - Implemented cross-platform window observer
+    - Added platform-specific window management
+    - Fixed duration handling and configuration
+    - Added macOS permissions handling for accessibility access
+    - Wrote documentation for observers and client
 
 2. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
-   - Implemented MkDocs for documentation
-   - Fixed CORS and network access issues
-   - Added Linux stub implementation
-   - Wrote documentation for FE/BE Architecture
-   - Deployed GitHub Actions for automated docs website
+    - Implemented MkDocs for documentation
+    - Fixed CORS and network access issues
+    - Added Linux stub implementation
+    - Wrote documentation for FE/BE Architecture
+    - Deployed GitHub Actions for automated docs website
 
 3. [@PulkitGarg777](https://github.com/PulkitGarg777) # Frontend
-   - Continued improvements to UsageOverviewChart component
-   - Fixed UI/UX inconsistencies and ensured theme persistence across sessions
-   - Wrote unit tests for UsageOverviewChart and other key UI elements
-   - Worked on FrontEnd documentation
+    - Continued improvements to UsageOverviewChart component
+    - Fixed UI/UX inconsistencies and ensured theme persistence across sessions
+    - Wrote unit tests for UsageOverviewChart and other key UI elements
+    - Worked on FrontEnd documentation
 
 4. [@YashDVerma](https://github.com/YashDVerma) # Frontend
-   - Updated UsageOverviewChart component
-   - Fixed UI/UX issues
-   - Added FrontEnd documentation
+    - Updated UsageOverviewChart component
+    - Fixed UI/UX issues
+    - Added FrontEnd documentation
 
 ## Conclusion
 
