@@ -17,19 +17,22 @@
     "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
-        "/v1/buckets/": {
+        "/v1/buckets": {
             "get": {
-                "description": "Retrieve a list of all buckets.",
+                "description": "Retrieves a list of all buckets in the system. Each bucket represents a collection\nof related events and contains metadata about the tracking session.",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "buckets"
                 ],
-                "summary": "Get all buckets",
+                "summary": "List all buckets",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "List of buckets retrieved successfully",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -38,7 +41,7 @@
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -48,102 +51,59 @@
         },
         "/v1/buckets/{bucket_id}": {
             "get": {
-                "description": "Retrieve metadata for a specific bucket.\nCreate a new bucket with the given ID and metadata.\nUpdate metadata for a specific bucket.\nDelete a specific bucket. Requires force=1 query parameter unless testing.",
+                "description": "Endpoint for creating, retrieving, updating, and deleting buckets",
                 "consumes": [
-                    "application/json",
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "buckets",
-                    "buckets",
-                    "buckets",
                     "buckets"
                 ],
-                "summary": "Delete a bucket",
+                "summary": "Manage bucket operations",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "Unique identifier for the bucket",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket creation payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketCreationPayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket update payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketUpdatePayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Force delete (required unless testing)",
+                        "description": "Force deletion flag (required for DELETE unless in testing mode)",
                         "name": "force",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Operation completed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.Bucket"
+                        }
+                    },
+                    "204": {
+                        "description": "No content (for successful updates)",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
+                        "description": "Invalid request parameters",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Bucket not found",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -151,102 +111,59 @@
                 }
             },
             "put": {
-                "description": "Retrieve metadata for a specific bucket.\nCreate a new bucket with the given ID and metadata.\nUpdate metadata for a specific bucket.\nDelete a specific bucket. Requires force=1 query parameter unless testing.",
+                "description": "Endpoint for creating, retrieving, updating, and deleting buckets",
                 "consumes": [
-                    "application/json",
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "buckets",
-                    "buckets",
-                    "buckets",
                     "buckets"
                 ],
-                "summary": "Delete a bucket",
+                "summary": "Manage bucket operations",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "Unique identifier for the bucket",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket creation payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketCreationPayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket update payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketUpdatePayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Force delete (required unless testing)",
+                        "description": "Force deletion flag (required for DELETE unless in testing mode)",
                         "name": "force",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Operation completed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.Bucket"
+                        }
+                    },
+                    "204": {
+                        "description": "No content (for successful updates)",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
+                        "description": "Invalid request parameters",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Bucket not found",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -254,102 +171,59 @@
                 }
             },
             "post": {
-                "description": "Retrieve metadata for a specific bucket.\nCreate a new bucket with the given ID and metadata.\nUpdate metadata for a specific bucket.\nDelete a specific bucket. Requires force=1 query parameter unless testing.",
+                "description": "Endpoint for creating, retrieving, updating, and deleting buckets",
                 "consumes": [
-                    "application/json",
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "buckets",
-                    "buckets",
-                    "buckets",
                     "buckets"
                 ],
-                "summary": "Delete a bucket",
+                "summary": "Manage bucket operations",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "Unique identifier for the bucket",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket creation payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketCreationPayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket update payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketUpdatePayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Force delete (required unless testing)",
+                        "description": "Force deletion flag (required for DELETE unless in testing mode)",
                         "name": "force",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Operation completed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.Bucket"
+                        }
+                    },
+                    "204": {
+                        "description": "No content (for successful updates)",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
+                        "description": "Invalid request parameters",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Bucket not found",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -357,102 +231,59 @@
                 }
             },
             "delete": {
-                "description": "Retrieve metadata for a specific bucket.\nCreate a new bucket with the given ID and metadata.\nUpdate metadata for a specific bucket.\nDelete a specific bucket. Requires force=1 query parameter unless testing.",
+                "description": "Endpoint for creating, retrieving, updating, and deleting buckets",
                 "consumes": [
-                    "application/json",
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "buckets",
-                    "buckets",
-                    "buckets",
                     "buckets"
                 ],
-                "summary": "Delete a bucket",
+                "summary": "Manage bucket operations",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "Unique identifier for the bucket",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket creation payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketCreationPayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Bucket update payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/types.BucketUpdatePayload"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Force delete (required unless testing)",
+                        "description": "Force deletion flag (required for DELETE unless in testing mode)",
                         "name": "force",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Operation completed successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.Bucket"
+                        }
+                    },
+                    "204": {
+                        "description": "No content (for successful updates)",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
+                        "description": "Invalid request parameters",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Bucket not found",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -462,7 +293,7 @@
         },
         "/v1/buckets/{bucket_id}/events": {
             "get": {
-                "description": "Retrieve events for a specific bucket, optionally with limit and time range.\nCreate one or more events in a specific bucket. Accepts single event object or array of event objects.",
+                "description": "Endpoint for creating and retrieving events associated with a specific bucket.\nEvents represent individual time-tracking entries or activities.",
                 "consumes": [
                     "application/json"
                 ],
@@ -470,48 +301,39 @@
                     "application/json"
                 ],
                 "tags": [
-                    "events",
                     "events"
                 ],
-                "summary": "Create events for a bucket",
+                "summary": "Manage events within a bucket",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "ID of the bucket containing the events",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Limit the number of events returned",
+                        "description": "Maximum number of events to return (for GET)",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Start time in ISO8601 format",
+                        "description": "Start time in ISO8601 format (for GET)",
                         "name": "start",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "End time in ISO8601 format",
+                        "description": "End time in ISO8601 format (for GET)",
                         "name": "end",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Event payload (single event object or array of event objects)",
-                        "name": "body",
+                        "description": "Event object or array of event objects (for POST)",
+                        "name": "event",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "object"
                         }
@@ -519,19 +341,34 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Events retrieved/created successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Event"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Event created successfully",
                         "schema": {
                             "$ref": "#/definitions/models.Event"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Bucket not found",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -539,7 +376,7 @@
                 }
             },
             "post": {
-                "description": "Retrieve events for a specific bucket, optionally with limit and time range.\nCreate one or more events in a specific bucket. Accepts single event object or array of event objects.",
+                "description": "Endpoint for creating and retrieving events associated with a specific bucket.\nEvents represent individual time-tracking entries or activities.",
                 "consumes": [
                     "application/json"
                 ],
@@ -547,48 +384,39 @@
                     "application/json"
                 ],
                 "tags": [
-                    "events",
                     "events"
                 ],
-                "summary": "Create events for a bucket",
+                "summary": "Manage events within a bucket",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "ID of the bucket containing the events",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Limit the number of events returned",
+                        "description": "Maximum number of events to return (for GET)",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Start time in ISO8601 format",
+                        "description": "Start time in ISO8601 format (for GET)",
                         "name": "start",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "End time in ISO8601 format",
+                        "description": "End time in ISO8601 format (for GET)",
                         "name": "end",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Bucket ID",
-                        "name": "bucket_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Event payload (single event object or array of event objects)",
-                        "name": "body",
+                        "description": "Event object or array of event objects (for POST)",
+                        "name": "event",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "type": "object"
                         }
@@ -596,19 +424,34 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Events retrieved/created successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Event"
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Event created successfully",
                         "schema": {
                             "$ref": "#/definitions/models.Event"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Bucket not found",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -832,7 +675,7 @@
         },
         "/v1/buckets/{bucket_id}/heartbeat": {
             "post": {
-                "description": "Send a heartbeat event for a bucket to indicate it's still active.",
+                "description": "Updates or creates an event in the specified bucket to indicate active status.\nIf an existing event is found within the pulsetime window, it will be updated\ninstead of creating a new event.",
                 "consumes": [
                     "application/json"
                 ],
@@ -840,27 +683,27 @@
                     "application/json"
                 ],
                 "tags": [
-                    "buckets"
+                    "events"
                 ],
-                "summary": "Send a heartbeat event",
+                "summary": "Send bucket heartbeat",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Bucket ID",
+                        "description": "ID of the bucket to send heartbeat to",
                         "name": "bucket_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "number",
-                        "description": "Pulsetime in seconds",
+                        "description": "Time window in seconds to merge events",
                         "name": "pulsetime",
                         "in": "query",
                         "required": true
                     },
                     {
-                        "description": "Event payload",
-                        "name": "body",
+                        "description": "Event data to record",
+                        "name": "event",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -870,25 +713,25 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Heartbeat recorded successfully",
                         "schema": {
                             "$ref": "#/definitions/models.Event"
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Missing or invalid parameters",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "409": {
-                        "description": "Conflict",
+                        "description": "Concurrent heartbeat operation in progress",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -898,23 +741,24 @@
         },
         "/v1/export": {
             "get": {
-                "description": "Export all buckets and their data as a JSON attachment.",
+                "description": "Exports all buckets and their associated events as a JSON file attachment.\nThe exported data can be used for backup or migration purposes.",
                 "produces": [
-                    "application/json"
+                    "application/json",
+                    "application/octet-stream"
                 ],
                 "tags": [
                     "export-import"
                 ],
-                "summary": "Export all buckets",
+                "summary": "Export all bucket data",
                 "responses": {
                     "200": {
-                        "description": "attachment",
+                        "description": "JSON file containing all bucket data",
                         "schema": {
                             "type": "file"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -968,17 +812,20 @@
         },
         "/v1/info": {
             "get": {
-                "description": "Get information about the server, such as version and build time.",
+                "description": "Returns detailed information about the TimelyGator server instance including version,\nbuild time, and other deployment-specific configuration.",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "info"
+                    "system"
                 ],
-                "summary": "Get server info",
+                "summary": "Get server information",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Server information retrieved successfully",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -987,7 +834,7 @@
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Internal server error occurred",
                         "schema": {
                             "type": "string"
                         }
@@ -1039,83 +886,12 @@
                     }
                 },
                 "duration": {
-                    "$ref": "#/definitions/time.Duration"
+                    "type": "number"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "time.Duration": {
-            "type": "integer",
-            "enum": [
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000
-            ],
-            "x-enum-varnames": [
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour"
-            ]
-        },
-        "types.BucketCreationPayload": {
-            "type": "object",
-            "properties": {
-                "client": {
-                    "type": "string"
-                },
-                "hostname": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "types.BucketUpdatePayload": {
-            "type": "object",
-            "properties": {
-                "client": {
-                    "type": "string"
-                },
-                "data": {
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "hostname": {
-                    "type": "string"
-                },
-                "type": {
                     "type": "string"
                 }
             }

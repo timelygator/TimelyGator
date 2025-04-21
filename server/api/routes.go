@@ -19,6 +19,11 @@ import (
 var heartbeatLock sync.Mutex
 var api API
 
+// @title TimelyGator API
+// @version 1.0
+// @description TimelyGator is a time-tracking and activity monitoring service that provides REST APIs for managing buckets and events.
+// @BasePath /v1
+
 func RegisterRoutes(cfg types.Config, datastore *database.Datastore, r *mux.Router) {
 	api = API{
 		config:    &cfg,
@@ -39,12 +44,14 @@ func RegisterRoutes(cfg types.Config, datastore *database.Datastore, r *mux.Rout
 }
 
 // GetInfo godoc
-// @Summary Get server info
-// @Description Get information about the server, such as version and build time.
-// @Tags info
+// @Summary Get server information
+// @Description Returns detailed information about the TimelyGator server instance including version,
+// @Description build time, and other deployment-specific configuration.
+// @Tags system
+// @Accept json
 // @Produce json
-// @Success 200 {object} types.InfoResponse
-// @Failure 500 {object} types.HTTPError
+// @Success 200 {object} types.InfoResponse "Server information retrieved successfully"
+// @Failure 500 {object} types.HTTPError "Internal server error occurred"
 // @Router /v1/info [get]
 func getInfo(w http.ResponseWriter, r *http.Request) {
 	info, err := api.GetInfo()
@@ -56,13 +63,15 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetBuckets godoc
-// @Summary Get all buckets
-// @Description Retrieve a list of all buckets.
+// @Summary List all buckets
+// @Description Retrieves a list of all buckets in the system. Each bucket represents a collection
+// @Description of related events and contains metadata about the tracking session.
 // @Tags buckets
+// @Accept json
 // @Produce json
-// @Success 200 {object} []models.Bucket
-// @Failure 500 {object} types.HTTPError
-// @Router /v1/buckets/ [get]
+// @Success 200 {array} models.Bucket "List of buckets retrieved successfully"
+// @Failure 500 {object} types.HTTPError "Internal server error occurred"
+// @Router /v1/buckets [get]
 func getBuckets(w http.ResponseWriter, r *http.Request) {
 	buckets, err := api.GetBuckets()
 	if err != nil {
@@ -72,47 +81,22 @@ func getBuckets(w http.ResponseWriter, r *http.Request) {
 	errors.JsonOK(w, buckets)
 }
 
-// GetBucketMetadata godoc
-// @Summary Get bucket metadata
-// @Description Retrieve metadata for a specific bucket.
+// Bucket operations godoc
+// @Summary Manage bucket operations
+// @Description Endpoint for creating, retrieving, updating, and deleting buckets
 // @Tags buckets
+// @Accept json
 // @Produce json
-// @Param bucket_id path string true "Bucket ID"
-// @Success 200 {object} models.Bucket
-// @Failure 404 {object} types.HTTPError
-// @Failure 500 {object} types.HTTPError
+// @Param bucket_id path string true "Unique identifier for the bucket"
+// @Param force query string false "Force deletion flag (required for DELETE unless in testing mode)"
+// @Success 200 {object} models.Bucket "Operation completed successfully"
+// @Success 204 {string} string "No content (for successful updates)"
+// @Failure 400 {object} types.HTTPError "Invalid request parameters"
+// @Failure 404 {object} types.HTTPError "Bucket not found"
+// @Failure 500 {object} types.HTTPError "Internal server error occurred"
 // @Router /v1/buckets/{bucket_id} [get]
-// CreateBucket godoc
-// @Summary Create a new bucket
-// @Description Create a new bucket with the given ID and metadata.
-// @Tags buckets
-// @Accept json
-// @Param bucket_id path string true "Bucket ID"
-// @Param body body types.BucketCreationPayload true "Bucket creation payload"
-// @Success 200 {string} Success
-// @Failure 400 {object} types.HTTPError
-// @Failure 500 {object} types.HTTPError
 // @Router /v1/buckets/{bucket_id} [post]
-// UpdateBucket godoc
-// @Summary Update a bucket
-// @Description Update metadata for a specific bucket.
-// @Tags buckets
-// @Accept json
-// @Param bucket_id path string true "Bucket ID"
-// @Param body body types.BucketUpdatePayload true "Bucket update payload"
-// @Success 200 {string} Success
-// @Failure 400 {object} types.HTTPError
-// @Failure 500 {object} types.HTTPError
 // @Router /v1/buckets/{bucket_id} [put]
-// DeleteBucket godoc
-// @Summary Delete a bucket
-// @Description Delete a specific bucket. Requires force=1 query parameter unless testing.
-// @Tags buckets
-// @Param bucket_id path string true "Bucket ID"
-// @Param force query string false "Force delete (required unless testing)"
-// @Success 200 {string} Success
-// @Failure 401 {object} types.HTTPError
-// @Failure 500 {object} types.HTTPError
 // @Router /v1/buckets/{bucket_id} [delete]
 func bucket(w http.ResponseWriter, r *http.Request) {
 	bucketID := mux.Vars(r)["bucket_id"]
@@ -200,28 +184,24 @@ func bucket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetEvents godoc
-// @Summary Get events for a bucket
-// @Description Retrieve events for a specific bucket, optionally with limit and time range.
-// @Tags events
-// @Produce json
-// @Param bucket_id path string true "Bucket ID"
-// @Param limit query int false "Limit the number of events returned"
-// @Param start query string false "Start time in ISO8601 format"
-// @Param end query string false "End time in ISO8601 format"
-// @Success 200 {object} []models.Event
-// @Failure 500 {object} types.HTTPError
-// @Router /v1/buckets/{bucket_id}/events [get]
-// CreateEvents godoc
-// @Summary Create events for a bucket
-// @Description Create one or more events in a specific bucket. Accepts single event object or array of event objects.
+// Event operations godoc
+// @Summary Manage events within a bucket
+// @Description Endpoint for creating and retrieving events associated with a specific bucket.
+// @Description Events represent individual time-tracking entries or activities.
 // @Tags events
 // @Accept json
-// @Param bucket_id path string true "Bucket ID"
-// @Param body body object true "Event payload (single event object or array of event objects)"
-// @Success 200 {object} models.Event
-// @Failure 400 {object} types.HTTPError
-// @Failure 500 {object} types.HTTPError
+// @Produce json
+// @Param bucket_id path string true "ID of the bucket containing the events"
+// @Param limit query integer false "Maximum number of events to return (for GET)"
+// @Param start query string false "Start time in ISO8601 format (for GET)"
+// @Param end query string false "End time in ISO8601 format (for GET)"
+// @Param event body object false "Event object or array of event objects (for POST)"
+// @Success 200 {array} models.Event "Events retrieved/created successfully"
+// @Success 201 {object} models.Event "Event created successfully"
+// @Failure 400 {object} types.HTTPError "Invalid request parameters"
+// @Failure 404 {object} types.HTTPError "Bucket not found"
+// @Failure 500 {object} types.HTTPError "Internal server error occurred"
+// @Router /v1/buckets/{bucket_id}/events [get]
 // @Router /v1/buckets/{bucket_id}/events [post]
 func event(w http.ResponseWriter, r *http.Request) {
 	bucketID := mux.Vars(r)["bucket_id"]
@@ -406,18 +386,20 @@ func getEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 // Heartbeat godoc
-// @Summary Send a heartbeat event
-// @Description Send a heartbeat event for a bucket to indicate it's still active.
-// @Tags buckets
+// @Summary Send bucket heartbeat
+// @Description Updates or creates an event in the specified bucket to indicate active status.
+// @Description If an existing event is found within the pulsetime window, it will be updated
+// @Description instead of creating a new event.
+// @Tags events
 // @Accept json
 // @Produce json
-// @Param bucket_id path string true "Bucket ID"
-// @Param pulsetime query number true "Pulsetime in seconds"
-// @Param body body object true "Event payload"
-// @Success 200 {object} models.Event
-// @Failure 400 {object} types.HTTPError
-// @Failure 409 {object} types.HTTPError
-// @Failure 500 {object} types.HTTPError
+// @Param bucket_id path string true "ID of the bucket to send heartbeat to"
+// @Param pulsetime query number true "Time window in seconds to merge events"
+// @Param event body object true "Event data to record"
+// @Success 200 {object} models.Event "Heartbeat recorded successfully"
+// @Failure 400 {object} types.HTTPError "Missing or invalid parameters"
+// @Failure 409 {object} types.HTTPError "Concurrent heartbeat operation in progress"
+// @Failure 500 {object} types.HTTPError "Internal server error occurred"
 // @Router /v1/buckets/{bucket_id}/heartbeat [post]
 func heartbeat(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
@@ -469,13 +451,15 @@ func heartbeat(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ExportAll godoc
-// @Summary Export all buckets
-// @Description Export all buckets and their data as a JSON attachment.
+// Export/Import operations godoc
+// @Summary Export all bucket data
+// @Description Exports all buckets and their associated events as a JSON file attachment.
+// @Description The exported data can be used for backup or migration purposes.
 // @Tags export-import
 // @Produce json
-// @Success 200 {file} json "attachment"
-// @Failure 500 {object} types.HTTPError
+// @Produce application/octet-stream
+// @Success 200 {file} binary "JSON file containing all bucket data"
+// @Failure 500 {object} types.HTTPError "Internal server error occurred"
 // @Router /v1/export [get]
 func export(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
