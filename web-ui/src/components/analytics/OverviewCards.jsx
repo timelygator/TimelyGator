@@ -10,9 +10,9 @@ const getIconByValue = (value) => {
 
 const overviewData = [
     { name: "Top Application", value: "Chrome", change: 3.5 },
-    { name: "Most Visited Website", value: "Youtube", change: 8.3 },
-    { name: "Most Active Website", value: "Github", change: 5.7 },
-    { name: "Top Category", value: "Educational", change: 15.7 },
+    { name: "Most Visited Application", value: "Youtube", change: 8.3 },
+    { name: "Top Website", value: "Github", change: 5.7 },
+    { name: "Most Visited Website", value: "Google", change: 15.7 },
 ].map((item) => ({
     ...item,
     icon: getIconByValue(item.value),
