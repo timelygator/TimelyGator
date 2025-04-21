@@ -59,8 +59,6 @@ Dive deeper into trends and progress.
     * `Actual`: Your recorded active hours.
     * `Target`: A dynamically adjusted optimal productivity time, calculated by the app based on general recommendations and your past performance/behaviour. It is *not* manually set by the user.
     * `Time Period`: You can select the time frame for analysis (e.g., This Week, This Month, This Year, Quarter) using the dropdown menu. 
-* **AI-Powered Insights:**
-    * ***(Experimental Feature Note):*** *This section is designed to provide future AI-driven analysis, explanations for trends, and actionable suggestions based on your data. 
 
 ### Settings Tab
 Configure your profile, preferences, and account settings.
