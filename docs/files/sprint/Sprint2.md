@@ -3,18 +3,7 @@
 This document contains the details of the work done in Sprint 2 of the Software Engineering Project. This sprint we focused on integrating the frontend with the backend, setting up the necessary dependencies, and writing unit tests for the frontend and backend components. The main goal was to ensure that the frontend and backend work together seamlessly.
 
 Repository Link: [Timelygator/Timelygator](https://github.com/timelygator/TimelyGator)
-Sprint2.md: [docs/sprint/sprint2.md](https://github.com/timelygator/TimelyGator/blob/main/docs/sprint2.md)
-
-Table of contents:
-
-- [SE Project : Sprint 2](#se-project--sprint-2)
-  - [Sprint 1 Rolled Over Tasks](#sprint-1-rolled-over-tasks)
-  - [User Stories](#user-stories)
-  - [Unit Tests](#unit-tests)
-    - [Frontend](#frontend)
-    - [Backend](#backend)
-  - [Tasks](#tasks)
-  - [Conclusion](#conclusion)
+Sprint2.md: [docs/files/sprint/sprint2.md](https://github.com/timelygator/TimelyGator/blob/main/docs/files/sprint/Sprint2.md)
 
 ## Sprint 1 Rolled Over Tasks
 

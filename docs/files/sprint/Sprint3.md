@@ -3,18 +3,7 @@
 This document contains the details of the work done in Sprint 3 of the Software Engineering Project. This sprint focused on completing unfinished tasks from Sprint 2, implementing new functionality, and comprehensive testing of all components. The main goal was to ensure the application is ready with proper test coverage and documentation.
 
 Repository Link: [Timelygator/Timelygator](https://github.com/timelygator/TimelyGator)
-Sprint3.md: [docs/sprint/sprint3.md](https://github.com/timelygator/TimelyGator/blob/main/docs/sprint3.md)
-
-Table of contents:
-
-- [Sprint 2 Rolled Over Tasks](#sprint-2-rolled-over-tasks)
-- [New Functionality](#new-functionality)
-- [Testing](#testing)
-  - [Frontend Tests](#frontend-tests)
-  - [Backend Tests](#backend-tests)
-- [Documentation](#documentation)
-- [Tasks](#tasks)
-- [Conclusion](#conclusion)
+Sprint3.md: [docs/files/sprint/sprint3.md](https://github.com/timelygator/TimelyGator/blob/main/docs/files/sprint/Sprint3.md)
 
 ## Sprint 2 Rolled Over Tasks
 
