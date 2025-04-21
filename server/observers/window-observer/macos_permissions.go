@@ -17,7 +17,7 @@ import (
 
 // isProcessTrusted wraps AXIsProcessTrusted from ApplicationServices.
 func isProcessTrusted() bool {
-	return bool(C.AXIsProcessTrusted())
+	return false
 }
 
 // BackgroundEnsurePermissions launches EnsurePermissions in its own goroutine
