@@ -5,6 +5,11 @@ repo_name: TimelyGator/TimelyGator
 docs_dir: files
 nav:
   - index.md
+  - Sprint Docs:
+    - Sprint 1: sprint/Sprint1.md
+    - Sprint 2: sprint/Sprint2.md
+    - Sprint 3: sprint/Sprint3.md
+    - Sprint 4: sprint/Sprint4.md
   - API Reference: api.md
 theme:
   name: material
@@ -29,6 +34,7 @@ theme:
     - navigation.instant.progress
     - navigation.top
     - navigation.footer
+    - navigation.expand
     - toc.follow
 markdown_extensions:
   - pymdownx.details

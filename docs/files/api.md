@@ -1,1 +1,1 @@
-[OAD(../../server/docs/swagger.json)]
+[OAD(../server/docs/swagger.json)]
