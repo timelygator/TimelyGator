@@ -2,6 +2,8 @@
 
 ## Project Description
 
+View [Docs](https://timelygator.github.io/TimelyGator/)
+
 **TimelyGator** is a time management tool aimed at helping users track their activities, set goals, and improve their focus. The project focuses on creating a simple and intuitive platform that empowers users to optimize their time effectively. With features like basic time tracking, session timers, and customizable activity categories, TimelyGator is designed to help individuals stay organized and productive. The core functionality will prioritize usability and practicality within a four-month development timeline, and may integrate AI-powered insights.
 
 ### Key Features
