@@ -52,6 +52,7 @@ This can now be visited at [timelygator.github.io/TimelyGator](https://timelygat
    - Added platform-specific window management
    - Fixed duration handling and configuration
    - Added macOS permissions handling for accessibility access
+   - Wrote documentation for observers and client
 
 2. [@shreyansh-nayak-ufl](https://github.com/shreyansh-nayak-ufl) # Backend
    - Implemented MkDocs for documentation
