@@ -51,7 +51,7 @@ const OverviewPage = () => {
                     transition={{ duration: 1 }}
                 >
                     <StatCard name='Time elapsed' icon={Timer} value='12 h' /* value={timeElapsed || 'Loading...'} */ color='#6366F1' />
-                    <StatCard name='Ideal Time' icon={TimerOff} value='4 h' /* value={idealTime || 'Loading...'} */ color='#8B5CF6' />
+                    <StatCard name='Idle Time' icon={TimerOff} value='4 h' /* value={idealTime || 'Loading...'} */ color='#8B5CF6' />
                     <StatCard name='Tabs open' icon={GalleryVerticalEnd} value='56' /* value={tabsOpen || 'Loading...'} */ color='#EC4899' />
                     <StatCard name='Data Used' icon={Radio} value='1254 MB' /* value={dataUsed || 'Loading...'} */ color='#10B981' />
                 </motion.div>

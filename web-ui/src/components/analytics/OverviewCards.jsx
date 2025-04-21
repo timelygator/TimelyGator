@@ -7,7 +7,7 @@ const OverviewCards = () => {
     const [overviewData, setOverviewData] = useState([
         { name: "Top Application", value: "Loading...", change: 0, icon: Chrome },
         { name: "Top Window Titles", value: "Loading...", change: 0, icon: FileCode2 },
-        { name: "Top Browser Domains", value: "Loading...", change: 0, icon: Github },
+        { name: "Top Activity", value: "Loading...", change: 0, icon: Github },
         { name: "Top Category", value: "Loading...", change: 0, icon: Layers },
     ]);
 
@@ -63,7 +63,7 @@ const OverviewCards = () => {
                             return { ...item, value: topApp[0], change: 0 };
                         } else if (item.name === "Top Window Titles") {
                             return { ...item, value: topTitle[0], change: 0 };
-                        } else if (item.name === "Top Browser Domains") {
+                        } else if (item.name === "Top Activity") {
                             return { ...item, value: topDomain[0], change: 0 };
                         }
                         return item;
