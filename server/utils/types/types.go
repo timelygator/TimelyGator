@@ -11,7 +11,7 @@ const ModuleVersion = "0.1.0"
 
 type Config struct {
 	Environment        string `env:"ENVIRONMENT" envDefault:"development"`
-	Interface          string `env:"INTERFACE" envDefault:"localhost"`
+	Interface          string `env:"INTERFACE" envDefault:"0.0.0.0"`
 	Port               string `env:"PORT" envDefault:"8080"`
 	DataSourceName     string `env:"DSN" envDefault:"timelygator.db"` // SQLite - file.db, MySQL - user:password@tcp(localhost:3306)/dbname
 	CommitInterval     int    `env:"COMMIT_INTERVAL" envDefault:"60"`
