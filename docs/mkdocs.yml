@@ -5,16 +5,18 @@ repo_name: TimelyGator/TimelyGator
 docs_dir: files
 nav:
   - index.md
+  - Frontend Design: frontend.md
+  - Backend Architecture Design: 
+    - Overview: backend.md
+    - Database: database.md
+    - Observers:
+      - Window Observer: observers/window-observer.md
+      - AFK Observer: observers/afk-observer.md
   - Sprint Docs:
     - Sprint 1: sprint/Sprint1.md
     - Sprint 2: sprint/Sprint2.md
     - Sprint 3: sprint/Sprint3.md
     - Sprint 4: sprint/Sprint4.md
-  - Database: database.md
-  - Observers:
-    - window-observer: observers/window-observer.md
-    - afk-observer: observers/afk-observer.md
-  - Frontend - Core Concepts & Features: frontend.md
   - API Reference: api.md
 theme:
   name: material
