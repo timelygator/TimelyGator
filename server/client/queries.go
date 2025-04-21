@@ -6,13 +6,12 @@ import (
 	"strings"
 )
 
-
 type QueryParams struct {
-	BidBrowsers    []string               // e.g. ["tg-observer-web_chrome_laptop", ...]
-	Classes        []ClassItem            // from the server or fallback
-	FilterClasses  [][]string             // e.g. [ ["Work","Programming"], ... ]
-	FilterAfk      bool                   // whether to filter out AFK times
-	IncludeAudible bool                   // whether to include audible browser events
+	BidBrowsers    []string    // e.g. ["tg-observer-web_chrome_laptop", ...]
+	Classes        []ClassItem // from the server or fallback
+	FilterClasses  [][]string  // e.g. [ ["Work","Programming"], ... ]
+	FilterAfk      bool        // whether to filter out AFK times
+	IncludeAudible bool        // whether to include audible browser events
 }
 
 // DesktopQueryParams merges QueryParams with `_DesktopQueryParamsBase` (bid_window, bid_afk).

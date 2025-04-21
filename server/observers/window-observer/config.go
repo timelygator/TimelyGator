@@ -1,13 +1,13 @@
 package windowobserver
 
 import (
-    "fmt"
-    "log"
-    "strings"
-    "time"
+	"fmt"
+	"log"
+	"strings"
+	"time"
 
-    "github.com/caarlos0/env"
-    "github.com/joho/godotenv"
+	"github.com/caarlos0/env"
+	"github.com/joho/godotenv"
 )
 
 //   HOST             → server host (string)
@@ -26,38 +26,38 @@ import (
 // -----------------------------------------------------------------------------
 
 type WindowObserverConfig struct {
-    Host          string   `env:"HOST"`
-    Port          string   `env:"PORT"         envDefault:"8080"`
-    Testing       bool     `env:"TESTING"      envDefault:"false"`
-    Verbose       bool     `env:"VERBOSE"      envDefault:"false"`
-    ExcludeTitle  bool     `env:"EXCLUDE_TITLE" envDefault:"false"`
-    ExcludeTitles []string `env:"EXCLUDE_TITLES" envSeparator:","`
-    PollTime      float64  `env:"POLL_TIME"    envDefault:"1.0"`
-    Strategy      string   `env:"STRATEGY"     envDefault:"swift"`
+	Host          string   `env:"HOST"`
+	Port          string   `env:"PORT"         envDefault:"8080"`
+	Testing       bool     `env:"TESTING"      envDefault:"false"`
+	Verbose       bool     `env:"VERBOSE"      envDefault:"false"`
+	ExcludeTitle  bool     `env:"EXCLUDE_TITLE" envDefault:"false"`
+	ExcludeTitles []string `env:"EXCLUDE_TITLES" envSeparator:","`
+	PollTime      float64  `env:"POLL_TIME"    envDefault:"1.0"`
+	Strategy      string   `env:"STRATEGY"     envDefault:"swift"`
 }
 
 // LoadConfig reads .env (if present) and environment variables into the struct.
 func LoadConfig() (WindowObserverConfig, error) {
-    _ = godotenv.Load() // optional; ignore error if .env absent
+	_ = godotenv.Load() // optional; ignore error if .env absent
 
-    cfg := WindowObserverConfig{}
-    if err := env.Parse(&cfg); err != nil {
-        return WindowObserverConfig{}, fmt.Errorf("window‑observer config: %w", err)
-    }
+	cfg := WindowObserverConfig{}
+	if err := env.Parse(&cfg); err != nil {
+		return WindowObserverConfig{}, fmt.Errorf("window‑observer config: %w", err)
+	}
 
-    // Normalise strategy to lowercase for easy comparison.
-    cfg.Strategy = strings.ToLower(cfg.Strategy)
-    switch cfg.Strategy {
-    case "jxa", "applescript", "swift":
-    default:
-        log.Printf("[LoadConfig] unknown STRATEGY %q – falling back to 'swift'", cfg.Strategy)
-        cfg.Strategy = "swift"
-    }
+	// Normalise strategy to lowercase for easy comparison.
+	cfg.Strategy = strings.ToLower(cfg.Strategy)
+	switch cfg.Strategy {
+	case "jxa", "applescript", "swift":
+	default:
+		log.Printf("[LoadConfig] unknown STRATEGY %q – falling back to 'swift'", cfg.Strategy)
+		cfg.Strategy = "swift"
+	}
 
-    return cfg, nil
+	return cfg, nil
 }
 
 // PollDuration converts the float seconds into a time.Duration.
 func (c WindowObserverConfig) PollDuration() time.Duration {
-    return time.Duration(c.PollTime * float64(time.Second))
+	return time.Duration(c.PollTime * float64(time.Second))
 }

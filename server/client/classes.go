@@ -9,8 +9,8 @@ import (
 type CategorySpec map[string]interface{}
 
 // ClassItem represents a classification entry:
-//  - Name => slice of strings (like ["Work","Programming"])
-//  - Rule => a CategorySpec containing "type", "regex", etc.
+//   - Name => slice of strings (like ["Work","Programming"])
+//   - Rule => a CategorySpec containing "type", "regex", etc.
 type ClassItem struct {
 	Name []string     `json:"name"`
 	Rule CategorySpec `json:"rule"`
