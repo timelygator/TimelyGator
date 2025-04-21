@@ -31,6 +31,7 @@
 
 ### Overview Tab
 Your main dashboard for a quick summary of your daily activity.
+
 * **Key Metrics:**
     * `Time elapsed`: Total active screen time tracked today (resets daily).
     * `Ideal Time`: Total idle (AFK) time tracked today. *(See definition above)*.
@@ -42,6 +43,7 @@ Your main dashboard for a quick summary of your daily activity.
 
 ### Tabs Tab
 Manage and analyze your browser tabs.
+
 * **Key Metrics:** `Total Tabs`, `Active Tabs`, `Hybernating Tabs` (count of inactive tabs), `Awake Rate`.
 * **Tabs List:** Detailed view of each open tab:
     * Website Icon & Domain
@@ -54,7 +56,8 @@ Manage and analyze your browser tabs.
 
 ### Analytics Tab
 Dive deeper into trends and progress.
-* **Top Items:** Displays your most used Application, Window Title, Browser Domain, and Website Category for the selected period. *
+
+* **Top Items:** Displays your most used Application, Window Title, Browser Domain, and Website Category for the selected period. 
 * **Actual vs Target (Graph):** Visualizes your actual tracked hours against a dynamic target over time.
     * `Actual`: Your recorded active hours.
     * `Target`: A dynamically adjusted optimal productivity time, calculated by the app based on general recommendations and your past performance/behaviour. It is *not* manually set by the user.
@@ -64,6 +67,7 @@ Dive deeper into trends and progress.
 
 ### Settings Tab
 Configure your profile, preferences, and account settings.
+
 * **Profile:** View and edit your name and email address.
 * **Notifications:** Enable or disable notifications via different channels:
     * `Push Notifications`
@@ -108,10 +112,3 @@ Configure your profile, preferences, and account settings.
     * A: _[Refer to Privacy section summary and link to full policy]_
 * **Q: How do I delete my account and data?**
     * A: Go to Settings -> Danger Zone and click 'Delete Account'. This removes data from servers and your local machine. It cannot be undone.
-
-## 8. Support
-
-Need help?
-* Contact us via email: `support@[appname].com` _(Replace with actual email)_
-* Visit our Help Center: `[Link to Help Center]` _(Replace with actual link)_
-

@@ -12,7 +12,7 @@ The **Window Observer** is a TimelyGator component that monitors the active wind
 ## Prerequisites
 
 - Go 1.17+ installed.
-- [TimelyGator server](../../client/README.md) running and accessible.
+- [TimelyGator server](../backend.md) running and accessible.
   - To run go to `cd server` and run `go run .`
 - Platform-specific dependencies:
   - **Linux**: X11 development libraries (`libx11-dev`, `xprop`).
