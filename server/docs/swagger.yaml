@@ -28,67 +28,10 @@ definitions:
           type: integer
         type: array
       duration:
-        $ref: '#/definitions/time.Duration'
+        type: number
       id:
         type: integer
       timestamp:
-        type: string
-    type: object
-  time.Duration:
-    enum:
-    - -9223372036854775808
-    - 9223372036854775807
-    - 1
-    - 1000
-    - 1000000
-    - 1000000000
-    - 60000000000
-    - 3600000000000
-    - -9223372036854775808
-    - 9223372036854775807
-    - 1
-    - 1000
-    - 1000000
-    - 1000000000
-    - 60000000000
-    - 3600000000000
-    type: integer
-    x-enum-varnames:
-    - minDuration
-    - maxDuration
-    - Nanosecond
-    - Microsecond
-    - Millisecond
-    - Second
-    - Minute
-    - Hour
-    - minDuration
-    - maxDuration
-    - Nanosecond
-    - Microsecond
-    - Millisecond
-    - Second
-    - Minute
-    - Hour
-  types.BucketCreationPayload:
-    properties:
-      client:
-        type: string
-      hostname:
-        type: string
-      type:
-        type: string
-    type: object
-  types.BucketUpdatePayload:
-    properties:
-      client:
-        type: string
-      data:
-        additionalProperties: true
-        type: object
-      hostname:
-        type: string
-      type:
         type: string
     type: object
   types.ImportPayload:
@@ -110,69 +53,41 @@ info:
   title: TimelyGator Server API
   version: "0.1"
 paths:
-  /v1/buckets/:
+  /v1/buckets:
     get:
-      description: Retrieve a list of all buckets.
+      consumes:
+      - application/json
+      description: |-
+        Retrieves a list of all buckets in the system. Each bucket represents a collection
+        of related events and contains metadata about the tracking session.
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: List of buckets retrieved successfully
           schema:
             items:
               $ref: '#/definitions/models.Bucket'
             type: array
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Get all buckets
+      summary: List all buckets
       tags:
       - buckets
   /v1/buckets/{bucket_id}:
     delete:
       consumes:
       - application/json
-      - application/json
-      description: |-
-        Retrieve metadata for a specific bucket.
-        Create a new bucket with the given ID and metadata.
-        Update metadata for a specific bucket.
-        Delete a specific bucket. Requires force=1 query parameter unless testing.
+      description: Endpoint for creating, retrieving, updating, and deleting buckets
       parameters:
-      - description: Bucket ID
+      - description: Unique identifier for the bucket
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket creation payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketCreationPayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket update payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketUpdatePayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Force delete (required unless testing)
+      - description: Force deletion flag (required for DELETE unless in testing mode)
         in: query
         name: force
         type: string
@@ -180,74 +95,39 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Operation completed successfully
+          schema:
+            $ref: '#/definitions/models.Bucket'
+        "204":
+          description: No content (for successful updates)
           schema:
             type: string
         "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
+          description: Invalid request parameters
           schema:
             type: string
         "404":
-          description: Not Found
+          description: Bucket not found
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Delete a bucket
+      summary: Manage bucket operations
       tags:
-      - buckets
-      - buckets
-      - buckets
       - buckets
     get:
       consumes:
       - application/json
-      - application/json
-      description: |-
-        Retrieve metadata for a specific bucket.
-        Create a new bucket with the given ID and metadata.
-        Update metadata for a specific bucket.
-        Delete a specific bucket. Requires force=1 query parameter unless testing.
+      description: Endpoint for creating, retrieving, updating, and deleting buckets
       parameters:
-      - description: Bucket ID
+      - description: Unique identifier for the bucket
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket creation payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketCreationPayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket update payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketUpdatePayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Force delete (required unless testing)
+      - description: Force deletion flag (required for DELETE unless in testing mode)
         in: query
         name: force
         type: string
@@ -255,74 +135,39 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Operation completed successfully
+          schema:
+            $ref: '#/definitions/models.Bucket'
+        "204":
+          description: No content (for successful updates)
           schema:
             type: string
         "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
+          description: Invalid request parameters
           schema:
             type: string
         "404":
-          description: Not Found
+          description: Bucket not found
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Delete a bucket
+      summary: Manage bucket operations
       tags:
-      - buckets
-      - buckets
-      - buckets
       - buckets
     post:
       consumes:
       - application/json
-      - application/json
-      description: |-
-        Retrieve metadata for a specific bucket.
-        Create a new bucket with the given ID and metadata.
-        Update metadata for a specific bucket.
-        Delete a specific bucket. Requires force=1 query parameter unless testing.
+      description: Endpoint for creating, retrieving, updating, and deleting buckets
       parameters:
-      - description: Bucket ID
+      - description: Unique identifier for the bucket
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket creation payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketCreationPayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket update payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketUpdatePayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Force delete (required unless testing)
+      - description: Force deletion flag (required for DELETE unless in testing mode)
         in: query
         name: force
         type: string
@@ -330,74 +175,39 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Operation completed successfully
+          schema:
+            $ref: '#/definitions/models.Bucket'
+        "204":
+          description: No content (for successful updates)
           schema:
             type: string
         "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
+          description: Invalid request parameters
           schema:
             type: string
         "404":
-          description: Not Found
+          description: Bucket not found
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Delete a bucket
+      summary: Manage bucket operations
       tags:
-      - buckets
-      - buckets
-      - buckets
       - buckets
     put:
       consumes:
       - application/json
-      - application/json
-      description: |-
-        Retrieve metadata for a specific bucket.
-        Create a new bucket with the given ID and metadata.
-        Update metadata for a specific bucket.
-        Delete a specific bucket. Requires force=1 query parameter unless testing.
+      description: Endpoint for creating, retrieving, updating, and deleting buckets
       parameters:
-      - description: Bucket ID
+      - description: Unique identifier for the bucket
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket creation payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketCreationPayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Bucket update payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/types.BucketUpdatePayload'
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Force delete (required unless testing)
+      - description: Force deletion flag (required for DELETE unless in testing mode)
         in: query
         name: force
         type: string
@@ -405,139 +215,142 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Operation completed successfully
+          schema:
+            $ref: '#/definitions/models.Bucket'
+        "204":
+          description: No content (for successful updates)
           schema:
             type: string
         "400":
-          description: Bad Request
-          schema:
-            type: string
-        "401":
-          description: Unauthorized
+          description: Invalid request parameters
           schema:
             type: string
         "404":
-          description: Not Found
+          description: Bucket not found
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Delete a bucket
+      summary: Manage bucket operations
       tags:
-      - buckets
-      - buckets
-      - buckets
       - buckets
   /v1/buckets/{bucket_id}/events:
     get:
       consumes:
       - application/json
       description: |-
-        Retrieve events for a specific bucket, optionally with limit and time range.
-        Create one or more events in a specific bucket. Accepts single event object or array of event objects.
+        Endpoint for creating and retrieving events associated with a specific bucket.
+        Events represent individual time-tracking entries or activities.
       parameters:
-      - description: Bucket ID
+      - description: ID of the bucket containing the events
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Limit the number of events returned
+      - description: Maximum number of events to return (for GET)
         in: query
         name: limit
         type: integer
-      - description: Start time in ISO8601 format
+      - description: Start time in ISO8601 format (for GET)
         in: query
         name: start
         type: string
-      - description: End time in ISO8601 format
+      - description: End time in ISO8601 format (for GET)
         in: query
         name: end
         type: string
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Event payload (single event object or array of event objects)
+      - description: Event object or array of event objects (for POST)
         in: body
-        name: body
-        required: true
+        name: event
         schema:
           type: object
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Events retrieved/created successfully
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+        "201":
+          description: Event created successfully
           schema:
             $ref: '#/definitions/models.Event'
         "400":
-          description: Bad Request
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Bucket not found
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Create events for a bucket
+      summary: Manage events within a bucket
       tags:
-      - events
       - events
     post:
       consumes:
       - application/json
       description: |-
-        Retrieve events for a specific bucket, optionally with limit and time range.
-        Create one or more events in a specific bucket. Accepts single event object or array of event objects.
+        Endpoint for creating and retrieving events associated with a specific bucket.
+        Events represent individual time-tracking entries or activities.
       parameters:
-      - description: Bucket ID
+      - description: ID of the bucket containing the events
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Limit the number of events returned
+      - description: Maximum number of events to return (for GET)
         in: query
         name: limit
         type: integer
-      - description: Start time in ISO8601 format
+      - description: Start time in ISO8601 format (for GET)
         in: query
         name: start
         type: string
-      - description: End time in ISO8601 format
+      - description: End time in ISO8601 format (for GET)
         in: query
         name: end
         type: string
-      - description: Bucket ID
-        in: path
-        name: bucket_id
-        required: true
-        type: string
-      - description: Event payload (single event object or array of event objects)
+      - description: Event object or array of event objects (for POST)
         in: body
-        name: body
-        required: true
+        name: event
         schema:
           type: object
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Events retrieved/created successfully
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+        "201":
+          description: Event created successfully
           schema:
             $ref: '#/definitions/models.Event'
         "400":
-          description: Bad Request
+          description: Invalid request parameters
+          schema:
+            type: string
+        "404":
+          description: Bucket not found
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Create events for a bucket
+      summary: Manage events within a bucket
       tags:
-      - events
       - events
   /v1/buckets/{bucket_id}/events/{event_id}:
     delete:
@@ -693,21 +506,24 @@ paths:
     post:
       consumes:
       - application/json
-      description: Send a heartbeat event for a bucket to indicate it's still active.
+      description: |-
+        Updates or creates an event in the specified bucket to indicate active status.
+        If an existing event is found within the pulsetime window, it will be updated
+        instead of creating a new event.
       parameters:
-      - description: Bucket ID
+      - description: ID of the bucket to send heartbeat to
         in: path
         name: bucket_id
         required: true
         type: string
-      - description: Pulsetime in seconds
+      - description: Time window in seconds to merge events
         in: query
         name: pulsetime
         required: true
         type: number
-      - description: Event payload
+      - description: Event data to record
         in: body
-        name: body
+        name: event
         required: true
         schema:
           type: object
@@ -715,39 +531,42 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Heartbeat recorded successfully
           schema:
             $ref: '#/definitions/models.Event'
         "400":
-          description: Bad Request
+          description: Missing or invalid parameters
           schema:
             type: string
         "409":
-          description: Conflict
+          description: Concurrent heartbeat operation in progress
           schema:
             type: string
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Send a heartbeat event
+      summary: Send bucket heartbeat
       tags:
-      - buckets
+      - events
   /v1/export:
     get:
-      description: Export all buckets and their data as a JSON attachment.
+      description: |-
+        Exports all buckets and their associated events as a JSON file attachment.
+        The exported data can be used for backup or migration purposes.
       produces:
       - application/json
+      - application/octet-stream
       responses:
         "200":
-          description: attachment
+          description: JSON file containing all bucket data
           schema:
             type: file
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Export all buckets
+      summary: Export all bucket data
       tags:
       - export-import
   /v1/import:
@@ -782,21 +601,25 @@ paths:
       - export-import
   /v1/info:
     get:
-      description: Get information about the server, such as version and build time.
+      consumes:
+      - application/json
+      description: |-
+        Returns detailed information about the TimelyGator server instance including version,
+        build time, and other deployment-specific configuration.
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Server information retrieved successfully
           schema:
             items:
               type: integer
             type: array
         "500":
-          description: Internal Server Error
+          description: Internal server error occurred
           schema:
             type: string
-      summary: Get server info
+      summary: Get server information
       tags:
-      - info
+      - system
 swagger: "2.0"
