@@ -52,8 +52,6 @@ This can now be visited at [timelygator.github.io/TimelyGator](https://timelygat
 
 ## Tasks
 
-## Tasks
-
 1. [@siddhant-0707](https://github.com/siddhant-0707) # Backend
     - Implemented cross-platform window observer
     - Added platform-specific window management
