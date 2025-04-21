@@ -21,6 +21,7 @@ The following tasks from Sprint 3 were completed in Sprint 4:
 
 ### Frontend
 - Updated UsageOverviewChart component with improved data visualization
+- Field modifications to extract specefic element from API calls
 - Fixed UI/UX issues for better user experience
 - Added FrontEnd documentation
 
@@ -65,6 +66,7 @@ This can now be visited at [timelygator.github.io/TimelyGator](https://timelygat
    - Continued improvements to UsageOverviewChart component
    - Fixed UI/UX inconsistencies and ensured theme persistence across sessions
    - Wrote unit tests for UsageOverviewChart and other key UI elements
+   - Worked on FrontEnd documentation
 
 4. [@YashDVerma](https://github.com/YashDVerma) # Frontend
    - Updated UsageOverviewChart component
