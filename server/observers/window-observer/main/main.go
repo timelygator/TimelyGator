@@ -27,6 +27,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var getCurrentWindow = lib.GetCurrentWindow
+
 func main() {
 	_ = godotenv.Load()
 
@@ -115,8 +117,17 @@ func main() {
 	}
 }
 
-func handleHeartBeat(tg *client.TimelyGatorClient, bucket string, strategy string, exclTitle bool, patterns []*regexp.Regexp, poll time.Duration) {
-	win, err := lib.GetCurrentWindow(strategy)
+type heartbeatSender interface {
+    Heartbeat(bucket string,
+              data interface{},
+              pulse float64,
+              wait bool,
+              extra *float64,
+    ) error
+}
+
+func handleHeartBeat(tg heartbeatSender, bucket string, strategy string, exclTitle bool, patterns []*regexp.Regexp, poll time.Duration) {
+	win, err := getCurrentWindow(strategy)
 	if err != nil {
 		log.Printf("getCurrentWindow error: %v", err)
 		return
