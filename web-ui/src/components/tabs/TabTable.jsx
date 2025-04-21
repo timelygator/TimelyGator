@@ -9,8 +9,6 @@ const tabData = [
     { id: 3, website: "Github", name: "Github/PulkitGarg777", Type: "Educational", status: "Inactive" },
     { id: 4, website: "Instagram", name: "Instagram.com", Type: "Social", status: "Active" },
     { id: 5, website: "Google", name: "Homemade Chocolate Cake", Type: "Entertainment", status: "Active" },
-    
-    
 ];
 
 
@@ -38,7 +36,6 @@ const tabData = [
 //     },
 //     ...
 // ]
-
 const getIconForWebsite = (website) => {
     const normalizedWebsite = website.charAt(0).toUpperCase() + website.slice(1).toLowerCase().replace(/\s+/g, '');
     return Icons[normalizedWebsite] || Icons.Globe; // Default to Globe icon if no mapping found
@@ -55,6 +52,11 @@ const TabTable = () => {
             (tab) => tab.website.toLowerCase().includes(term) || tab.name.toLowerCase().includes(term)
         );
         setFilteredUsers(filtered);
+    };
+
+    const handleDelete = (id) => {
+        const updatedTabs = filteredUsers.filter((tab) => tab.id !== id);
+        setFilteredUsers(updatedTabs);
     };
 
     return (
@@ -155,8 +157,13 @@ const TabTable = () => {
                                     </td>
 
                                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-300'>
-                                        <button className='text-indigo-400 hover:text-indigo-300 mr-2'>Edit</button>
-                                        <button className='text-red-400 hover:text-red-300'>Delete</button>
+                                        {/* <button className='text-indigo-400 hover:text-indigo-300 mr-2'>Edit</button> */}
+                                        <button
+                                            className='text-red-400 hover:text-red-300'
+                                            onClick={() => handleDelete(tab.id)}
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </motion.tr>
                             );
