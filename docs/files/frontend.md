@@ -27,7 +27,7 @@
 * You can connect external accounts (e.g., Google, Twitter, GitHub) via the **Settings** section.
 * **Purpose:** This is used to **integrate data** from those services (e.g., calendar events, repository activity) to provide richer context and more accurate insights into your productivity patterns. It is not solely for login purposes.
 
-## 4. Navigating the App
+## Navigating the App
 
 ### Overview Tab
 Your main dashboard for a quick summary of your daily activity.
@@ -79,7 +79,7 @@ Configure your profile, preferences, and account settings.
 * **Danger Zone:**
     * `Delete Account`: Permanently removes your account and all associated data from **both the servers and your local machine**. This action is irreversible.
 
-## 5. Understanding Your Productivity Metrics
+## Understanding Your Productivity Metrics
 
 * **Time elapsed:** Daily active screen time while tracked. Helps understand total engagement.
 * **Ideal Time (Idle Time):** Daily inactive/AFK time. Useful for seeing break times or periods away.
@@ -94,7 +94,7 @@ Configure your profile, preferences, and account settings.
 
 
 
-## 6. Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 * **Q: What does "Ideal Time" mean?**
     * A: In the current version, "Ideal Time" represents the time you were idle or away from your keyboard/mouse while the app was tracking.
