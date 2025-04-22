@@ -73,9 +73,10 @@ This can now be visited at [timelygator.github.io/TimelyGator](https://timelygat
     - Worked on FrontEnd documentation
 
 4. [@YashDVerma](https://github.com/YashDVerma) # Frontend
-    - Updated UsageOverviewChart component
-    - Fixed UI/UX issues
+    - Testing API call over UsageOverviewChart 
+    - Added Profile editing feature
     - Added FrontEnd documentation
+    - Fixed ActualCharts not reacting to changed TimeRange
 
 ## Conclusion
 
