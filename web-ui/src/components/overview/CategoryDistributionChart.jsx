@@ -1,54 +1,12 @@
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { FaYoutube, FaCode, FaGithub, FaInstagram, FaShoppingCart } from "react-icons/fa";
-// import { useState, useEffect } from "react";
-// import Axios from "axios";
-
-const categoryData = [
-    { name: "YouTube", value: 3.7, icon: FaYoutube },
-    { name: "LeetCode", value: 2.6, icon: FaCode },
-    { name: "Github", value: 2.3, icon: FaGithub },
-    { name: "Instagram", value: 1.7, icon: FaInstagram },
-    { name: "Amazon", value: 1.6, icon: FaShoppingCart },
-];
+import { useState, useEffect } from "react";
+import Axios from "axios";
 
 const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
 
-
-//            <  API CALLING FOR CATEGORY DISTRIBUTION CHART TEST FORMAT >
-// Default data for category distribution
-// const defaultCategoryData = [
-// 	{ name: "YouTube", value: 0, icon: FaYoutube },
-// 	{ name: "LeetCode", value: 0, icon: FaCode },
-// 	{ name: "Github", value: 0, icon: FaGithub },
-// 	{ name: "Instagram", value: 0, icon: FaInstagram },
-// 	{ name: "Amazon", value: 0, icon: FaShoppingCart },
-// ];
-
-// const [categoryData, setCategoryData] = useState(defaultCategoryData);
-
-// useEffect(() => {
-// 	Axios.get("http://localhost:5000/api/category-distribution")
-// 		.then((res) => {
-// 			// Calculate the time spent on each site
-// 			const data = res.data.map(item => {
-// 				const startTime = new Date(item.Starttime);
-// 				const endTime = new Date(item.EndTime);
-// 				const timeSpent = (endTime - startTime) / (1000 * 60 * 60); // Convert milliseconds to hours
-// 				return {
-// 					name: item.Category,
-// 					value: timeSpent,
-// 					icon: getIcon(item.Category) // Function to get the corresponding icon
-// 				};
-// 			});
-// 			setCategoryData(data);
-// 		})
-// 		.catch((error) => {
-// 			console.error("Error fetching category distribution data:", error);
-// 		});
-// }, []);
-
-// Function to get the corresponding icon
+// Updated getIcon function that uses the category name
 const getIcon = (category) => {
     switch (category) {
         case "YouTube":
@@ -66,56 +24,79 @@ const getIcon = (category) => {
     }
 };
 
-//         <  API format that may be used >
-// [
-//     {
-//         "Category": "YouTube",
-//         "Starttime": "2025-02-28T08:00:00Z",
-//         "EndTime": "2025-02-28T09:00:00Z",
-//         "activityId": "12345"
-//     },
-//     
-// ]
-
 const CategoryDistributionChart = () => {
-return (
-	<motion.div
-		className='bg-backgroundSecondary bg-opacity-100 backdrop-blur-md shadow-lg rounded-xl p-6 border border-border'
-		initial={{ opacity: 0, y: 20 }}
-		animate={{ opacity: 1, y: 0 }}
-		transition={{ delay: 0.3 }}
-	>
-		<h2 className='text-lg font-medium mb-4 text-text'>Time Distribution</h2>
-		<div className='h-80'>
-			<ResponsiveContainer width={"100%"} height={"100%"}>
-				<PieChart>
-					<Pie
-						data={categoryData}
-						cx={"50%"}
-						cy={"50%"}
-						labelLine={false}
-						outerRadius={80}
-						fill='#8884d8'
-						dataKey='value'
-						label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-					>
-						{categoryData.map((entry, index) => (
-							<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-						))}
-					</Pie>
-					<Tooltip
-						contentStyle={{
-							backgroundColor: "rgba(31, 41, 55, 0.8)",
-							borderColor: "#4B5563",
-						}}
-						itemStyle={{ color: "#E5E7EB" }}
-					/>
-					<Legend />
-				</PieChart>
-			</ResponsiveContainer>
-		</div>
-	</motion.div>
-);
+    const [categoryData, setCategoryData] = useState([]);
+
+    useEffect(() => {
+        Axios.get("http://192.168.0.166:8080/api/v1/v1/buckets/tg-observer-window_sidd-Predator-PHN16-72/events")
+            .then((res) => {
+                // First, aggregate total duration and durations per category
+                let totalDuration = 0;
+                const categoryTotals = {};
+
+                res.data.forEach((item) => {
+                    totalDuration += item.duration;
+                    // Determine the category.
+                    let category = item.app;
+                    if (item.title.includes("YouTube")) {
+                        category = "YouTube";
+                    }
+                    categoryTotals[category] = (categoryTotals[category] || 0) + item.duration;
+                });
+
+                // Calculate percentage for each category based on its duration
+                const data = Object.keys(categoryTotals).map((cat) => ({
+                    name: cat,
+                    // Percentage value
+                    value: (categoryTotals[cat] / totalDuration) * 100,
+                    icon: getIcon(cat),
+                }));
+
+                setCategoryData(data);
+            })
+            .catch((error) => {
+                console.error("Error fetching category distribution data:", error);
+            });
+    }, []);
+
+    return (
+        <motion.div
+            className='bg-backgroundSecondary bg-opacity-100 backdrop-blur-md shadow-lg rounded-xl p-6 border border-border'
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+        >
+            <h2 className='text-lg font-medium mb-4 text-text'>Time Distribution</h2>
+            <div className='h-80'>
+                <ResponsiveContainer width={"100%"} height={"100%"}>
+                    <PieChart>
+                        <Pie
+                            data={categoryData}
+                            cx={"50%"}
+                            cy={"50%"}
+                            labelLine={false}
+                            outerRadius={80}
+                            fill='#8884d8'
+                            dataKey='value'
+                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                            {categoryData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: "rgba(31, 41, 55, 0.8)",
+                                borderColor: "#4B5563",
+                            }}
+                            itemStyle={{ color: "#E5E7EB" }}
+                        />
+                        <Legend />
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+        </motion.div>
+    );
 };
 
 export default CategoryDistributionChart;
